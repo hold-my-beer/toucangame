@@ -1,0 +1,19 @@
+{
+  "name": "toucan",
+  "version": "1.0.0",
+  "description": "Toucan game web app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "server": "nodemon server"
+  },
+  "author": "Sergei Petrov",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "concurrently": "^6.2.1",
+    "nodemon": "^2.0.12"
+  }
+}
