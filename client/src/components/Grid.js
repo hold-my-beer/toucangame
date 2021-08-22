@@ -3,7 +3,7 @@ import { HexGrid, Layout, Path, Text, Hexagon, HexUtils } from "react-hexgrid";
 import { minorGrid } from "../data/minorGrid";
 import { v4 as uuidv4 } from "uuid";
 
-const Field = () => {
+const Grid = () => {
   const [hexagons, setHexagons] = useState([]);
   const [path, setPath] = useState({ start: null, end: null });
   const [paths, setPaths] = useState([]);
@@ -95,7 +95,7 @@ const Field = () => {
   }, [path.end]);
 
   return (
-    <div className="field">
+    <div className="grid">
       <HexGrid width={600} height={800} viewBox="0 0 100 100">
         <Layout
           size={{ x: 5, y: 5 }}
@@ -138,4 +138,4 @@ const Field = () => {
   );
 };
 
-export default Field;
+export default Grid;

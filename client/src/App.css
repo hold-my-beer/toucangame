@@ -5,6 +5,10 @@
   --light-color: #ffe0cc;
   --danger-color: #ff0000;
   --success-color: #00ff00;
+  --sand-color: #ffff99;
+  --forest-color: #66ff33;
+  --stone-color: #777;
+  --water-color: #0099ff;
 }
 
 * {
@@ -37,7 +41,8 @@ img {
 /* Utilities */
 .container {
   /* max-width: 1100px; */
-  width: 95%;
+  min-width: 900px;
+  width: 70%;
   margin: auto;
   overflow: hidden;
   padding: 0 2rem;
@@ -70,6 +75,30 @@ img {
   margin-bottom: 3rem;
 }
 
+.ml-1 {
+  margin-left: 1rem;
+}
+
+.ml-2 {
+  margin-left: 2rem;
+}
+
+.ml-3 {
+  margin-left: 3rem;
+}
+
+.mr-1 {
+  margin-right: 1rem;
+}
+
+.mr-2 {
+  margin-right: 2rem;
+}
+
+.mr-3 {
+  margin-right: 3rem;
+}
+
 /* Text */
 .center {
   text-align: center;
@@ -94,83 +123,51 @@ img {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 }
 
-.gameField {
+.island {
   min-width: 600px;
   width: 70%;
 }
 
-.pointsField {
-  min-width: 200px;
+.points {
+  min-width: 250px;
   width: 30%;
 }
 
 /* Hexagons */
-/* svg g {
-  stroke: none;
-  transition: stroke 0.2s;
-} */
 
 svg g.sand {
-  fill: #ffff99;
+  fill: var(--sand-color);
   fill-opacity: 0.7;
 }
 
 svg g.forest {
-  fill: #66ff33;
+  fill: var(--forest-color);
   fill-opacity: 0.7;
 }
 
 svg g.stone {
-  fill: #777;
+  fill: var(--stone-color);
   fill-opacity: 0.7;
 }
 
 svg g.water {
-  fill: #0099ff;
+  fill: var(--water-color);
   fill-opacity: 0.7;
 }
 
-/* svg g {
-  fill: #4499a9;
-  fill-opacity: 0.6;
-}*/
 svg g:hover {
-  /* fill: #7be3f6;*/
   fill-opacity: 1;
-  /* stroke: red;
-  stroke-width: 0.1; */
   cursor: pointer;
 }
-/*svg g:hover text {
-  fill-opacity: 1;
-}
-svg g.q .hexagon {
-  fill: Red;
-  fill-opacity: 0.4;
-}
-svg g.r .hexagon {
-  fill: Green;
-  fill-opacity: 0.4;
-}
-svg g.s .hexagon {
-  fill: Blue;
-  fill-opacity: 0.4;
-}*/
+
 svg g .active {
-  /* fill: Coral;
-  fill-opacity: 0.9; */
   stroke: orange;
   stroke-width: 0.5;
   stroke-opacity: 0.9;
 }
-/*svg g polygon {
-  stroke: #7be3f6;
-  stroke-width: 0.2;
-  transition: fill-opacity 0.5s;
-}*/
 svg g text {
   font-size: 0.17em;
   fill: #000;
@@ -185,7 +182,6 @@ svg path {
   stroke-opacity: 0.9;
   stroke-linecap: round;
   stroke-linejoin: round;
-  /* opacity: 0.8; */
 }
 
 /* CellsLeft */
@@ -194,6 +190,186 @@ svg path {
   fill-opacity: 0.7;
 }
 
+.cellsLeft svg g:hover {
+  fill-opacity: unset;
+  cursor: default;
+}
+
 .cellsLeft text {
   font-size: 0.4rem;
+}
+
+/* Points */
+.artefactPoints {
+  background-color: var(--primary-color);
+  padding: 1rem;
+}
+
+.artefactPointsItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.artefactPointsPicture {
+  width: 25px;
+  height: 35px;
+}
+
+.artefactPointsPicture img {
+  width: 100%;
+  margin: auto;
+}
+
+.artefactPointsValue1,
+.artefactPointsValue2 {
+  background-color: var(--light-color);
+}
+
+.artefactPointsValue1 {
+  /* padding: 0.1rem 0.7rem; */
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  text-align: center;
+}
+
+.artefactPointsValue2 {
+  padding: 0.1rem 1rem;
+  border-radius: 5px;
+}
+
+.cityPoints {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  height: 130px;
+  background-color: var(--water-color);
+  padding: 1rem;
+}
+
+.cityPointsItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 0.3rem;
+}
+
+.cityPointsFrom,
+.cityPointsTo,
+.cityPointsValue {
+  width: 27px;
+  height: 27px;
+  background-color: var(--water-color);
+  border-radius: 50%;
+  text-align: center;
+}
+
+.cityPointsFrom,
+.cityPointsTo {
+  background-color: blue;
+}
+
+.cityPointsValue {
+  background-color: lightblue;
+}
+
+.cityPointsFrom,
+.cityPointsTo {
+  margin-right: 0.5rem;
+}
+
+.cityPointsValue {
+  margin-right: 1rem;
+}
+
+.otherPoints {
+  display: flex;
+  flex-direction: row;
+}
+
+.bonusPoints,
+.totalPoints {
+  width: 50%;
+  height: 280px;
+}
+
+.bonusPoints {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  background-color: sandybrown;
+  padding: 1rem;
+}
+
+.bonusPointValue {
+  width: 37px;
+  height: 37px;
+  background-color: var(--sand-color);
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+
+.bonusPointValue:nth-child(3n) {
+  margin-bottom: 6rem;
+}
+
+.totalPoints {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: var(--success-color);
+}
+
+.totalPointsItem {
+  width: 100%;
+  padding: 0.7rem 0;
+}
+
+.totalFirstRoundArtefactPoints,
+.totalSecondRoundArtefactPoints {
+  background-color: var(--primary-color);
+}
+
+.totalCityPoints {
+  background-color: var(--water-color);
+}
+
+.totalBonusPoints {
+  background-color: sandybrown;
+}
+
+.totalOverallPoints {
+  background-color: var(--success-color);
+}
+
+.totalPointValue {
+  width: 45px;
+  height: 32px;
+  border-radius: 5px;
+  margin: auto;
+}
+
+.totalFirstRoundArtefactPoints .totalPointValue,
+.totalSecondRoundArtefactPoints .totalPointValue {
+  background-color: var(--light-color);
+}
+
+.totalCityPoints .totalPointValue {
+  background-color: lightblue;
+}
+
+.totalBonusPoints .totalPointValue {
+  background-color: var(--sand-color);
+}
+
+.totalOverallPoints .totalPointValue {
+  background-color: lightgreen;
 }

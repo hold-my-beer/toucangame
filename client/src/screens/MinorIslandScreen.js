@@ -1,13 +1,13 @@
 import React from "react";
 
-import GameField from "../components/GameField";
-import PointsField from "../components/PointsField";
+import Island from "../components/Island";
+import Points from "../components/Points";
 
 const MinorIslandScreen = () => {
   return (
     <div className="islandScreen">
-      <GameField />
-      <PointsField />
+      <Island />
+      <Points />
     </div>
   );
 };

@@ -2,17 +2,17 @@ import React from "react";
 
 import CellsLeft from "./CellsLeft";
 import Compass from "./Compass";
-import Field from "./Field";
+import Grid from "./Grid";
 
-const GameField = () => {
+const Island = () => {
   return (
-    <div className="gameField">
+    <div className="island">
       <h3 className="center mb-3">Малый остров</h3>
       <CellsLeft />
       {/*<Compass /> */}
-      <Field />
+      <Grid />
     </div>
   );
 };
 
-export default GameField;
+export default Island;
