@@ -15,7 +15,7 @@ const RegisterScreen = () => {
     <div className="register">
       <h1 className="large">Регистрация</h1>
       <p className="lead">
-        Зарегистрируйтесь, чтобы получить возможность играть с друзьями
+        Зарегистрируйтесь, чтобы сохранять достижения и играть с друзьями
       </p>
       <form className="form" onSubmit={onSubmit}>
         <div className="form-group">
@@ -58,13 +58,15 @@ const RegisterScreen = () => {
             onChange={(e) => setPassword2(e.target.value)}
           />
         </div>
+        <p className="mb-1">
+          <small>* - поля обязательны для заполнения</small>
+        </p>
         <input
           type="submit"
           className="btn btn-primary"
           value="Зарегистрироваться"
         />
       </form>
-      <small>* - поля обязательны для заполнения</small>
       <p>
         Есть учетная запись? <Link to="/login">Войти</Link>
       </p>

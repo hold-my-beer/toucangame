@@ -15,7 +15,7 @@ const App = () => {
   return (
     <Router>
       <>
-        {/* <Header /> */}
+        <Header />
         <div className="container">
           <Route path="/minor-island" component={MinorIslandScreen} exact />
           <Route path="/login" component={LoginScreen} exact />

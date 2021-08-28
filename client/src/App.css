@@ -176,17 +176,8 @@ img {
 }
 
 /* Landing Page*/
-.landing {
-  /* width: 80%; */
-  margin: 8rem auto;
-}
-
-/* Register */
-.register {
-  margin: 2rem auto;
-}
-
-/* Login */
+.landing,
+.register,
 .login {
   margin: 8rem auto;
 }
@@ -201,8 +192,8 @@ img {
   z-index: 1;
   width: 100%;
   top: 0;
+  background-color: var(--light-color);
   border-bottom: solid 1px var(--primary-color);
-  /* opacity: 0.9; */
 }
 
 /* IslandScreen */

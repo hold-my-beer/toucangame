@@ -1,14 +1,21 @@
 const express = require("express");
-const app = express();
 const http = require("http");
 const path = require("path");
-const server = http.createServer(app);
+const dotenv = require("dotenv");
 const { Server } = require("socket.io");
+const connectDB = require("./config/db");
+
+dotenv.config();
+connectDB();
+const app = express();
+
+const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "*",
   },
 });
+
 const { initiateGame, deal } = require("./utils/game");
 
 io.on("connection", (socket) => {
