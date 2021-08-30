@@ -4,6 +4,7 @@ const path = require("path");
 const dotenv = require("dotenv");
 const { Server } = require("socket.io");
 const connectDB = require("./config/db");
+const userRoutes = require("./routes/userRoutes");
 
 dotenv.config();
 connectDB();
@@ -24,6 +25,10 @@ io.on("connection", (socket) => {
   // game = deal(game);
   // console.log(game);
 });
+
+app.use(express.json());
+
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 

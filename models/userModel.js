@@ -1,4 +1,25 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+
+const statSchema = mongoose.Schema(
+  {
+    gamesPlayed: {
+      type: Number,
+      default: 0,
+    },
+    wins: {
+      type: Number,
+      default: 0,
+    },
+    points: {
+      type: Number,
+      default: 0,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const userSchema = mongoose.Schema(
   {
@@ -17,59 +38,33 @@ const userSchema = mongoose.Schema(
     friends: [
       {
         user: {
-          type: Schema.Types.ObjectId,
+          type: mongoose.Schema.Types.ObjectId,
           ref: "User",
         },
       },
     ],
     stats: {
-      total: {
-        gamesPlayed: {
-          type: Number,
-          default: 0,
-        },
-        wins: {
-          type: Number,
-          default: 0,
-        },
-        points: {
-          type: Number,
-          default: 0,
-        },
-      },
-      major: {
-        gamesPlayed: {
-          type: Number,
-          default: 0,
-        },
-        wins: {
-          type: Number,
-          default: 0,
-        },
-        points: {
-          type: Number,
-          default: 0,
-        },
-      },
-      minor: {
-        gamesPlayed: {
-          type: Number,
-          default: 0,
-        },
-        wins: {
-          type: Number,
-          default: 0,
-        },
-        points: {
-          type: Number,
-          default: 0,
-        },
-      },
+      total: statSchema,
+      major: statSchema,
+      minor: statSchema,
     },
   },
   {
     timestamps: true,
   }
 );
+
+userSchema.methods.matchPassword = async (enteredPassword) => {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+});
 
 module.exports = User = mongoose.model("User", userSchema);
