@@ -1,14 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
+import { register } from "../actions/userActions";
 
-const RegisterScreen = () => {
+const RegisterScreen = ({ history }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
+  const [message, setMessage] = useState("");
 
-  const onSubmit = (e) => {
+  const dispatch = useDispatch();
+
+  const userRegister = useSelector((state) => state.userRegister);
+  const { loading, error, userInfo } = userRegister;
+
+  useEffect(() => {
+    if (userInfo) {
+      history.push("/users-online");
+    }
+  }, [history, userInfo]);
+
+  const submitHandler = (e) => {
     e.preventDefault();
+
+    if (password !== password2) {
+      setMessage("Пароли не совпадают");
+    } else {
+      dispatch(register(name, email, password));
+    }
   };
 
   return (
@@ -17,7 +39,10 @@ const RegisterScreen = () => {
       <p className="lead">
         Зарегистрируйтесь, чтобы сохранять достижения и играть с друзьями
       </p>
-      <form className="form" onSubmit={onSubmit}>
+      {message && <Message className="danger" text={message} />}
+      {error && <Message className="danger" text={error} />}
+      {loading && <Loader />}
+      <form className="form" onSubmit={submitHandler}>
         <div className="form-group">
           <label htmlFor="name">Имя*</label>
           <input

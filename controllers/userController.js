@@ -12,7 +12,7 @@ const registerUser = async (req, res) => {
 
     if (userExists) {
       return res.status(400).json({
-        msg: "Попробуйте использовать другой e-mail",
+        message: "Попробуйте использовать другой e-mail",
       });
     }
 
@@ -38,11 +38,11 @@ const registerUser = async (req, res) => {
         token: generateToken(user._id),
       });
     } else {
-      return res.status(401).json({ msg: "Неверные учетные данные" });
+      return res.status(401).json({ message: "Неверные учетные данные" });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ msg: "Ошибка сервера" });
+    return res.status(500).json({ message: "Ошибка сервера" });
   }
 };
 
@@ -65,11 +65,11 @@ const loginUser = async (req, res) => {
         token: generateToken(user._id),
       });
     } else {
-      return res.status(401).json({ msg: "Неверные учетные данные" });
+      return res.status(401).json({ message: "Неверные учетные данные" });
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ msg: "Ошибка сервера" });
+    return res.status(500).json({ message: "Ошибка сервера" });
   }
 };
 
