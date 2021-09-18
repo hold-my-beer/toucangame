@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import socket from "../config/socket";
 import { logout } from "../actions/userActions";
 
 const Header = () => {
@@ -11,6 +12,7 @@ const Header = () => {
 
   const logoutHandler = () => {
     dispatch(logout());
+    socket.emit("userLogout");
   };
 
   return (

@@ -125,6 +125,8 @@ img {
   padding: 0.5rem 1.2rem;
   margin-right: 0.5rem;
   margin-bottom: 1rem;
+  font-family: inherit;
+  font-size: 1rem;
   color: var(--dark-color);
   background-color: var(--light-color);
   border: 1px solid;
@@ -144,7 +146,7 @@ img {
 
 .btn-primary {
   background-color: var(--primary-color);
-  color: var(--dark-color);
+  color: var(--light-color);
   border: none;
 }
 
@@ -152,6 +154,16 @@ img {
   background-color: var(--success-color);
   color: var(--dark-color);
   border: none;
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  color: var(--light-color);
+  border: none;
+}
+
+.btn-border-light {
+  border: 2px solid var(--light-color);
 }
 
 /* Forms */
@@ -173,27 +185,6 @@ img {
 
 .form input[type="submit"] {
   font: inherit;
-}
-
-/* Landing Page*/
-.landing,
-.register,
-.login {
-  margin: 8rem auto;
-}
-
-/* Navbar */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.7rem 2rem;
-  position: fixed;
-  z-index: 1;
-  width: 100%;
-  top: 0;
-  background-color: var(--light-color);
-  border-bottom: solid 1px var(--primary-color);
 }
 
 /* Messages */
@@ -251,6 +242,69 @@ img {
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Landing Page*/
+.landing,
+.register,
+.login,
+.usersOnline {
+  margin: 8rem auto;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 2rem;
+  position: fixed;
+  z-index: 1;
+  width: 100%;
+  top: 0;
+  background-color: var(--light-color);
+  border-bottom: solid 1px var(--primary-color);
+}
+
+/* Users Online */
+.userLists {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  /* width: 100%; */
+}
+
+.userList {
+  /* width: 50%; */
+  min-width: 300px;
+  margin-right: 1rem;
+}
+
+.userList h3 {
+  color: var(--primary-color);
+}
+
+.userListItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.2rem 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--light-color);
+  background-color: var(--primary-color);
+  border-radius: 5px;
+}
+
+.userListItem .btn {
+  font-size: 0.8rem;
+  margin-bottom: 0;
+}
+
+.userListItemData {
+  margin-right: 1rem;
 }
 
 /* IslandScreen */

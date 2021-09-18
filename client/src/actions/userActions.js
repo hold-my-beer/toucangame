@@ -3,11 +3,14 @@ import {
   USER_REGISTER_REQUEST,
   USER_REGISTER_SUCCESS,
   USER_REGISTER_FAIL,
-  USER_REGISTER_CLEAR,
+  USER_REGISTER_RESET,
   USER_LOGIN_REQUEST,
   USER_LOGIN_SUCCESS,
   USER_LOGIN_FAIL,
   USER_LOGOUT,
+  USER_LIST_REQUEST,
+  USER_LIST_SUCCESS,
+  USER_LIST_FAIL,
 } from "../constants/userConstants";
 
 export const login = (email, password) => async (dispatch) => {
@@ -82,8 +85,6 @@ export const register = (name, email, password) => async (dispatch) => {
           ? error.response.data.message
           : error.message,
     });
-
-    console.log(error);
   }
 };
 
@@ -92,5 +93,90 @@ export const logout = () => (dispatch) => {
 
   dispatch({ type: USER_LOGOUT });
 
-  dispatch({ type: USER_REGISTER_CLEAR });
+  dispatch({ type: USER_REGISTER_RESET });
+};
+
+// export const listUsers = (users, userId) => (dispatch) => {
+//   try {
+//     dispatch({ type: USER_LIST_REQUEST });
+
+//     const index = users.map((user) => user.id).indexOf(userId);
+
+//     const sortedUsers = [...users.filter((user) => user.id !== userId)];
+
+//     if (index !== -1) {
+//       sortedUsers.unshift(users[index]);
+//     }
+
+//     dispatch({
+//       type: USER_LIST_SUCCESS,
+//       payload: sortedUsers,
+//     });
+//   } catch (error) {
+//     dispatch({
+//       type: USER_LIST_FAIL,
+//       payload:
+//         error.response && error.response.data.message
+//           ? error.response.data.message
+//           : error.message,
+//     });
+//   }
+// };
+
+export const listUsers = (users, userId) => (dispatch) => {
+  try {
+    dispatch({ type: USER_LIST_REQUEST });
+
+    let groupUsers = [];
+    let freeUsers = [];
+
+    if (users.length !== 0) {
+      const index = users.map((user) => user.id).indexOf(userId);
+      const groupId = users[index].groupId || "";
+
+      if (!groupId) {
+        // freeUsers = [...users.filter((user) => user.id !== userId)];
+
+        // if (index !== -1) {
+        //   freeUsers.unshift(users[index]);
+        // }
+
+        users.forEach((user) => {
+          if (user.id === userId) {
+            freeUsers.unshift(user);
+          } else if (!user.groupId) {
+            freeUsers.push(user);
+          }
+        });
+      } else {
+        users.forEach((user) => {
+          if (user.id === userId) {
+            groupUsers.unshift(user);
+          } else if (user.groupId && user.groupId === groupId) {
+            groupUsers.push(user);
+          } else if (!user.groupId) {
+            freeUsers.push(user);
+          }
+        });
+      }
+    }
+
+    const finalUsers = {
+      groupUsers,
+      freeUsers,
+    };
+
+    dispatch({
+      type: USER_LIST_SUCCESS,
+      payload: finalUsers,
+    });
+  } catch (error) {
+    dispatch({
+      type: USER_LIST_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
 };

@@ -1,7 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-const LandingScreen = () => {
+const LandingScreen = ({ history }) => {
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  useEffect(() => {
+    if (userInfo) {
+      history.push("/users");
+    }
+  }, [history, userInfo]);
+
   return (
     <div className="landing">
       <h1 className="x-large">Добро пожаловать в Тропы Туканы!</h1>

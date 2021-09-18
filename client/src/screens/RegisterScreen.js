@@ -19,7 +19,7 @@ const RegisterScreen = ({ history }) => {
 
   useEffect(() => {
     if (userInfo) {
-      history.push("/users-online");
+      history.push("/users");
     }
   }, [history, userInfo]);
 

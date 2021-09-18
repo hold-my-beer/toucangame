@@ -1,23 +1,38 @@
+import { useEffect } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import { useSelector } from "react-redux";
 import "./App.css";
-import { io } from "socket.io-client";
+import socket from "./config/socket";
 import Header from "./components/Header";
 import LandingScreen from "./screens/LandingScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
+import UsersScreen from "./screens/UsersScreen";
 import MinorIslandScreen from "./screens/MinorIslandScreen";
 
 const App = () => {
-  const socket = io("http://127.0.0.1:5000");
-  socket.on("connect", () => {
-    console.log(socket.id); // x8WIv7-mJelg7on_ALbx
-  });
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  useEffect(() => {
+    if (userInfo) {
+      const user = {
+        id: userInfo.id,
+        name: userInfo.name,
+        friends: userInfo.friends,
+        stats: userInfo.stats,
+      };
+      socket.emit("userLogin", user);
+    }
+  }, [userInfo]);
+
   return (
     <Router>
       <>
         <Header />
         <div className="container">
           <Route path="/minor-island" component={MinorIslandScreen} exact />
+          <Route path="/users" component={UsersScreen} exact />
           <Route path="/login" component={LoginScreen} exact />
           <Route path="/register" component={RegisterScreen} exact />
           <Route path="/" component={LandingScreen} exact />

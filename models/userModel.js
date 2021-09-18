@@ -21,6 +21,23 @@ const statSchema = mongoose.Schema(
   }
 );
 
+const friendSchema = mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    status: {
+      type: String,
+      required: true,
+      default: "toBeApproved",
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
 const userSchema = mongoose.Schema(
   {
     name: {
@@ -36,12 +53,13 @@ const userSchema = mongoose.Schema(
       required: true,
     },
     friends: [
-      {
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-      },
+      // {
+      //   user: {
+      //     type: mongoose.Schema.Types.ObjectId,
+      //     ref: "User",
+      //   },
+      // },
+      friendSchema,
     ],
     stats: {
       total: statSchema,
