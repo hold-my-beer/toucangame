@@ -8,7 +8,7 @@ import LandingScreen from "./screens/LandingScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import UsersScreen from "./screens/UsersScreen";
-import MinorIslandScreen from "./screens/MinorIslandScreen";
+import IslandScreen from "./screens/IslandScreen";
 
 const App = () => {
   const userLogin = useSelector((state) => state.userLogin);
@@ -31,7 +31,7 @@ const App = () => {
       <>
         <Header />
         <div className="container">
-          <Route path="/minor-island" component={MinorIslandScreen} exact />
+          <Route path="/minor-island" component={IslandScreen} exact />
           <Route path="/users" component={UsersScreen} exact />
           <Route path="/login" component={LoginScreen} exact />
           <Route path="/register" component={RegisterScreen} exact />

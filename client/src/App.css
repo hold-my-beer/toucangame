@@ -42,7 +42,7 @@ img {
 .container {
   /* max-width: 1100px; */
   min-width: 900px;
-  width: 70%;
+  width: 90%;
   margin: 1rem auto;
   overflow: hidden;
   padding: 0 2rem;
@@ -313,18 +313,14 @@ img {
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
+  margin-top: 3rem;
 }
 
 .island {
-  position: relative;
+  /* position: relative; */
   min-width: 600px;
   width: 70%;
-  margin-right: 2rem;
-}
-
-.points {
-  min-width: 250px;
-  width: 30%;
+  margin: 0 2rem;
 }
 
 /* Hexagons */
@@ -375,11 +371,51 @@ svg path {
   stroke-linejoin: round;
 }
 
+.city {
+  font-size: 0.25rem;
+  color: var(--dark-color);
+}
+
+.points,
+.gameData {
+  min-width: 250px;
+  width: 30%;
+}
+
+/* Game Data */
+.gameData {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* Turn hexes */
+.turnHexes {
+  width: 100%;
+  transition: width 5s;
+}
+
+.turnProgressContainer {
+  width: 100%;
+  height: 15px;
+  background-color: #ccc;
+  border-radius: 7px;
+}
+
+.turnProgress {
+  /* width: 20%; */
+  height: 15px;
+  background-color: var(--water-color);
+  border-radius: 7px;
+}
+
 /* CellsLeft */
 .cellsLeft {
-  position: absolute;
+  /* position: absolute;
   top: 50;
-  left: 0;
+  left: 0; */
+  text-align: center;
   fill-opacity: 0.7;
 }
 
@@ -392,13 +428,102 @@ svg path {
   font-size: 0.4rem;
 }
 
-/* Turn hexes */
-.turnHexes {
-  position: absolute;
-  top: 50;
-  right: 0;
+/* Bonus Artefact */
+.bonusArtefact {
+  text-align: center;
+}
+
+.bonusArtefactCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 70px;
+  height: 90px;
+  margin: 0 auto;
+  padding-top: 0.5rem;
+  background-color: var(--sand-color);
+  border: 3px solid var(--primary-color);
   border-radius: 5px;
-  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.bonusArtefactImage {
+  width: 50px;
+  height: 50px;
+}
+
+.bonusArtefactImage img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* City Bonuses */
+.cityBonuses {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.cityBonusItems {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.cityBonusCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 50px;
+  margin: 0 auto;
+  margin-right: 0.2rem;
+  padding: 0.5rem;
+  background-color: var(--sand-color);
+  border: 3px solid var(--primary-color);
+  border-radius: 5px;
+  color: var(--primary-color);
+}
+
+.cityBonusHeader {
+  color: var(--dark-color);
+}
+
+/* Opponents */
+
+.opponents {
+  width: 100%;
+}
+
+.opponent {
+  width: 100%;
+  background-color: var(--primary-color);
+  color: var(--light-color);
+  margin-bottom: 0.5rem;
+}
+
+.opponentData {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3rem 1rem;
+}
+
+.opponentStatusContainer {
+  width: 100%;
+  height: 10px;
+  background-color: #ccc;
+}
+
+.opponentStatus {
+  height: 10px;
+  background-color: var(--water-color);
 }
 
 /* Points */

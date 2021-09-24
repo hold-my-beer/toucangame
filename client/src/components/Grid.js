@@ -1,12 +1,18 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { HexGrid, Layout, Path, Text, Hexagon, HexUtils } from "react-hexgrid";
 import { minorGrid } from "../data/minorGrid";
+import { updatePlayerGame } from "../actions/gameActions";
 
-const Grid = () => {
+const Grid = ({ cities, deal }) => {
   const [hexagons, setHexagons] = useState(minorGrid);
   // const [path, setPath] = useState({ start: null, end: null });
   const [pathStart, setPathStart] = useState(null);
   const [paths, setPaths] = useState([]);
+  const [hexStart, setHexStart] = useState(null);
+  const [hexUsed, setHexUsed] = useState([...deal]);
+
+  const dispatch = useDispatch();
 
   const pathsContain = (newPath) => {
     return (
@@ -21,12 +27,59 @@ const Grid = () => {
   };
 
   const onClick = (e, source, hex) => {
-    // No path initiated
+    // // Hex clicked is not in the deal or been
+    // if (deal.indexOf(hex.landscape) === -1) {
+    //   setPathStart(null);
+    //   setHexStart(null);
 
-    // if (!path.start) {
-    //   setPath({ ...path, start: source.state.hex });
-    if (!pathStart) {
+    //   setHexagons([
+    //     ...hexagons.map((item) => {
+    //       item.className = "";
+
+    //       return item;
+    //     }),
+    //   ]);
+    // }
+    const landscapeIndex = hexUsed.indexOf(hex.landscape);
+    console.log(landscapeIndex);
+
+    // Hex clicked is not in the deal or been used
+    if (
+      landscapeIndex === -1 ||
+      //Hex clicked is in the deal but this landscape has already been used
+
+      // The same hex clicked
+      (pathStart && HexUtils.equals(source.state.hex, pathStart)) ||
+      // Hex clicked is not a neighbour
+      (pathStart && HexUtils.distance(source.state.hex, pathStart)) >= 2
+    ) {
+      setHexUsed([...deal]);
+      setPathStart(null);
+      setHexStart(null);
+
+      setHexagons([
+        ...hexagons.map((item) => {
+          item.className = "";
+
+          return item;
+        }),
+      ]);
+    }
+    // No path initiated
+    else if (!pathStart) {
+      // console.log(landscapeIndex);
+      // const updatedHexUsed = [];
+      // hexUsed.forEach((item, index) => {
+      //   if (index !== landscapeIndex) {
+      //     updatedHexUsed.push(item);
+      //   }
+      // });
+      // setHexUsed(updatedHexUsed);
+      setHexUsed([
+        ...hexUsed.filter((item, index) => index !== landscapeIndex),
+      ]);
       setPathStart(source.state.hex);
+      setHexStart(hex);
 
       setHexagons([
         ...hexagons.map((item) => {
@@ -41,35 +94,44 @@ const Grid = () => {
       ]);
     }
     // The same hex clicked
+    // else if (HexUtils.equals(source.state.hex, pathStart)) {
+    //   setPathStart(null);
+    //   setHexStart(null);
 
-    // else if (HexUtils.equals(source.state.hex, path.start)) {
-    //   setPath({ ...path, start: null });
-    else if (HexUtils.equals(source.state.hex, pathStart)) {
-      setPathStart(null);
+    //   setHexagons([
+    //     ...hexagons.map((item) => {
+    //       item.className = "";
 
-      setHexagons([
-        ...hexagons.map((item) => {
-          item.className = "";
-
-          return item;
-        }),
-      ]);
-    }
+    //       return item;
+    //     }),
+    //   ]);
+    // }
     // Hex clicked is a neighbour
-
-    // else if (HexUtils.distance(source.state.hex, path.start) < 2) {
-    //   setPath({ ...path, end: source.state.hex });
-    else if (HexUtils.distance(source.state.hex, pathStart) < 2) {
+    // if (HexUtils.distance(source.state.hex, pathStart) < 2)
+    else {
+      // const updatedHexUsed = [];
+      // hexUsed.forEach((item, index) => {
+      //   if (index !== landscapeIndex) {
+      //     updatedHexUsed.push(item);
+      //   }
+      // });
+      // setHexUsed(updatedHexUsed);
+      setHexUsed([
+        ...hexUsed.filter((item, index) => index !== landscapeIndex),
+      ]);
       const newPath = { start: pathStart, end: source.state.hex };
       if (!pathsContain(newPath)) {
         setPaths([...paths, newPath]);
       }
 
+      const newHexes = { start: hexStart, end: hex };
+      // dispatch(updatePlayerGame(newHexes));
+      // console.log(hex);
+
       setHexagons([
         ...hexagons.map((item) => {
           if (
             HexUtils.equals(item, hex) ||
-            // (path.start && HexUtils.equals(item, path.start))
             (pathStart && HexUtils.equals(item, pathStart))
           ) {
             item.className = "active";
@@ -84,31 +146,19 @@ const Grid = () => {
       setPathStart(null);
     }
     // Hex clicked is not a neighbour
-    else {
-      // setPath({ ...path, start: null });
-      setPathStart(null);
+    // else {
+    //   setPathStart(null);
+    //   setHexStart(null);
 
-      setHexagons([
-        ...hexagons.map((item) => {
-          item.className = "";
+    //   setHexagons([
+    //     ...hexagons.map((item) => {
+    //       item.className = "";
 
-          return item;
-        }),
-      ]);
-    }
+    //       return item;
+    //     }),
+    //   ]);
+    // }
   };
-
-  // useEffect(() => {
-  //   setHexagons(minorGrid);
-  // }, []);
-
-  // useEffect(() => {
-  //   // If path.end is not null && no such path already created
-  //   if (path.end && !pathsContain(path)) {
-  //     setPaths([...paths, path]);
-  //   }
-  //   setPath({ start: null, end: null });
-  // }, [path.end]);
 
   return (
     <div className="grid">
@@ -132,8 +182,10 @@ const Grid = () => {
               }
               onClick={(e, h) => onClick(e, h, hex)}
             >
-              {hex.artefact === "CITY" ? (
-                <Text>{hex.artefact}</Text>
+              {hex.artefact.substring(0, 4) === "CITY" ? (
+                <Text className="city">
+                  {cities[hex.artefact.substring(4, 5)]}
+                </Text>
               ) : (
                 <image
                   href={hex.artefact}

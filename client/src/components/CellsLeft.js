@@ -1,29 +1,30 @@
 import React from "react";
 import { HexGrid, Layout, Text, Hexagon } from "react-hexgrid";
 
-const CellsLeft = () => {
+const CellsLeft = ({ cellsLeft }) => {
   return (
     <div className="cellsLeft">
-      <HexGrid width={50} height={150} viewBox="-10 -10 20 20">
+      <h4 className="text-center">Осталось карточек</h4>
+      <HexGrid width={150} height={50} viewBox="0 -25 20 20">
         <Layout
           size={{ x: 5, y: 5 }}
-          flat={true}
-          spacing={1.3}
+          flat={false}
+          spacing={1.1}
           origin={{ x: 0, y: 0 }}
         >
           <Hexagon q={0} r={-2} s={2} className="sand">
-            <Text>8</Text>
+            <Text>{cellsLeft.sand.toString()}</Text>
           </Hexagon>
-          <Hexagon q={0} r={-1} s={1} className="forest">
-            <Text>7</Text>
+          <Hexagon q={1} r={-2} s={1} className="forest">
+            <Text>{cellsLeft.forest.toString()}</Text>
           </Hexagon>
-          <Hexagon q={0} r={0} s={0} className="stone">
-            <Text>6</Text>
+          <Hexagon q={2} r={-2} s={0} className="stone">
+            <Text>{cellsLeft.stone.toString()}</Text>
           </Hexagon>
-          <Hexagon q={0} r={1} s={-1} className="water">
-            <Text>4</Text>
+          <Hexagon q={3} r={-2} s={-1} className="water">
+            <Text>{cellsLeft.water.toString()}</Text>
           </Hexagon>
-          <Hexagon q={0} r={2} s={-2} className="multi" fill="MyGradient">
+          <Hexagon q={4} r={-2} s={-2} className="any" fill="MyGradient">
             <defs>
               <linearGradient id="MyGradient" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#ffff99" />
@@ -36,7 +37,7 @@ const CellsLeft = () => {
                 <stop offset="100%" stopColor="#0099ff" />
               </linearGradient>
             </defs>
-            <Text>2</Text>
+            <Text>{cellsLeft.any.toString()}</Text>
           </Hexagon>
         </Layout>
       </HexGrid>

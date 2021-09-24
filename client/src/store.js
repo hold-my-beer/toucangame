@@ -8,10 +8,13 @@ import {
   userListReducer,
 } from "./reducers/userReducers";
 
+import { gameGetReducer } from "./reducers/gameReducers";
+
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   userList: userListReducer,
+  gameGet: gameGetReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

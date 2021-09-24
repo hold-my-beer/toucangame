@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
+// import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import socket from "../config/socket";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { listUsers } from "../actions/userActions";
+import { getGame } from "../actions/gameActions";
 
 const UsersScreen = ({ history }) => {
   const dispatch = useDispatch();
@@ -30,6 +32,18 @@ const UsersScreen = ({ history }) => {
     });
   }, [dispatch, userInfo.id]);
 
+  useEffect(() => {
+    socket.on("getGame", (game) => {
+      dispatch(getGame(game, userInfo.id));
+      history.push("/minor-island");
+    });
+
+    return socket.off("getGame", (game) => {
+      dispatch(getGame(game, userInfo._id));
+      history.push("/minor-island");
+    });
+  }, [dispatch, history]);
+
   // const askForFriendshipHandler = (socketId) => {
   //   socket.emit("askForFriendship", socketId);
   // };
@@ -48,6 +62,10 @@ const UsersScreen = ({ history }) => {
 
   const removeFromGroupHandler = (socketId) => {
     socket.emit("removeFromGroup", socketId);
+  };
+
+  const launchGameHandler = (groupId) => {
+    socket.emit("launchGame", groupId);
   };
 
   return (
@@ -72,47 +90,62 @@ const UsersScreen = ({ history }) => {
                   Создать группу
                 </button>
               ) : (
-                users.groupUsers.map((user) => (
-                  <div key={user.id} className="userListItem">
-                    <div className="userListItemData">
-                      <div className="username">
-                        {user.name}{" "}
-                        {user.isLeader && <i className="fas fa-flag"></i>}
-                      </div>{" "}
-                      <div className="userStats">
-                        <i className="fas fa-trophy"></i>{" "}
-                        {user.stats.total.wins} <i className="fas fa-star"></i>{" "}
-                        {user.stats.total.points}{" "}
+                <>
+                  {users.groupUsers.map((user) => (
+                    <div key={user.id} className="userListItem">
+                      <div className="userListItemData">
+                        <div className="username">
+                          {user.name}{" "}
+                          {user.isLeader && <i className="fas fa-flag"></i>}
+                        </div>{" "}
+                        <div className="userStats">
+                          <i className="fas fa-trophy"></i>{" "}
+                          {user.stats.total.wins}{" "}
+                          <i className="fas fa-star"></i>{" "}
+                          {user.stats.total.points}{" "}
+                        </div>
                       </div>
-                    </div>
-                    {user.id === userInfo.id && (
-                      <div className="userListItemButtons">
-                        <button
-                          type="button"
-                          className="btn btn-danger btn-border-light"
-                          onClick={leaveGroupHandler}
-                        >
-                          Выйти из группы
-                        </button>
-                      </div>
-                    )}
-                    {user.id !== userInfo.id && (
-                      <div className="userListItemButtons">
-                        {users.groupUsers[0].isLeader && (
+                      {user.id === userInfo.id && (
+                        <div className="userListItemButtons">
                           <button
                             type="button"
                             className="btn btn-danger btn-border-light"
-                            onClick={(e) =>
-                              removeFromGroupHandler(user.socketId)
-                            }
+                            onClick={leaveGroupHandler}
                           >
-                            Удалить из группы
+                            Выйти из группы
                           </button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ))
+                        </div>
+                      )}
+                      {user.id !== userInfo.id && (
+                        <div className="userListItemButtons">
+                          {users.groupUsers[0].isLeader && (
+                            <button
+                              type="button"
+                              className="btn btn-danger btn-border-light"
+                              onClick={(e) =>
+                                removeFromGroupHandler(user.socketId)
+                              }
+                            >
+                              Удалить из группы
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                  {/* <Link to="/minor-island" className="btn btn-success my-1">
+                    Начать игру
+                  </Link> */}
+                  <button
+                    type="button"
+                    className="btn btn-success my-1"
+                    onClick={(e) =>
+                      launchGameHandler(users.groupUsers[0].groupId)
+                    }
+                  >
+                    Начать игру
+                  </button>
+                </>
               )}
             </div>
             <div className="userList">

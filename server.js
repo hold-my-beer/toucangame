@@ -171,6 +171,17 @@ io.on("connection", (socket) => {
     });
   });
 
+  // Launch game
+  socket.on("launchGame", (groupId) => {
+    const users = getUsers().filter((user) => user.groupId === groupId);
+
+    const game = initiateGame(users);
+
+    const updatedGame = deal(game);
+
+    io.to(groupId).emit("getGame", updatedGame);
+  });
+
   // User logout
   socket.on("userLogout", () => {
     // const groupId = [...socket.rooms][1];

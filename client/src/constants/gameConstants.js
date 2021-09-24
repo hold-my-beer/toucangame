@@ -1,0 +1,3 @@
+export const GAME_GET_REQUEST = "GAME_GET_REQUEST";
+export const GAME_GET_SUCCESS = "GAME_GET_SUCCESS";
+export const GAME_GET_FAIL = "GAME_GET_FAIL";

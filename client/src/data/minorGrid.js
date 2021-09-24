@@ -5,7 +5,16 @@ import {
   TOUCAN,
   YETI,
   DRAGON,
-  CITY,
+  CITY0,
+  CITY1,
+  CITY2,
+  CITY3,
+  CITY4,
+  CITY5,
+  CITY6,
+  CITY7,
+  CITY8,
+  CITY9,
   NONE,
 } from "../constants/artefactConstants";
 
@@ -32,7 +41,7 @@ export const minorGrid = [
     s: 3,
 
     landscape: STONE,
-    artefact: CITY,
+    artefact: CITY0,
   },
   {
     q: 3,
@@ -56,7 +65,7 @@ export const minorGrid = [
     s: 5,
 
     landscape: STONE,
-    artefact: CITY,
+    artefact: CITY9,
   },
   {
     q: 0,
@@ -96,7 +105,7 @@ export const minorGrid = [
     s: 0,
 
     landscape: FOREST,
-    artefact: CITY,
+    artefact: CITY1,
   },
   {
     q: -2,
@@ -160,7 +169,7 @@ export const minorGrid = [
     s: 5,
 
     landscape: SAND,
-    artefact: CITY,
+    artefact: CITY8,
   },
   {
     q: -2,
@@ -216,7 +225,7 @@ export const minorGrid = [
     s: -2,
 
     landscape: SAND,
-    artefact: CITY,
+    artefact: CITY2,
   },
   {
     q: -4,
@@ -368,7 +377,7 @@ export const minorGrid = [
     s: 3,
 
     landscape: SAND,
-    artefact: CITY,
+    artefact: CITY7,
   },
   {
     q: -3,
@@ -424,7 +433,7 @@ export const minorGrid = [
     s: -4,
 
     landscape: SAND,
-    artefact: CITY,
+    artefact: CITY3,
   },
   {
     q: -5,
@@ -512,7 +521,7 @@ export const minorGrid = [
     s: 1,
 
     landscape: FOREST,
-    artefact: CITY,
+    artefact: CITY6,
   },
   {
     q: -3,
@@ -544,7 +553,7 @@ export const minorGrid = [
     s: -3,
 
     landscape: STONE,
-    artefact: CITY,
+    artefact: CITY4,
   },
   {
     q: 1,
@@ -576,7 +585,7 @@ export const minorGrid = [
     s: -2,
 
     landscape: FOREST,
-    artefact: CITY,
+    artefact: CITY5,
   },
   {
     q: 0,
