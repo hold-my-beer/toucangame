@@ -17,7 +17,11 @@ const userLogin = (socketId, user) => {
 };
 
 const userLogout = (socketId) => {
-  users = users.filter((user) => user.socketId !== socketId);
+  // users = users.filter((user) => user.socketId !== socketId);
+  const index = users.findIndex((user) => user.socketId === socketId);
+  if (index !== -1) {
+    return users.splice(index, 1)[0];
+  }
 };
 
 const getUsers = () => {
@@ -140,6 +144,7 @@ const userLeaveGroup = (socketId) => {
 
   if (index !== -1) {
     groupId = users[index].groupId;
+    // console.log(groupId);
     users[index].groupId = "";
 
     if (users[index].isLeader === true) {

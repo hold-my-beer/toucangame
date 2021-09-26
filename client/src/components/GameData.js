@@ -15,8 +15,8 @@ const GameData = ({ game }) => {
     <div className="gameData">
       <TurnHexes deal={game.deal} />
       <CellsLeft cellsLeft={game.cellsLeft} />
-      <BonusArtefact artefact={game.artefact} />
-      <CityBonuses cityBonuses={game.cityBonuses} />
+      <BonusArtefact bonusArtefact={game.bonusArtefact} />
+      <CityBonuses cities={game.cities} playersNumber={game.players.length} />
       <Opponents users={game.players} />
     </div>
   );

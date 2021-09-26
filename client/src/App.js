@@ -1,8 +1,10 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import { useSelector } from "react-redux";
 import "./App.css";
 import socket from "./config/socket";
+import Loader from "./components/Loader";
+import Message from "./components/Message";
 import Header from "./components/Header";
 import LandingScreen from "./screens/LandingScreen";
 import LoginScreen from "./screens/LoginScreen";
@@ -12,10 +14,10 @@ import IslandScreen from "./screens/IslandScreen";
 
 const App = () => {
   const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo } = userLogin;
+  const { loading, error, userInfo } = userLogin;
 
   useEffect(() => {
-    if (userInfo) {
+    if (userInfo && userInfo.id) {
       const user = {
         id: userInfo.id,
         name: userInfo.name,
@@ -31,11 +33,19 @@ const App = () => {
       <>
         <Header />
         <div className="container">
-          <Route path="/minor-island" component={IslandScreen} exact />
-          <Route path="/users" component={UsersScreen} exact />
-          <Route path="/login" component={LoginScreen} exact />
-          <Route path="/register" component={RegisterScreen} exact />
-          <Route path="/" component={LandingScreen} exact />
+          {loading ? (
+            <Loader />
+          ) : error ? (
+            <Message className="danger" text={error} />
+          ) : (
+            <>
+              <Route path="/minor-island" component={IslandScreen} exact />
+              <Route path="/users" component={UsersScreen} exact />
+              <Route path="/login" component={LoginScreen} exact />
+              <Route path="/register" component={RegisterScreen} exact />
+              <Route path="/" component={LandingScreen} exact />
+            </>
+          )}
         </div>
       </>
     </Router>

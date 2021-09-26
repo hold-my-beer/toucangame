@@ -33,24 +33,20 @@ const {
   // removeFromGroup,
   // leaveGroup,
 } = require("./utils/users");
-const { initiateGame, deal } = require("./utils/game");
-const { setgroups } = require("process");
+const { initiateGame, deal, quitGame } = require("./utils/game");
+// const { setgroups } = require("process");
 
 // User connects
 io.on("connection", (socket) => {
   // User login
   socket.on("userLogin", (user) => {
-    // user.socket = socket;
-    // console.log("before userLogin");
     userLogin(socket.id, user);
-    // console.log("after userLogin");
 
-    // console.log(getUsers());
+    socket.join(process.env.SOCKET_IO_PUBLIC_ROOM);
 
-    io.emit("getUsers", {
+    io.to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
     });
-    // console.log("after emit");
   });
 
   // User asks another user for friendship
@@ -70,56 +66,39 @@ io.on("connection", (socket) => {
 
   // User creates group
   socket.on("createGroup", () => {
-    // console.log("in create group");
     setLeader(socket.id);
     const groupId = uuidv4();
     setGroup(socket.id, groupId);
 
     socket.join(groupId);
 
-    io.emit("getUsers", {
+    io.to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
     });
   });
 
   // User adds another user to group
   socket.on("addToGroup", async (socketId) => {
-    const groupId = [...socket.rooms][1];
-    // console.log(groupId);
+    // console.log([...socket.rooms]);
+    const groupId = [...socket.rooms].find(
+      (item, index) => index !== 0 && item !== "public"
+    );
     setGroup(socketId, groupId);
 
-    // otherSocket.join(groupId);
     const sockets = await io.fetchSockets();
     const socketToAdd = sockets.find((socket) => socket.id === socketId);
     if (socketToAdd) {
       socketToAdd.join(groupId);
     }
 
-    // socket.to(socketId).emit("joinRoom", groupId);
-
-    io.emit("getUsers", {
+    io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
     });
   });
 
-  // User receives invitation to group
-  // socket.on("joinRoom", (groupId) => {
-  //   console.log("in joinRoom");
-
-  //   socket.join(groupId);
-
-  //   // io.emit("getUsers", {
-  //   //   users: getUsers(),
-  //   // });
-  // });
-
   // User removes another user from group
   socket.on("removeFromGroup", async (socketId) => {
-    // console.log("in remove from group");
-    // const groupId = [...socket.rooms][1];
     const groupId = userLeaveGroup(socketId);
-    // io.to(groupId).emit("leaveRoom", socketId);
-    // otherSocket.leave(groupId);
     const sockets = await io.in(groupId).fetchSockets();
 
     const socketToRemove = sockets.find((socket) => socket.id === socketId);
@@ -128,7 +107,7 @@ io.on("connection", (socket) => {
       socketToRemove.leave(groupId);
     }
 
-    io.emit("getUsers", {
+    io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
     });
   });
@@ -151,28 +130,23 @@ io.on("connection", (socket) => {
 
   // User leaves group by himself
   socket.on("leaveGroup", () => {
-    // const groupId = [...socket.rooms][1];
     const groupId = userLeaveGroup(socket.id);
-    // changeLeader(socket.id, groupId);
 
     socket.leave(groupId);
 
-    // if (user.isLeader && user.isLeader === true) {
-    //   user.isLeader = false;
-
-    //   const sockets = await io.in(groupId).fetchSockets();
-    //   if (sockets.length !== 0) {
-    //     setLeader(sockets[0].id);
-    //   }
-    // }
-
-    io.emit("getUsers", {
+    io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
     });
   });
 
   // Launch game
-  socket.on("launchGame", (groupId) => {
+  socket.on("launchGame", async (groupId) => {
+    const sockets = await io.in(groupId).fetchSockets();
+
+    sockets.forEach((socket) => {
+      socket.leave(process.env.SOCKET_IO_PUBLIC_ROOM);
+    });
+
     const users = getUsers().filter((user) => user.groupId === groupId);
 
     const game = initiateGame(users);
@@ -182,36 +156,51 @@ io.on("connection", (socket) => {
     io.to(groupId).emit("getGame", updatedGame);
   });
 
-  // User logout
-  socket.on("userLogout", () => {
-    // const groupId = [...socket.rooms][1];
-    // console.log(groupId);
+  // User quit game
+  socket.on("quitGame", (gameId) => {
     const groupId = userLeaveGroup(socket.id);
-    // changeLeader(socket.id, groupId);
 
     socket.leave(groupId);
 
+    socket.join(process.env.SOCKET_IO_PUBLIC_ROOM);
+
+    io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
+      users: getUsers(),
+    });
+    const game = quitGame(socket.id, gameId);
+    io.to(groupId).emit("getGame", game);
+  });
+
+  // User logout
+  socket.on("userLogout", () => {
+    const groupId = userLeaveGroup(socket.id);
+
+    socket.leave(groupId);
+
+    socket.leave(process.env.SOCKET_IO_PUBLIC_ROOM);
+
     userLogout(socket.id);
 
-    io.emit("getUsers", {
+    io.to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
     });
   });
 
   // User disconnect
   socket.on("disconnect", () => {
-    // const groupId = [...socket.rooms][1];
-    // console.log(groupId);
-    userLeaveGroup(socket.id);
-    // changeLeader(socket.id, groupId);
+    const groupId = userLeaveGroup(socket.id);
 
-    // socket.leave(groupId);
+    const user = userLogout(socket.id);
+    // console.log(user);
 
-    userLogout(socket.id);
-
-    socket.broadcast.emit("getUsers", {
+    io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
     });
+
+    if (user && user.gameId) {
+      const game = quitGame(socket.id, user.gameId);
+      io.to(groupId).emit("getGame", game);
+    }
   });
 });
 

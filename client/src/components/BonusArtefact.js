@@ -7,7 +7,7 @@ import {
   DRAGON,
 } from "../constants/artefactConstants";
 
-const BonusArtefact = ({ artefact }) => {
+const BonusArtefact = ({ bonusArtefact }) => {
   const getBonusArtefact = (name) => {
     switch (name) {
       case "obelisk":
@@ -28,12 +28,19 @@ const BonusArtefact = ({ artefact }) => {
   return (
     <div className="bonusArtefact mb-1">
       <h4 className="text-center mb-1">Призовой артефакт</h4>
-      <div className="bonusArtefactCard">
+      <div
+        className={`bonusArtefactCard ${
+          bonusArtefact.bonusAwarded && "awarded"
+        }`}
+      >
         <div className="bonusArtefactImage">
-          <img src={getBonusArtefact(artefact.name)} alt={artefact.name} />
+          <img
+            src={getBonusArtefact(bonusArtefact.name)}
+            alt={bonusArtefact.name}
+          />
         </div>
         <div className="bonusArtefactPoints">
-          <span>{artefact.points.toString()}</span>
+          <span>{bonusArtefact.bonusPoints}</span>
         </div>
       </div>
     </div>

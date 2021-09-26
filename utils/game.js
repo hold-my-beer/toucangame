@@ -1,8 +1,9 @@
 const { v4: uuidv4 } = require("uuid");
 const deck = require("../data/deck");
-const cities = require("../data/cities");
+const cityScenarios = require("../data/cityScenarios");
 const artefacts = require("../data/artefacts");
-const cityBonuses = require("../data/cityBonuses");
+const cities = require("../data/cities");
+const { default: socket } = require("../client/src/config/socket");
 
 const games = [];
 
@@ -33,17 +34,21 @@ const deal = (game) => {
 };
 
 const initiateGame = (users) => {
+  const gameId = uuidv4();
+
   users.forEach((user) => {
+    user.gameId = gameId;
     user.status = "idle";
     user.points = 0;
     user.offset = users.indexOf(user);
   });
 
-  const citiesIndex = getRandomIntInclusive(0, cities.length - 1);
-  const artefactIndex = getRandomIntInclusive(0, artefacts.length - 1);
+  const cityScenarioIndex = getRandomIntInclusive(0, cityScenarios.length - 1);
+  const bonusArtefactIndex = getRandomIntInclusive(0, artefacts.length - 1);
 
   const game = {
-    id: uuidv4(),
+    id: gameId,
+    isActive: true,
     deck,
     deal: [],
     cellsLeft: {
@@ -53,15 +58,36 @@ const initiateGame = (users) => {
       water: 4,
       any: 2,
     },
-    cities: cities[citiesIndex],
-    artefact: artefacts[artefactIndex],
-    cityBonuses,
+    cityScenario: cityScenarios[cityScenarioIndex],
+    artefacts,
+    bonusArtefact: artefacts[bonusArtefactIndex],
+    cities,
     players: users,
   };
 
   games.push(game);
 
   return game;
+};
+
+const quitGame = (socketId, gameId) => {
+  const gameIndex = games.findIndex((game) => game.id === gameId);
+
+  if (gameIndex !== -1) {
+    games[gameIndex].players = games[gameIndex].players.filter(
+      (player) => player.socketId !== socketId
+    );
+
+    if (!games[gameIndex].players.length) {
+      // games[gameIndex].isActive = false;
+      games.splice(gameIndex, 1);
+      return {};
+    } else {
+      return games[gameIndex];
+    }
+  }
+
+  return {};
 };
 
 // const addPlayer = (playerId, game) => {
@@ -87,4 +113,5 @@ module.exports = {
   // addPlayer,
   // removePlayer,
   deal,
+  quitGame,
 };

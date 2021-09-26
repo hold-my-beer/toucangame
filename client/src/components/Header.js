@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import socket from "../config/socket";
+import { GAME_GET_RESET } from "../constants/gameConstants";
 import { logout } from "../actions/userActions";
 
 const Header = () => {
@@ -10,9 +11,17 @@ const Header = () => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const gameGet = useSelector((state) => state.gameGet);
+  const { game } = gameGet;
+
   const logoutHandler = () => {
     dispatch(logout());
     socket.emit("userLogout");
+  };
+
+  const quitGameHandler = () => {
+    socket.emit("quitGame", game.id);
+    dispatch({ type: GAME_GET_RESET });
   };
 
   return (
@@ -21,9 +30,15 @@ const Header = () => {
         <h1>Тропы Туканы</h1>
       </Link>
       {userInfo ? (
-        <Link to="/" onClick={logoutHandler}>
-          Выход
-        </Link>
+        game && game.isActive ? (
+          <Link to="/users" onClick={quitGameHandler}>
+            Выход из игры
+          </Link>
+        ) : (
+          <Link to="/" onClick={logoutHandler}>
+            Выход
+          </Link>
+        )
       ) : (
         <Link to="/login">Вход</Link>
       )}

@@ -39,10 +39,10 @@ const UsersScreen = ({ history }) => {
     });
 
     return socket.off("getGame", (game) => {
-      dispatch(getGame(game, userInfo._id));
+      dispatch(getGame(game, userInfo.id));
       history.push("/minor-island");
     });
-  }, [dispatch, history]);
+  }, [dispatch, history, userInfo.id]);
 
   // const askForFriendshipHandler = (socketId) => {
   //   socket.emit("askForFriendship", socketId);
@@ -136,15 +136,17 @@ const UsersScreen = ({ history }) => {
                   {/* <Link to="/minor-island" className="btn btn-success my-1">
                     Начать игру
                   </Link> */}
-                  <button
-                    type="button"
-                    className="btn btn-success my-1"
-                    onClick={(e) =>
-                      launchGameHandler(users.groupUsers[0].groupId)
-                    }
-                  >
-                    Начать игру
-                  </button>
+                  {users.groupUsers[0].isLeader && (
+                    <button
+                      type="button"
+                      className="btn btn-success my-1"
+                      onClick={(e) =>
+                        launchGameHandler(users.groupUsers[0].groupId)
+                      }
+                    >
+                      Начать игру
+                    </button>
+                  )}
                 </>
               )}
             </div>
@@ -165,7 +167,8 @@ const UsersScreen = ({ history }) => {
                     {user.id !== userInfo.id && (
                       <div className="userListItemButtons">
                         {users.groupUsers.length &&
-                          users.groupUsers[0].groupId && (
+                          users.groupUsers[0].groupId &&
+                          users.groupUsers[0].isLeader && (
                             <button
                               type="button"
                               className="btn btn-success btn-border-light"
