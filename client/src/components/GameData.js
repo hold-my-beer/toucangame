@@ -5,7 +5,7 @@ import Message from "./Message";
 import Loader from "./Loader";
 import TurnHexes from "./TurnHexes";
 import CellsLeft from "./CellsLeft";
-import BonusArtefact from "./BonusArtefact";
+import ArtefactBonus from "./ArtefactBonus";
 import CityBonuses from "./CityBonuses";
 import Opponents from "./Opponents";
 import { getGame } from "../actions/gameActions";
@@ -15,7 +15,7 @@ const GameData = ({ game }) => {
     <div className="gameData">
       <TurnHexes deal={game.deal} />
       <CellsLeft cellsLeft={game.cellsLeft} />
-      <BonusArtefact bonusArtefact={game.bonusArtefact} />
+      <ArtefactBonus bonusArtefact={game.bonusArtefact} />
       <CityBonuses cities={game.cities} playersNumber={game.players.length} />
       <Opponents users={game.players} />
     </div>

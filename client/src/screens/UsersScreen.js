@@ -68,7 +68,11 @@ const UsersScreen = ({ history }) => {
   const launchGameHandler = (groupId) => {
     // socket.emit("launchGame", groupId);
     const launchMinorGame = () => {
-      socket.emit("launchGame", groupId);
+      socket.emit("launchGame", { groupId, isMinor: true });
+    };
+
+    const launchMajorGame = () => {
+      socket.emit("launchGame", { groupId, isMinor: false });
     };
 
     const buttons = [
@@ -80,7 +84,7 @@ const UsersScreen = ({ history }) => {
       {
         className: "success",
         text: "Большая игра",
-        clickHandler: launchMinorGame,
+        clickHandler: launchMajorGame,
       },
     ];
 

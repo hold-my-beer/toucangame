@@ -575,12 +575,12 @@ svg path {
   margin: auto;
 }
 
-.artefactPointsValue1,
-.artefactPointsValue2 {
+.artefactPointsValueCircle,
+.artefactPointsValueRectangle {
   background-color: var(--light-color);
 }
 
-.artefactPointsValue1 {
+.artefactPointsValueCircle {
   /* padding: 0.1rem 0.7rem; */
   width: 27px;
   height: 27px;
@@ -588,7 +588,7 @@ svg path {
   text-align: center;
 }
 
-.artefactPointsValue2 {
+.artefactPointsValueRectangle {
   padding: 0.1rem 1rem;
   border-radius: 5px;
 }

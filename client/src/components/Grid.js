@@ -4,7 +4,7 @@ import { HexGrid, Layout, Path, Text, Hexagon, HexUtils } from "react-hexgrid";
 import { minorGrid } from "../data/minorGrid";
 import { updateTurn } from "../actions/gameActions";
 
-const Grid = ({ cityScenario, deal, turn }) => {
+const Grid = ({ isMinor, cityScenario, deal, turn }) => {
   const [hexagons, setHexagons] = useState(minorGrid);
   // const [path, setPath] = useState({ start: null, end: null });
   const [pathStart, setPathStart] = useState(null);
@@ -110,7 +110,9 @@ const Grid = ({ cityScenario, deal, turn }) => {
 
   return (
     <div className="island">
-      <h2 className="text-center my-1 mb-2">Малый остров</h2>
+      <h2 className="text-center my-1 mb-2">
+        {isMinor ? "Малый остров" : "Большой остров"}
+      </h2>
       <div className="grid">
         <HexGrid width={600} height={500} viewBox="0 0 85 85">
           <Layout

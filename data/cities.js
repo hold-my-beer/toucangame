@@ -12,7 +12,7 @@ module.exports = [
     name: "Б",
     points: {
       minor: 13,
-      major: 29,
+      major: 19,
     },
     bonusPoints: [4, 2],
     bonusAwarded: [false, false],

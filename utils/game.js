@@ -33,7 +33,7 @@ const deal = (game) => {
   return updatedGame;
 };
 
-const initiateGame = (users) => {
+const initiateGame = (users, isMinor) => {
   const gameId = uuidv4();
 
   users.forEach((user) => {
@@ -49,6 +49,7 @@ const initiateGame = (users) => {
   const game = {
     id: gameId,
     isActive: true,
+    isMinor,
     deck,
     deal: [],
     cellsLeft: {

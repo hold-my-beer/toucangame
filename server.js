@@ -140,7 +140,7 @@ io.on("connection", (socket) => {
   });
 
   // Launch game
-  socket.on("launchGame", async (groupId) => {
+  socket.on("launchGame", async ({ groupId, isMinor }) => {
     const sockets = await io.in(groupId).fetchSockets();
 
     sockets.forEach((socket) => {
@@ -149,7 +149,7 @@ io.on("connection", (socket) => {
 
     const users = getUsers().filter((user) => user.groupId === groupId);
 
-    const game = initiateGame(users);
+    const game = initiateGame(users, isMinor);
 
     const updatedGame = deal(game);
 

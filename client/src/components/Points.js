@@ -1,54 +1,16 @@
 import React from "react";
+import ArtefactPoints from "./ArtefactPoints";
+import CityPoints from "./CityPoints";
 
-const Points = () => {
+const Points = ({ isMinor, artefacts, cities }) => {
   return (
     <div className="points">
       {/* Artefact Points */}
-      <div className="artefactPoints">
-        {/* Obelisk Points */}
-        <div className="artefactPointsItem">
-          <div className="mr-1 artefactPointsPicture">
-            <img src="img/building-48701_640.png" alt="обелиск" />
-          </div>
-          <div className="mr-1 artefactPointsValue1">1</div>
-          <div className="artefactPointsValue2">2+</div>
-        </div>
-        {/* Book Points */}
-        <div className="artefactPointsItem">
-          <div className="mr-1 artefactPointsPicture">
-            <img src="img/book-1296045_640.png" alt="книга" />
-          </div>
-          <div className="mr-1 artefactPointsValue1">2</div>
-          <div className="artefactPointsValue2">2+</div>
-        </div>
-        {/* Toucan Points */}
-        <div className="artefactPointsItem">
-          <div className="mr-1 artefactPointsPicture">
-            <img src="img/toucan-154521_640.png" alt="тукан" />
-          </div>
-          <div className="mr-1 artefactPointsValue1">2</div>
-          <div className="artefactPointsValue2">3+</div>
-        </div>
-        {/* Yeti Points */}
-        <div className="artefactPointsItem">
-          <div className="mr-1 artefactPointsPicture">
-            <img src="img/yeti-575808_640.png" alt="йети" />
-          </div>
-          <div className="mr-1 artefactPointsValue1">3</div>
-          <div className="artefactPointsValue2">4+</div>
-        </div>
-        {/* Dragon Points */}
-        <div className="artefactPointsItem">
-          <div className="mr-1 artefactPointsPicture">
-            <img src="img/dragon-2023884_640.png" alt="дракон" />
-          </div>
-          <div className="mr-1 artefactPointsValue1">4</div>
-          <div className="artefactPointsValue2">5+</div>
-        </div>
-      </div>
+      <ArtefactPoints isMinor={isMinor} artefacts={artefacts} />
 
       {/* City Points */}
-      <div className="cityPoints">
+      <CityPoints isMinor={isMinor} cities={cities} />
+      {/* <div className="cityPoints">
         <div className="cityPointsItem">
           <div className="cityPointsFrom">А</div>
           <div className="cityPointsTo">А</div>
@@ -74,7 +36,7 @@ const Points = () => {
           <div className="cityPointsTo">Д</div>
           <div className="cityPointsValue">10</div>
         </div>
-      </div>
+      </div> */}
 
       {/* Bonus and Total Points */}
       <div className="otherPoints">
