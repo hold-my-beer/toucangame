@@ -5,6 +5,7 @@ import "./App.css";
 import socket from "./config/socket";
 import Loader from "./components/Loader";
 import Message from "./components/Message";
+import Modal from "./components/Modal";
 import Header from "./components/Header";
 import LandingScreen from "./screens/LandingScreen";
 import LoginScreen from "./screens/LoginScreen";
@@ -32,6 +33,7 @@ const App = () => {
     <Router>
       <>
         <Header />
+        <Modal />
         <div className="container">
           {loading ? (
             <Loader />

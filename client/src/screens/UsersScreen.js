@@ -6,6 +6,7 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { listUsers } from "../actions/userActions";
 import { getGame } from "../actions/gameActions";
+import { setModal } from "../actions/modalActions";
 
 const UsersScreen = ({ history }) => {
   const dispatch = useDispatch();
@@ -65,7 +66,31 @@ const UsersScreen = ({ history }) => {
   };
 
   const launchGameHandler = (groupId) => {
-    socket.emit("launchGame", groupId);
+    // socket.emit("launchGame", groupId);
+    const launchMinorGame = () => {
+      socket.emit("launchGame", groupId);
+    };
+
+    const buttons = [
+      {
+        className: "success",
+        text: "Малая игра",
+        clickHandler: launchMinorGame,
+      },
+      {
+        className: "success",
+        text: "Большая игра",
+        clickHandler: launchMinorGame,
+      },
+    ];
+
+    dispatch(
+      setModal({
+        isVisible: true,
+        text: "Выберите тип игры",
+        buttons,
+      })
+    );
   };
 
   return (

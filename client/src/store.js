@@ -10,12 +10,15 @@ import {
 
 import { gameGetReducer, gameUpdateTurnReducer } from "./reducers/gameReducers";
 
+import { modalSetReducer } from "./reducers/modalReducers";
+
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
   userList: userListReducer,
   gameGet: gameGetReducer,
   gameUpdateTurn: gameUpdateTurnReducer,
+  modalSet: modalSetReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

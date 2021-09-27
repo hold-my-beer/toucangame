@@ -187,6 +187,28 @@ img {
   font: inherit;
 }
 
+/* Modal */
+.modal {
+  position: fixed;
+  left: -100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  /* margin: auto; */
+  z-index: 2;
+  color: var(--light-color);
+  background-color: var(--primary-color);
+  opacity: 0.9;
+}
+
+.modal.visible {
+  top: 0;
+  left: 0;
+}
+
 /* Messages */
 .message {
   width: 500px;
