@@ -4,8 +4,8 @@ import ArtefactPointsItem from "./ArtefactPointsItem";
 const ArtefactPoints = ({ isMinor, artefacts }) => {
   return (
     <div className="artefactPoints">
-      {artefacts.map((artefact) => (
-        <ArtefactPointsItem isMinor={isMinor} artefact={artefact} />
+      {artefacts.map((artefact, index) => (
+        <ArtefactPointsItem key={index} isMinor={isMinor} artefact={artefact} />
       ))}
       {/* Obelisk Points */}
       {/* <div className="artefactPointsItem">

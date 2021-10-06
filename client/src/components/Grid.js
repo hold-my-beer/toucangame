@@ -2,36 +2,25 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { HexGrid, Layout, Path, Text, Hexagon, HexUtils } from "react-hexgrid";
 import { minorGrid } from "../data/minorGrid";
+import { pathsContain } from "../utils";
 import { updateTurn } from "../actions/gameActions";
 
-const Grid = ({ isMinor, cityScenario, deal, turn }) => {
+const Grid = ({ turn, game }) => {
   const [hexagons, setHexagons] = useState(minorGrid);
   // const [path, setPath] = useState({ start: null, end: null });
   const [pathStart, setPathStart] = useState(null);
   const [paths, setPaths] = useState([]);
   const [hexStart, setHexStart] = useState(null);
-  const [hexUsed, setHexUsed] = useState([...deal]);
+  const [hexUsed, setHexUsed] = useState([...game.deal]);
 
   const dispatch = useDispatch();
-
-  const pathsContain = (newPath) => {
-    return (
-      paths.filter(
-        (item) =>
-          (HexUtils.equals(item.start, newPath.start) &&
-            HexUtils.equals(item.end, newPath.end)) ||
-          (HexUtils.equals(item.start, newPath.end) &&
-            HexUtils.equals(item.end, newPath.start))
-      ).length > 0
-    );
-  };
 
   const onClick = (e, source, hex) => {
     const landscapeIndex = hexUsed.indexOf(hex.landscape);
     const anyIndex = hexUsed.indexOf("any");
-    console.log(landscapeIndex);
+    // console.log(landscapeIndex);
 
-    // Hex clicked is not in the deal or been used
+    // Hex clicked is not in the game or been used
     if (
       (anyIndex === -1 && landscapeIndex === -1) ||
       // The same hex clicked
@@ -39,7 +28,7 @@ const Grid = ({ isMinor, cityScenario, deal, turn }) => {
       // Hex clicked is not a neighbour
       (pathStart && HexUtils.distance(source.state.hex, pathStart)) >= 2
     ) {
-      setHexUsed([...deal]);
+      setHexUsed([...game.deal]);
       setPathStart(null);
       setHexStart(null);
 
@@ -81,13 +70,15 @@ const Grid = ({ isMinor, cityScenario, deal, turn }) => {
           ])
         : setHexUsed([...hexUsed.filter((item, index) => index !== anyIndex)]);
       const newPath = { start: pathStart, end: source.state.hex };
-      if (!pathsContain(newPath)) {
+      if (!pathsContain(newPath, paths)) {
         setPaths([...paths, newPath]);
       }
 
-      const hexPath = { start: hexStart, end: hex };
-      console.log(hexPath);
-      // dispatch(updateTurn(hexPath, turn));
+      // const hexPath = { start: hexStart, end: hex };
+      const hexPath = [hexStart, hex];
+      // console.log(hexPath);
+      // console.log(turn);
+      dispatch(updateTurn(hexPath, turn, game));
 
       setHexagons([
         ...hexagons.map((item) => {
@@ -111,7 +102,7 @@ const Grid = ({ isMinor, cityScenario, deal, turn }) => {
   return (
     <div className="island">
       <h2 className="text-center my-1 mb-2">
-        {isMinor ? "Малый остров" : "Большой остров"}
+        {game.isMinor ? "Малый остров" : "Большой остров"}
       </h2>
       <div className="grid">
         <HexGrid width={600} height={500} viewBox="0 0 85 85">
@@ -136,7 +127,7 @@ const Grid = ({ isMinor, cityScenario, deal, turn }) => {
               >
                 {hex.artefact.substring(0, 4) === "CITY" ? (
                   <Text className="city">
-                    {cityScenario[hex.artefact.substring(4, 5)]}
+                    {game.cityScenario[parseInt(hex.artefact.substring(4, 5))]}
                   </Text>
                 ) : (
                   <image

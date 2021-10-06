@@ -1,15 +1,17 @@
 import React from "react";
 import ArtefactPoints from "./ArtefactPoints";
 import CityPoints from "./CityPoints";
+import BonusPoints from "./BonusPoints";
+import TotalPoints from "./TotalPoints";
 
-const Points = ({ isMinor, artefacts, cities }) => {
+const Points = ({ turn, game }) => {
   return (
     <div className="points">
       {/* Artefact Points */}
-      <ArtefactPoints isMinor={isMinor} artefacts={artefacts} />
+      <ArtefactPoints isMinor={game.isMinor} artefacts={game.artefacts} />
 
       {/* City Points */}
-      <CityPoints isMinor={isMinor} cities={cities} />
+      <CityPoints isMinor={game.isMinor} cities={game.cities} />
       {/* <div className="cityPoints">
         <div className="cityPointsItem">
           <div className="cityPointsFrom">А</div>
@@ -40,15 +42,17 @@ const Points = ({ isMinor, artefacts, cities }) => {
 
       {/* Bonus and Total Points */}
       <div className="otherPoints">
-        <div className="bonusPoints">
+        <BonusPoints roundPoints={turn.roundPoints} />
+        {/* <div className="bonusPoints">
           <div className="bonusPointValue"></div>
           <div className="bonusPointValue"></div>
           <div className="bonusPointValue"></div>
           <div className="bonusPointValue"></div>
           <div className="bonusPointValue"></div>
           <div className="bonusPointValue"></div>
-        </div>
-        <div className="totalPoints">
+        </div> */}
+        <TotalPoints roundPoints={turn.roundPoints} />
+        {/* <div className="totalPoints">
           <div className="totalPointsItem totalFirstRoundArtefactPoints">
             <div className="totalPointValue"></div>
           </div>
@@ -64,7 +68,7 @@ const Points = ({ isMinor, artefacts, cities }) => {
           <div className="totalPointsItem totalOverallPoints">
             <div className="totalPointValue"></div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -23,15 +23,18 @@ const IslandScreen = () => {
         <>
           <GameData game={game} />
           <Grid
-            isMinor={game.isMinor}
-            cityScenario={game.cityScenario}
-            deal={game.deal}
+            // isMinor={game.isMinor}
+            // cityScenario={game.cityScenario}
+            // deal={game.deal}
             turn={turn}
+            game={game}
           />
           <Points
-            isMinor={game.isMinor}
-            artefacts={game.artefacts}
-            cities={game.cities}
+            // isMinor={game.isMinor}
+            // artefacts={game.artefacts}
+            // cities={game.cities}
+            turn={turn}
+            game={game}
           />
         </>
       )}

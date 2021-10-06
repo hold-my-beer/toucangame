@@ -1,4 +1,3 @@
-import { HexUtils } from "react-hexgrid";
 import {
   GAME_GET_REQUEST,
   GAME_GET_SUCCESS,
@@ -7,6 +6,7 @@ import {
   GAME_UPDATE_TURN_SUCCESS,
   GAME_UPDATE_TURN_FAIL,
 } from "../constants/gameConstants";
+import { getUpdatedTurn } from "../utils";
 
 export const getGame = (game, userId) => (dispatch) => {
   try {
@@ -44,57 +44,16 @@ export const getGame = (game, userId) => (dispatch) => {
   }
 };
 
-export const updateTurn = (path, turn) => (dispatch) => {
+export const updateTurn = (path, turn, game) => (dispatch) => {
   try {
     dispatch({ type: GAME_UPDATE_TURN_REQUEST });
 
-    const updatedTurn = { ...turn };
-    const firstHexRoadIndex = -1;
-    const secondHexRoadIndex = -1;
-
-    // Find indecies of path hexes in the roads array if there are ones
-    const roads = updatedTurn.roads || [];
-    for (let i = 0; i < roads.length; i++) {
-      for (let j = 0; j < roads[i].length; j++) {
-        if (HexUtils.equals(roads[i][j], path[0])) {
-          firstHexRoadIndex = i;
-          break;
-        } else if (HexUtils.equals(roads[i][j], path[1])) {
-          secondHexRoadIndex = i;
-          break;
-        }
-      }
-
-      if (firstHexRoadIndex !== -1 && secondHexRoadIndex !== -1) {
-        break;
-      }
-    }
-
-    // Update roads array
-    let updatedRoads = [];
-
-    if (firstHexRoadIndex !== -1 && secondHexRoadIndex !== -1) {
-      updatedRoads = roads.filter(
-        (road, index) =>
-          index !== firstHexRoadIndex && index !== secondHexRoadIndex
-      );
-      updatedRoads.push([
-        ...roads[firstHexRoadIndex],
-        roads[secondHexRoadIndex],
-      ]);
-    } else if (firstHexRoadIndex !== -1) {
-      updatedRoads = roads;
-      updatedRoads[firstHexRoadIndex].push(path[1]);
-    } else if (secondHexRoadIndex !== -1) {
-      updatedRoads = roads;
-      updatedRoads[secondHexRoadIndex].push(path[0]);
-    } else {
-      updatedRoads = roads;
-      updatedRoads.push(path);
-    }
-
-    updatedTurn.roads = updatedRoads;
+    dispatch({
+      type: GAME_UPDATE_TURN_SUCCESS,
+      payload: getUpdatedTurn(path, turn, game),
+    });
   } catch (error) {
+    console.log(error);
     dispatch({
       type: GAME_UPDATE_TURN_FAIL,
       payload:

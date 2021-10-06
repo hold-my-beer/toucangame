@@ -50,6 +50,7 @@ const initiateGame = (users, isMinor) => {
     id: gameId,
     isActive: true,
     isMinor,
+    roundNumber: 1,
     deck,
     deal: [],
     cellsLeft: {
