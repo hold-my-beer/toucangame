@@ -1,3 +1,4 @@
+import socket from "../config/socket";
 import {
   GAME_GET_REQUEST,
   GAME_GET_SUCCESS,
@@ -44,16 +45,24 @@ export const getGame = (game, userId) => (dispatch) => {
   }
 };
 
-export const updateTurn = (path, turn, game) => (dispatch) => {
+export const updateTurn = (path, turn, game, groupId, paths) => (dispatch) => {
   try {
     dispatch({ type: GAME_UPDATE_TURN_REQUEST });
 
+    const updatedTurn = getUpdatedTurn(path, turn, game, paths);
+
     dispatch({
       type: GAME_UPDATE_TURN_SUCCESS,
-      payload: getUpdatedTurn(path, turn, game),
+      payload: updatedTurn,
+    });
+
+    socket.emit("updateTurn", {
+      gameId: game.id,
+      turn: updatedTurn,
+      groupId,
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     dispatch({
       type: GAME_UPDATE_TURN_FAIL,
       payload:

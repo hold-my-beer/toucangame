@@ -33,17 +33,17 @@ const UsersScreen = ({ history }) => {
     });
   }, [dispatch, userInfo.id]);
 
-  useEffect(() => {
-    socket.on("getGame", (game) => {
-      dispatch(getGame(game, userInfo.id));
-      history.push("/minor-island");
-    });
+  // useEffect(() => {
+  //   socket.on("getGame", (game) => {
+  //     dispatch(getGame(game, userInfo.id));
+  //     history.push("/minor-island");
+  //   });
 
-    return socket.off("getGame", (game) => {
-      dispatch(getGame(game, userInfo.id));
-      history.push("/minor-island");
-    });
-  }, [dispatch, history, userInfo.id]);
+  //   return socket.off("getGame", (game) => {
+  //     dispatch(getGame(game, userInfo.id));
+  //     history.push("/minor-island");
+  //   });
+  // }, [dispatch, history, userInfo.id]);
 
   // const askForFriendshipHandler = (socketId) => {
   //   socket.emit("askForFriendship", socketId);
@@ -69,10 +69,12 @@ const UsersScreen = ({ history }) => {
     // socket.emit("launchGame", groupId);
     const launchMinorGame = () => {
       socket.emit("launchGame", { groupId, isMinor: true });
+      history.push("/minor-island");
     };
 
     const launchMajorGame = () => {
       socket.emit("launchGame", { groupId, isMinor: false });
+      history.push("/minor-island");
     };
 
     const buttons = [

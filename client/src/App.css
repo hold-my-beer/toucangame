@@ -470,9 +470,9 @@ svg path {
   color: var(--primary-color);
 }
 
-.awarded {
+/* .awarded {
   opacity: 0.3;
-}
+} */
 
 .bonusArtefactImage {
   width: 50px;
@@ -553,6 +553,7 @@ svg path {
 }
 
 /* Points */
+
 .artefactPoints {
   background-color: var(--primary-color);
   padding: 1rem;
@@ -579,6 +580,11 @@ svg path {
 .artefactPointsValueRectangle {
   background-color: var(--light-color);
 }
+
+/* .artefactPointsValueCircle .awarded,
+.artefactPointsValueRectangle .awarded {
+  background-color: var(--success-color);
+} */
 
 .artefactPointsValueCircle {
   /* padding: 0.1rem 0.7rem; */
@@ -662,6 +668,9 @@ svg path {
 }
 
 .bonusPointValue {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 37px;
   height: 37px;
   background-color: var(--sand-color);
@@ -704,6 +713,9 @@ svg path {
 }
 
 .totalPointValue {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 45px;
   height: 32px;
   border-radius: 5px;
@@ -725,4 +737,9 @@ svg path {
 
 .totalOverallPoints .totalPointValue {
   background-color: lightgreen;
+}
+
+.awarded {
+  background-color: #777;
+  color: #fff;
 }

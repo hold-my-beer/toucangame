@@ -33,7 +33,7 @@ const {
   // removeFromGroup,
   // leaveGroup,
 } = require("./utils/users");
-const { initiateGame, deal, quitGame } = require("./utils/game");
+const { initiateGame, updateTurn, deal, quitGame } = require("./utils/game");
 // const { setgroups } = require("process");
 
 // User connects
@@ -154,6 +154,17 @@ io.on("connection", (socket) => {
     const updatedGame = deal(game);
 
     io.to(groupId).emit("getGame", updatedGame);
+  });
+
+  // User updates turn
+  socket.on("updateTurn", ({ groupId, gameId, turn }) => {
+    const gameInfo = updateTurn(socket.id, gameId, turn);
+
+    if (gameInfo.isNewTurn) {
+      const updatedGame = deal(gameInfo.game);
+
+      io.to(groupId).emit("getGame", updatedGame);
+    }
   });
 
   // User quit game

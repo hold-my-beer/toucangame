@@ -38,7 +38,7 @@ const initiateGame = (users, isMinor) => {
 
   users.forEach((user) => {
     user.gameId = gameId;
-    user.status = "idle";
+    user.status = "isThinking";
     user.points = 0;
     user.offset = users.indexOf(user);
   });
@@ -51,6 +51,7 @@ const initiateGame = (users, isMinor) => {
     isActive: true,
     isMinor,
     roundNumber: 1,
+    turnNumber: 1,
     deck,
     deal: [],
     cellsLeft: {
@@ -70,6 +71,86 @@ const initiateGame = (users, isMinor) => {
   games.push(game);
 
   return game;
+};
+
+const updateTurn = (socketId, gameId, turn) => {
+  const gameIndex = games.findIndex((game) => game.id === gameId);
+
+  if (gameIndex !== -1) {
+    const playerIndex = games[gameIndex].players.findIndex(
+      (player) => player.socketId === socketId
+    );
+
+    if (playerIndex !== -1) {
+      // Set player status to isWaiting
+      games[gameIndex].players[playerIndex].status = "isWaiting";
+
+      // If bonus artefact points awarded set bonusArtefact as awarded
+      if (
+        turn.roundPoints.length &&
+        turn.roundPoints[turn.roundPoints.length - 1].bonusArtefactPoints.length
+      ) {
+        games[gameIndex].bonusArtefact.bonusAwarded = true;
+      }
+
+      //If bonus city points awarded set bonusAwarded as awarded
+      if (
+        turn.roundPoints.length &&
+        turn.roundPoints[turn.roundPoints.length - 1].bonusCityPoints.length
+      ) {
+        const updatedCities = [];
+        games[gameIndex].cities.forEach((city) => {
+          const cityIndex = turn.roundPoints[
+            turn.roundPoints.length - 1
+          ].bonusCityPoints.findIndex((item) => item.name === city.name);
+          if (cityIndex === -1) {
+            updatedCities.push(city);
+          } else {
+            const updatedCity = {
+              ...city,
+              bonusAwarded: [
+                city.bonusAwarded[0]
+                  ? true
+                  : turn.roundPoints[turn.roundPoints.length - 1]
+                      .bonusCityPoints[cityIndex].bonusAwarded[0]
+                  ? true
+                  : false,
+                city.bonusAwarded[1]
+                  ? true
+                  : turn.roundPoints[turn.roundPoints.length - 1]
+                      .bonusCityPoints[cityIndex].bonusAwarded[1]
+                  ? true
+                  : false,
+              ],
+            };
+
+            updatedCities.push(updatedCity);
+          }
+        });
+
+        games[gameIndex].cities = updatedCities;
+      }
+
+      // Check if all players made their move this turn
+      const playersWaitingNumber = games[gameIndex].players.filter(
+        (player) => player.status === "isWaiting"
+      ).length;
+
+      if (playersWaitingNumber === games[gameIndex].players.length) {
+        games[gameIndex].players.forEach((player) => {
+          player.status = "isThinking";
+        });
+
+        games[gameIndex].turnNumber += 1;
+
+        return { game: games[gameIndex], isNewTurn: true };
+      }
+    }
+
+    return { game: games[gameIndex], isNewTurn: false };
+  }
+
+  return { game: {}, isNewTurn: false };
 };
 
 const quitGame = (socketId, gameId) => {
@@ -112,6 +193,7 @@ const quitGame = (socketId, gameId) => {
 
 module.exports = {
   initiateGame,
+  updateTurn,
   // addPlayer,
   // removePlayer,
   deal,

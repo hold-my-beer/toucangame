@@ -1,19 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
+import socket from "../config/socket";
 import { HexGrid, Layout, Path, Text, Hexagon, HexUtils } from "react-hexgrid";
 import { minorGrid } from "../data/minorGrid";
 import { pathsContain } from "../utils";
 import { updateTurn } from "../actions/gameActions";
 
-const Grid = ({ turn, game }) => {
+const Grid = ({ turn, game, users }) => {
+  // const [turnNumber, setTurnNumber] = useState(0);
   const [hexagons, setHexagons] = useState(minorGrid);
   // const [path, setPath] = useState({ start: null, end: null });
   const [pathStart, setPathStart] = useState(null);
-  const [paths, setPaths] = useState([]);
+  const [paths, setPaths] = useState(turn ? turn.paths : []);
   const [hexStart, setHexStart] = useState(null);
   const [hexUsed, setHexUsed] = useState([...game.deal]);
 
   const dispatch = useDispatch();
+
+  // useEffect(() => {
+  //   // if (turn.number > 0) {
+  //   // if (turn.number !== turnNumber) {
+  //   console.log(turn.number);
+  //   // console.log(turnNumber);
+  //   console.log("updateTurn");
+  //   //   setTurnNumber(turn.number);
+
+  //   if (turn.number > turnNumber) {
+  //     socket.emit("updateTurn", {
+  //       gameId: game.id,
+  //       turn,
+  //       groupId: users.groupUsers[0].groupId,
+  //     });
+
+  //     setTurnNumber(turn.number);
+  //   }
+  //   // }
+  //   // }
+  // }, [turn.number]);
+
+  // useEffect(() => {
+  //   if (turn.number !== turnNumber) {
+  //     setTurnNumber(turn.number);
+  //   }
+  // }, [turn, turnNumber]);
 
   const onClick = (e, source, hex) => {
     const landscapeIndex = hexUsed.indexOf(hex.landscape);
@@ -78,7 +107,12 @@ const Grid = ({ turn, game }) => {
       const hexPath = [hexStart, hex];
       // console.log(hexPath);
       // console.log(turn);
-      dispatch(updateTurn(hexPath, turn, game));
+      dispatch(
+        updateTurn(hexPath, turn, game, users.groupUsers[0].groupId, [
+          ...paths,
+          newPath,
+        ])
+      );
 
       setHexagons([
         ...hexagons.map((item) => {
@@ -140,7 +174,7 @@ const Grid = ({ turn, game }) => {
                 )}
               </Hexagon>
             ))}
-            {paths.map((item, i) => (
+            {turn.paths.map((item, i) => (
               <Path key={i} start={item.start} end={item.end} />
             ))}
           </Layout>

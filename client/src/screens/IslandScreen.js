@@ -1,41 +1,67 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import socket from "../config/socket";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import GameData from "../components/GameData";
 import Grid from "../components/Grid";
 import Points from "../components/Points";
+import { getGame } from "../actions/gameActions";
 
 const IslandScreen = () => {
+  const dispatch = useDispatch();
+
   const gameGet = useSelector((state) => state.gameGet);
-  const { loading, error, game } = gameGet;
+  const { loading, error, game: game_ } = gameGet;
 
   const gameUpdateTurn = useSelector((state) => state.gameUpdateTurn);
   const { loading: loadingTurn, error: errorTurn, turn } = gameUpdateTurn;
 
+  const userList = useSelector((state) => state.userList);
+  const { loading: loadingList, error: errorList, users } = userList;
+
+  const userLogin = useSelector((state) => state.userLogin);
+  const { loading: loadingUser, error: errorUser, userInfo } = userLogin;
+
+  useEffect(() => {
+    socket.on("getGame", (game) => {
+      // console.log(game);
+      dispatch(getGame(game, userInfo.id));
+    });
+
+    return socket.off("getGame", (game) => {
+      dispatch(getGame(game, userInfo.id));
+    });
+  }, [dispatch, userInfo.id]);
+
   return (
     <div className="islandScreen">
-      {loading || loadingTurn ? (
+      {loading || loadingTurn || loadingList || loadingUser ? (
         <Loader />
-      ) : error || errorTurn ? (
+      ) : error || errorTurn || errorList || errorUser ? (
         <Message className="danger" text={error} />
       ) : (
         <>
-          <GameData game={game} />
-          <Grid
-            // isMinor={game.isMinor}
-            // cityScenario={game.cityScenario}
-            // deal={game.deal}
-            turn={turn}
-            game={game}
-          />
-          <Points
-            // isMinor={game.isMinor}
-            // artefacts={game.artefacts}
-            // cities={game.cities}
-            turn={turn}
-            game={game}
-          />
+          {game_ && (
+            <>
+              <GameData game={game_} />
+              <Grid
+                // isMinor={game.isMinor}
+                // cityScenario={game.cityScenario}
+                // deal={game.deal}
+                turn={turn}
+                game={game_}
+                users={users}
+              />
+              <Points
+                // isMinor={game.isMinor}
+                // artefacts={game.artefacts}
+                // cities={game.cities}
+                turn={turn}
+                game={game_}
+              />
+            </>
+          )}
         </>
       )}
     </div>

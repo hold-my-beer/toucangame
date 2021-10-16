@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import socket from "../config/socket";
 import { GAME_GET_RESET } from "../constants/gameConstants";
+import { GAME_UPDATE_TURN_RESET } from "../constants/gameConstants";
 import { logout } from "../actions/userActions";
 
 const Header = () => {
@@ -21,7 +22,10 @@ const Header = () => {
 
   const quitGameHandler = () => {
     socket.emit("quitGame", game.id);
+
     dispatch({ type: GAME_GET_RESET });
+
+    dispatch({ type: GAME_UPDATE_TURN_RESET });
   };
 
   return (

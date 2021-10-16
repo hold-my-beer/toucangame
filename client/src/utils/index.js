@@ -54,6 +54,12 @@ export const getArtefactName = (artefact) => {
   }
 };
 
+export const getCityName = (name, cityScenario) => {
+  const cityScenarioIndex = name.substring(4, 5);
+  // console.log(cityScenarioIndex);
+  return cityScenario[cityScenarioIndex];
+};
+
 export const pathsContain = (newPath, paths) => {
   return (
     paths.filter(
@@ -112,10 +118,10 @@ const updatePoints = (roads, roundPoints, game) => {
       // Award city points and bonus city points
       road.cities.forEach((city) => {
         if (city.qty === 2) {
-          const cityScenarioIndex = city.name.substring(4, 0);
-          const cityName = cityScenario[cityScenarioIndex];
+          // const cityScenarioIndex = city.name.substring(4, 0);
+          // const cityName = cityScenario[cityScenarioIndex];
           const gameCityIndex = gameCities.findIndex(
-            (city) => city.name === cityName
+            (item) => item.name === city.name
           );
 
           // Update city points
@@ -142,12 +148,14 @@ const updatePoints = (roads, roundPoints, game) => {
               if (!gameCities[gameCityIndex].bonusAwarded[0]) {
                 currentRoundPoints.bonusCityPoints.push({
                   name: city.name,
-                  pts: gameCities[gameCityIndex].bonusAwarded[0],
+                  pts: gameCities[gameCityIndex].bonusPoints[0],
+                  bonusAwarded: [true, false],
                 });
               } else
                 currentRoundPoints.bonusCityPoints.push({
                   name: city.name,
-                  pts: gameCities[gameCityIndex].bonusAwarded[1],
+                  pts: gameCities[gameCityIndex].bonusPoints[1],
+                  bonusAwarded: [false, true],
                 });
             } else {
               currentRoundPoints.bonusCityPoints.push(
@@ -160,69 +168,158 @@ const updatePoints = (roads, roundPoints, game) => {
 
       // Award artefact points
       road.artefacts.forEach((artefact) => {
-        const artefactName = getArtefactName(artefact.name);
+        // const artefactName = getArtefactName(artefact.name);
         const gameArtefactIndex = gameArtefacts.findIndex(
-          (item) => item.name === artefactName
+          (item) => item.name === artefact.name
         );
 
-        currentRoundPoints.artefactPoints.push({
-          name: artefact.name,
-          pts: isMinor
-            ? gameArtefacts[gameArtefactIndex].points.minor.reduce(
-                (acc, cur, index) => {
-                  if (index < artefact.qty) {
-                    return acc + cur;
-                  }
-                  return acc;
-                },
-                0
-              )
-            : gameArtefacts[gameArtefactIndex].points.major.reduce(
-                (acc, cur, index) => {
-                  if (index < artefact.qty) {
-                    return acc + cur;
-                  }
-                  return acc;
-                },
-                0
-              ),
-        });
+        const artefactIndex = currentRoundPoints.artefactPoints.findIndex(
+          (item) => item.name === artefact.name
+        );
+
+        // console.log(artefactIndex);
+        // console.log(currentRoundPoints.artefactPoints);
+        // console.log(artefact);
+
+        if (artefactIndex === -1) {
+          currentRoundPoints.artefactPoints.push({
+            name: artefact.name,
+            pts: isMinor
+              ? gameArtefacts[gameArtefactIndex].points.minor.reduce(
+                  (acc, cur, index) => {
+                    if (index < artefact.qty) {
+                      return acc + cur;
+                    }
+                    return acc;
+                  },
+                  0
+                )
+              : gameArtefacts[gameArtefactIndex].points.major.reduce(
+                  (acc, cur, index) => {
+                    if (index < artefact.qty) {
+                      return acc + cur;
+                    }
+                    return acc;
+                  },
+                  0
+                ),
+            totalQty: artefact.qty,
+          });
+        } else {
+          const qty =
+            currentRoundPoints.artefactPoints[artefactIndex].totalQty + 1;
+          // console.log(currentRoundPoints.artefactPoints[artefactIndex].name);
+          // console.log(currentRoundPoints.artefactPoints[artefactIndex].pts);
+          // console.log(
+          //   currentRoundPoints.artefactPoints[artefactIndex].totalQty
+          // );
+          // console.log(qty);
+
+          currentRoundPoints.artefactPoints[artefactIndex] = {
+            name: artefact.name,
+            pts: isMinor
+              ? gameArtefacts[gameArtefactIndex].points.minor.reduce(
+                  (acc, cur, index) => {
+                    if (
+                      index <
+                      currentRoundPoints.artefactPoints[artefactIndex]
+                        .totalQty +
+                        1
+                    ) {
+                      return acc + cur;
+                    }
+                    return acc;
+                  },
+                  0
+                )
+              : gameArtefacts[gameArtefactIndex].points.major.reduce(
+                  (acc, cur, index) => {
+                    if (
+                      index <
+                      currentRoundPoints.artefactPoints[artefactIndex]
+                        .totalQty +
+                        1
+                    ) {
+                      return acc + cur;
+                    }
+                    return acc;
+                  },
+                  0
+                ),
+            totalQty: qty,
+          };
+        }
       });
     }
 
     // Award artefact bonus points
-    road.artefacts.forEach((artefact) => {
-      const artefactName = getArtefactName(artefact.name);
-      // const gameArtefactIndex = gameArtefacts.findIndex(
-      //   (item) => item.name === artefactName
-      // );
+    // road.artefacts.forEach((artefact) => {
+    //   const artefactName = getArtefactName(artefact.name);
+    //   // const gameArtefactIndex = gameArtefacts.findIndex(
+    //   //   (item) => item.name === artefactName
+    //   // );
 
-      if (artefactName === bonusArtefact.name && artefact.qty >= 2) {
-        const bonusArtefactAllRounds = roundPoints
-          .map((round) => round.bonusArtefactPoints)
-          .flat();
-        const bonusArtefactIndex = bonusArtefactAllRounds.findIndex(
-          (bonusArtefact) => bonusArtefact.name === artefact.name
-        );
+    //   if (artefactName === bonusArtefact.name && artefact.qty >= 2) {
+    //     const bonusArtefactAllRounds = roundPoints
+    //       .map((round) => round.bonusArtefactPoints)
+    //       .flat();
+    //     const bonusArtefactIndex = bonusArtefactAllRounds.findIndex(
+    //       (bonusArtefact) => bonusArtefact.name === artefact.name
+    //     );
 
-        if (bonusArtefactIndex === -1) {
-          if (!bonusArtefact.bonusAwarded) {
-            currentRoundPoints.bonusArtefactPoints.push({
-              name: artefact.name,
-              pts: bonusArtefact.bonusPoints,
-            });
-          } else {
-            currentRoundPoints.bonusArtefactPoints.push({
-              name: artefact.name,
-              pts: 0,
-            });
-          }
+    //     if (bonusArtefactIndex === -1) {
+    //       if (!bonusArtefact.bonusAwarded) {
+    //         currentRoundPoints.bonusArtefactPoints.push({
+    //           name: artefact.name,
+    //           pts: bonusArtefact.bonusPoints,
+    //         });
+    //       } else {
+    //         currentRoundPoints.bonusArtefactPoints.push({
+    //           name: artefact.name,
+    //           pts: 0,
+    //         });
+    //       }
+    //     } else {
+    //       currentRoundPoints.bonusArtefactPoints =
+    //         bonusArtefactAllRounds[bonusArtefactIndex];
+    //     }
+    //   }
+    // });
+  });
+
+  // Award artefact bonus points
+  currentRoundPoints.artefactPoints.forEach((artefact) => {
+    // const artefactName = getArtefactName(artefact.name);
+    // const gameArtefactIndex = gameArtefacts.findIndex(
+    //   (item) => item.name === artefactName
+    // );
+
+    if (artefact.name === bonusArtefact.name && artefact.totalQty >= 2) {
+      const bonusArtefactAllRounds = roundPoints
+        .map((round) => round.bonusArtefactPoints)
+        .flat();
+      const bonusArtefactIndex = bonusArtefactAllRounds.findIndex(
+        (bonusArtefact) => bonusArtefact.name === artefact.name
+      );
+
+      if (bonusArtefactIndex === -1) {
+        if (!bonusArtefact.bonusAwarded) {
+          currentRoundPoints.bonusArtefactPoints.push({
+            name: artefact.name,
+            pts: bonusArtefact.bonusPoints,
+          });
         } else {
-          currentRoundPoints.bonusArtefactPoints =
-            bonusArtefactAllRounds[bonusArtefactIndex];
+          currentRoundPoints.bonusArtefactPoints.push({
+            name: artefact.name,
+            pts: 0,
+          });
         }
+      } else {
+        currentRoundPoints.bonusArtefactPoints.push(
+          bonusArtefactAllRounds[bonusArtefactIndex]
+        );
       }
-    });
+    }
   });
 
   return [
@@ -231,9 +328,7 @@ const updatePoints = (roads, roundPoints, game) => {
   ];
 };
 
-export const connectRoads = (roads, roadIndecies) => {
-  // const { isMinor, artefacts: gameArtefacts, bonusArtefact } = game;
-
+export const connectRoads = (roads, roadIndecies, cityScenario) => {
   const updatedRoads = roads.filter(
     (road, index) => index !== roadIndecies[0] && index !== roadIndecies[1]
   );
@@ -249,59 +344,17 @@ export const connectRoads = (roads, roadIndecies) => {
       (item) => item.name === artefact.name
     );
 
-    // const artefactName = getArtefactName(artefact.name);
-    // const gameArtefactIndex = gameArtefacts.findIndex(
-    //   (item) => item.name === artefactName
-    // );
-
-    // const artefactCount = roads
-    //   .map((item) => item.artefacts)
-    //   .flat()
-    //   .filter((art) => art.name === artefact.name).length;
-
     // No such artefact in road1
     if (artefactIndex === -1) {
       unitedArtefacts.push({
         name: artefact.name,
         qty: artefact.qty,
-        // pts: artefact.pts
-        //   ? artefact.pts
-        //   : road1.cities.length
-        //   ? isMinor
-        //     ? artefactCount === 1
-        //       ? gameArtefacts[gameArtefactIndex].points.minor[0]
-        //       : gameArtefacts[gameArtefactIndex].points.minor[1]
-        //     : artefactCount === 1
-        //     ? gameArtefacts[gameArtefactIndex].points.major[0]
-        //     : artefactCount === 2
-        //     ? gameArtefacts[gameArtefactIndex].points.major[1]
-        //     : gameArtefacts[gameArtefactIndex].points.major[2]
-        //   : 0,
-        // bonusPts: artefact.bonusPts ? artefact.bonusPts : 0,
       });
       // road1 has the same artefact
     } else {
       unitedArtefacts[artefactIndex] = {
         name: artefact.name,
         qty: artefact.qty + road1.artefacts[artefactIndex].qty,
-        // pts:
-        //   artefact.pts || road1.artefacts[artefactIndex].pts
-        //     ? isMinor
-        //       ? artefactCount === 1
-        //         ? gameArtefacts[gameArtefactIndex].points.minor[0]
-        //         : gameArtefacts[gameArtefactIndex].points.minor[1]
-        //       : artefactCount === 1
-        //       ? gameArtefacts[gameArtefactIndex].points.major[0]
-        //       : artefactCount === 2
-        //       ? gameArtefacts[gameArtefactIndex].points.major[1]
-        //       : gameArtefacts[gameArtefactIndex].points.major[2]
-        //     : 0,
-        // bonusPts:
-        //   bonusArtefact === artefactName &&
-        //   artefact.qty + road1.artefacts[artefactIndex].qty === 2 &&
-        //   !gameArtefacts[gameArtefactIndex].bonusAwarded
-        //     ? gameArtefacts[gameArtefactIndex].bonusPoints
-        //     : 0,
       };
     }
   });
@@ -329,8 +382,6 @@ export const connectRoads = (roads, roadIndecies) => {
     path: [...road1.path, ...road2.path],
     artefacts: unitedArtefacts,
     cities: unitedCities,
-    // points: updatePoints(unitedArtefacts, hasCities, game),
-    // hasCities,
   };
 
   updatedRoads.push(unitedRoad);
@@ -338,135 +389,48 @@ export const connectRoads = (roads, roadIndecies) => {
   return updatedRoads;
 };
 
-export const addHex = (roads, roadIndex, hex) => {
-  // const { roads, roundPoints } = turn;
-  // const {
-  //   isMinor,
-  //   roundNumber,
-  //   cities: gameCities,
-  //   cityScenario,
-  //   artefacts: gameArtefacts,
-  //   bonusArtefact,
-  //   players,
-  // } = game;
-
+export const addHex = (roads, roadIndex, hex, cityScenario) => {
   let artefacts = roads[roadIndex].artefacts;
   let cities = roads[roadIndex].cities;
-  // let points = roundPoints;
 
   // If hex artefact is not empty
   if (hex.artefact !== NONE) {
     // If hex artefact is a city
     if (hex.artefact.substring(0, 4) === "CITY") {
-      const cityIndex = cities.findIndex((city) => city.name === hex.artefact);
+      const cityName = getCityName(hex.artefact, cityScenario);
+      const cityIndex = cities.findIndex((city) => city.name === cityName);
 
       // If road doesn't have this city
       if (cityIndex === -1) {
         cities.push({
-          name: hex.artefact,
+          name: cityName,
           qty: 1,
-          // pts: 0,
-          // bonusPts: 0,
         });
-
-        // If the road has artefacts connecting only city brings artefact points
-        // if (cities.length == 1 && artefacts.length) {
-        //   const artefactName = getArtefactName(hex.artefact);
-        //   const gameArtefactIndex = gameArtefacts.findIndex(
-        //     (artefact) => artefact.name === artefactName
-        //   );
-
-        //   artefacts.forEach((artefact, index) => {
-        //     const artefactCount =
-        //       roads
-        //         .filter((road) => road.cities.length !== 0)
-        //         .map((item) => item.artefacts)
-        //         .flat()
-        //         .filter((art) => art.name === hex.artefact).length +
-        //       artefact.qty;
-
-        //     points[roundNumber].artefactPoints[hex.artefact] = isMinor
-        //       ? gameArtefacts[gameArtefactIndex].points.minor[artefactCount - 1]
-        //       : gameArtefacts[gameArtefactIndex].points.major[
-        //           artefactCount - 1
-        //         ];
-
-        //     // points[roundNumber].artefactBonusPoints
-        //   });
-        // }
-        // If road has this city
+        // If the road has this city
       } else {
-        // const cityScenarioIndex = hex.artefact.substring(4, 0);
-        // const cityName = cityScenario[cityScenarioIndex];
-        // const gameCityIndex = gameCities.findIndex(
-        //   (city) => city.name === cityName
-        // );
-
         cities[cityIndex] = {
-          name: cities[cityIndex].name,
-          qty: cities[cityIndex].qty++,
-          // pts: isMinor
-          //   ? gameCities[gameCityIndex].points.minor
-          //   : gameCities[gameCityIndex].points.major,
-          // bonusPts: !gameCities[gameCityIndex].bonusAwarded[0]
-          //   ? gameCities[gameCityIndex].bonusPoints[0]
-          //   : players.length >= 4 && !gameCities[gameCityIndex].bonusAwarded[1]
-          //   ? gameCities[gameCityIndex].bonusPoints[1]
-          //   : 0,
+          name: cityName,
+          qty: cities[cityIndex].qty + 1,
         };
-
-        // points[roundNumber].cityPoints[hex.artefact] =
       }
       // If hex artefact is an artefact
     } else {
+      const artefactName = getArtefactName(hex.artefact);
       const artefactIndex = artefacts.findIndex(
-        (artefact) => artefact.name === hex.artefact
+        (artefact) => artefact.name === artefactName
       );
-      // const artefactCount = roads
-      //   .map((item) => item.artefacts)
-      //   .flat()
-      //   .filter((art) => art.name === hex.artefact).length;
-      // const artefactName = getArtefactName(hex.artefact);
-      // const gameArtefactIndex = gameArtefacts.findIndex(
-      //   (artefact) => artefact.name === artefactName
-      // );
 
       // If road doesn't have this artefact
       if (artefactIndex === -1) {
         artefacts.push({
-          name: hex.artefact,
+          name: artefactName,
           qty: 1,
-          // pts: cities.length
-          //   ? isMinor
-          //     ? artefactCount === 0
-          //       ? gameArtefacts[gameArtefactIndex].points.minor[0]
-          //       : gameArtefacts[gameArtefactIndex].points.minor[1]
-          //     : artefactCount === 0
-          //     ? gameArtefacts[gameArtefactIndex].points.major[0]
-          //     : artefactCount === 1
-          //     ? gameArtefacts[gameArtefactIndex].points.major[1]
-          //     : gameArtefacts[gameArtefactIndex].points.major[2]
-          //   : 0,
-          // bonusPts: 0,
         });
         // If road has this artefact
       } else {
         artefacts[artefactIndex] = {
-          name: artefacts[artefactIndex].name,
-          qty: artefacts[artefactIndex].qty++,
-          // pts: cities.length
-          //   ? isMinor
-          //     ? gameArtefacts[gameArtefactIndex].points.minor[1]
-          //     : artefactCount === 1
-          //     ? gameArtefacts[gameArtefactIndex].points.major[1]
-          //     : gameArtefacts[gameArtefactIndex].points.major[2]
-          //   : 0,
-          // bonusPts:
-          //   bonusArtefact === artefactName &&
-          //   artefacts[artefactIndex].qty + 1 === 2 &&
-          //   !gameArtefacts[gameArtefactIndex].bonusAwarded
-          //     ? gameArtefacts[gameArtefactIndex].bonusPoints
-          //     : 0,
+          name: artefactName,
+          qty: (artefacts[artefactIndex].qty += 1),
         };
       }
     }
@@ -482,23 +446,23 @@ export const addHex = (roads, roadIndex, hex) => {
   ];
 };
 
-export const createRoad = (roads, path) => {
+export const createRoad = (roads, path, cityScenario) => {
   let artefacts = [];
   let cities = [];
 
-  console.log(path);
+  // console.log(path);
   path.forEach((hex) => {
     if (hex.artefact !== NONE) {
       if (hex.artefact.substring(0, 4) === "CITY") {
         cities.push({
-          name: hex.artefact,
+          name: getCityName(hex.artefact, cityScenario),
           qty: 1,
           // pts: 0,
           // bonusPts: 0,
         });
       } else {
         artefacts.push({
-          name: hex.artefact,
+          name: getArtefactName(hex.artefact),
           qty: 1,
           // pts: 0,
           // bonusPts: 0,
@@ -532,26 +496,38 @@ export const createRoad = (roads, path) => {
 //   }
 // };
 
-export const getUpdatedTurn = (path, turn, game) => {
+export const getUpdatedTurn = (path, turn, game, paths) => {
   // const roads = turn.roads || [];
   const roadIndecies = findRoadIndecies(turn.roads, path);
   let updatedRoads = [];
 
   // Both hexes are in the existing roads
   if (roadIndecies[0] !== -1 && roadIndecies[1] !== -1) {
-    updatedRoads = connectRoads(turn.roads, roadIndecies);
+    updatedRoads = connectRoads(turn.roads, roadIndecies, game.cityScenario);
     // One of the hexes is in the existing roads
   } else if (roadIndecies[0] !== -1) {
-    updatedRoads = addHex(turn.roads, roadIndecies[0], path[1]);
+    updatedRoads = addHex(
+      turn.roads,
+      roadIndecies[0],
+      path[1],
+      game.cityScenario
+    );
   } else if (roadIndecies[1] !== -1) {
-    updatedRoads = addHex(turn.roads, roadIndecies[1], path[0]);
+    updatedRoads = addHex(
+      turn.roads,
+      roadIndecies[1],
+      path[0],
+      game.cityScenario
+    );
     // Both hexes are not in the existing roads
   } else {
-    updatedRoads = createRoad(turn.roads, path);
+    updatedRoads = createRoad(turn.roads, path, game.cityScenario);
   }
 
   return {
+    number: turn.number + 1,
     roads: updatedRoads,
     roundPoints: updatePoints(updatedRoads, turn.roundPoints, game),
+    paths,
   };
 };
