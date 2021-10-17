@@ -107,8 +107,8 @@ const UsersScreen = ({ history }) => {
       ) : error || errorList ? (
         <Message className="danger" text={error || errorList} />
       ) : (
-        users && (
-          // users.length !== 0 &&
+        users &&
+        users.length !== 0 && (
           <div className="userLists">
             <div className="userList">
               <h3 className="mb-1">Ваша группа</h3>

@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import socket from "../config/socket";
 import { HexGrid, Layout, Path, Text, Hexagon, HexUtils } from "react-hexgrid";
 import { minorGrid } from "../data/minorGrid";
 import { pathsContain } from "../utils";
 import { updateTurn } from "../actions/gameActions";
 
 const Grid = ({ turn, game, users }) => {
-  // const [turnNumber, setTurnNumber] = useState(0);
   const [hexagons, setHexagons] = useState(minorGrid);
-  // const [path, setPath] = useState({ start: null, end: null });
   const [pathStart, setPathStart] = useState(null);
   const [paths, setPaths] = useState(turn ? turn.paths : []);
   const [hexStart, setHexStart] = useState(null);
@@ -17,39 +14,11 @@ const Grid = ({ turn, game, users }) => {
 
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   // if (turn.number > 0) {
-  //   // if (turn.number !== turnNumber) {
-  //   console.log(turn.number);
-  //   // console.log(turnNumber);
-  //   console.log("updateTurn");
-  //   //   setTurnNumber(turn.number);
-
-  //   if (turn.number > turnNumber) {
-  //     socket.emit("updateTurn", {
-  //       gameId: game.id,
-  //       turn,
-  //       groupId: users.groupUsers[0].groupId,
-  //     });
-
-  //     setTurnNumber(turn.number);
-  //   }
-  //   // }
-  //   // }
-  // }, [turn.number]);
-
-  // useEffect(() => {
-  //   if (turn.number !== turnNumber) {
-  //     setTurnNumber(turn.number);
-  //   }
-  // }, [turn, turnNumber]);
-
   const onClick = (e, source, hex) => {
     const landscapeIndex = hexUsed.indexOf(hex.landscape);
     const anyIndex = hexUsed.indexOf("any");
-    // console.log(landscapeIndex);
 
-    // Hex clicked is not in the game or been used
+    // Hex clicked is not in the deal or been used
     if (
       (anyIndex === -1 && landscapeIndex === -1) ||
       // The same hex clicked
@@ -103,10 +72,7 @@ const Grid = ({ turn, game, users }) => {
         setPaths([...paths, newPath]);
       }
 
-      // const hexPath = { start: hexStart, end: hex };
       const hexPath = [hexStart, hex];
-      // console.log(hexPath);
-      // console.log(turn);
       dispatch(
         updateTurn(hexPath, turn, game, users.groupUsers[0].groupId, [
           ...paths,

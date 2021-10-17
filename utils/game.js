@@ -52,7 +52,8 @@ const initiateGame = (users, isMinor) => {
     isMinor,
     roundNumber: 1,
     turnNumber: 1,
-    deck,
+    isBonusMove: false,
+    deck: [...deck],
     deal: [],
     cellsLeft: {
       sand: 8,
@@ -141,7 +142,22 @@ const updateTurn = (socketId, gameId, turn) => {
           player.status = "isThinking";
         });
 
+        games[gameIndex].isBonusMove = false;
+
         games[gameIndex].turnNumber += 1;
+
+        if (games[gameIndex].turnNumber === 14) {
+          games[gameIndex].roundNumber = games[gameIndex].roundNumber + 1;
+          games[gameIndex].turnNumber = 1;
+          games[gameIndex].deck = [...deck];
+          games[gameIndex].cellsLeft = {
+            sand: 8,
+            forest: 7,
+            stone: 6,
+            water: 4,
+            any: 2,
+          };
+        }
 
         return { game: games[gameIndex], isNewTurn: true };
       }

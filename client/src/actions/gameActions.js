@@ -6,6 +6,7 @@ import {
   GAME_UPDATE_TURN_REQUEST,
   GAME_UPDATE_TURN_SUCCESS,
   GAME_UPDATE_TURN_FAIL,
+  GAME_SET_BONUS_MOVE,
 } from "../constants/gameConstants";
 import { getUpdatedTurn } from "../utils";
 
@@ -51,16 +52,34 @@ export const updateTurn = (path, turn, game, groupId, paths) => (dispatch) => {
 
     const updatedTurn = getUpdatedTurn(path, turn, game, paths);
 
-    dispatch({
-      type: GAME_UPDATE_TURN_SUCCESS,
-      payload: updatedTurn,
-    });
+    const bonusMoveIndex = updatedTurn.bonusMoves.findIndex(
+      (item) => item.moveIsMade === false
+    );
 
-    socket.emit("updateTurn", {
-      gameId: game.id,
-      turn: updatedTurn,
-      groupId,
-    });
+    // If no bonus moves to be made
+    if (bonusMoveIndex === -1) {
+      dispatch({
+        type: GAME_UPDATE_TURN_SUCCESS,
+        payload: updatedTurn,
+      });
+
+      socket.emit("updateTurn", {
+        gameId: game.id,
+        turn: updatedTurn,
+        groupId,
+      });
+      // If bonus move is to be made
+    } else {
+      dispatch({
+        type: GAME_UPDATE_TURN_SUCCESS,
+        payload: updatedTurn,
+      });
+
+      dispatch({
+        type: GAME_SET_BONUS_MOVE,
+        payload: game,
+      });
+    }
   } catch (error) {
     // console.log(error);
     dispatch({

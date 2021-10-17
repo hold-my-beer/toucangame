@@ -119,6 +119,10 @@ img {
   text-align: center;
 }
 
+.text-danger {
+  color: var(--danger-color);
+}
+
 /* Buttons */
 .btn {
   display: inline-block;

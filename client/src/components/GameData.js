@@ -13,7 +13,12 @@ import Opponents from "./Opponents";
 const GameData = ({ game }) => {
   return (
     <div className="gameData">
-      <TurnHexes deal={game.deal} />
+      <TurnHexes
+        deal={game.deal}
+        roundNumber={game.roundNumber}
+        turnNumber={game.turnNumber}
+        isBonusMove={game.isBonusMove}
+      />
       <CellsLeft cellsLeft={game.cellsLeft} />
       <ArtefactBonus bonusArtefact={game.bonusArtefact} />
       <CityBonuses cities={game.cities} playersNumber={game.players.length} />

@@ -4,21 +4,9 @@ import {
   TOUCAN,
   YETI,
   DRAGON,
-  // CITY0,
-  // CITY1,
-  // CITY2,
-  // CITY3,
-  // CITY4,
-  // CITY5,
-  // CITY6,
-  // CITY7,
-  // CITY8,
-  // CITY9,
   NONE,
 } from "../constants/artefactConstants";
 import { HexUtils } from "react-hexgrid";
-// import artefacts from "../../../data/artefacts";
-// import { updateTurn } from "../actions/gameActions";
 
 export const getBonusArtefact = (name) => {
   switch (name) {
@@ -56,7 +44,7 @@ export const getArtefactName = (artefact) => {
 
 export const getCityName = (name, cityScenario) => {
   const cityScenarioIndex = name.substring(4, 5);
-  // console.log(cityScenarioIndex);
+
   return cityScenario[cityScenarioIndex];
 };
 
@@ -94,7 +82,49 @@ export const findRoadIndecies = (roads, path) => {
   return roadIndecies;
 };
 
-const updatePoints = (roads, roundPoints, game) => {
+export const updateBonusMoves = (roundPoints, bonusMoves, game) => {
+  if (roundPoints.length) {
+    const { artefactPoints } = roundPoints[roundPoints.length - 1];
+    const { isMinor } = game;
+
+    let updatedBonusMoves = [...bonusMoves];
+    let bonusMoveReset = false;
+
+    artefactPoints.forEach((artefact) => {
+      const bonusMoveIndex = bonusMoves.findIndex(
+        (item) => item.name === artefact.name
+      );
+
+      // If conditions for bonus move met
+      if (
+        bonusMoveIndex === -1 &&
+        ((isMinor && artefact.totalQty === 2) ||
+          (!isMinor && artefact.totalQty === 3))
+      ) {
+        updatedBonusMoves.push({
+          name: artefact.name,
+          moveIsMade: false,
+        });
+        // If bonus move is to be set as made
+      } else if (
+        bonusMoveIndex !== -1 &&
+        ((isMinor && artefact.totalQty === 2) ||
+          (!isMinor && artefact.totalQty === 3)) &&
+        !bonusMoves[bonusMoveIndex].moveIsMade &&
+        !bonusMoveReset
+      ) {
+        updatedBonusMoves[bonusMoveIndex].moveIsMade = true;
+        bonusMoveReset = true;
+      }
+    });
+
+    return updatedBonusMoves;
+  } else {
+    return bonusMoves;
+  }
+};
+
+export const updatePoints = (roads, roundPoints, game) => {
   const {
     isMinor,
     roundNumber,
@@ -118,8 +148,6 @@ const updatePoints = (roads, roundPoints, game) => {
       // Award city points and bonus city points
       road.cities.forEach((city) => {
         if (city.qty === 2) {
-          // const cityScenarioIndex = city.name.substring(4, 0);
-          // const cityName = cityScenario[cityScenarioIndex];
           const gameCityIndex = gameCities.findIndex(
             (item) => item.name === city.name
           );
@@ -133,42 +161,44 @@ const updatePoints = (roads, roundPoints, game) => {
           });
 
           // Award bonus city points if available
-          if (
-            !gameCities[gameCityIndex].bonusAwarded[0] ||
-            (players.length >= 4 && !gameCities[gameCityIndex].bonusAwarded[1])
-          ) {
-            const bonusCityAllRounds = roundPoints
-              .map((round) => round.bonusCityPoints)
-              .flat();
-            const bonusCityIndex = bonusCityAllRounds.findIndex(
-              (bonusCity) => bonusCity.name === city.name
-            );
+          // if (
+          //   !gameCities[gameCityIndex].bonusAwarded[0] ||
+          //   (players.length >= 4 && !gameCities[gameCityIndex].bonusAwarded[1])
+          // ) {
+          const bonusCityAllRounds = roundPoints
+            .map((round) => round.bonusCityPoints)
+            .flat();
+          const bonusCityIndex = bonusCityAllRounds.findIndex(
+            (bonusCity) => bonusCity.name === city.name
+          );
 
-            if (bonusCityIndex === -1) {
-              if (!gameCities[gameCityIndex].bonusAwarded[0]) {
-                currentRoundPoints.bonusCityPoints.push({
-                  name: city.name,
-                  pts: gameCities[gameCityIndex].bonusPoints[0],
-                  bonusAwarded: [true, false],
-                });
-              } else
-                currentRoundPoints.bonusCityPoints.push({
-                  name: city.name,
-                  pts: gameCities[gameCityIndex].bonusPoints[1],
-                  bonusAwarded: [false, true],
-                });
-            } else {
-              currentRoundPoints.bonusCityPoints.push(
-                bonusCityAllRounds[bonusCityIndex]
-              );
-            }
+          if (bonusCityIndex === -1) {
+            if (!gameCities[gameCityIndex].bonusAwarded[0]) {
+              currentRoundPoints.bonusCityPoints.push({
+                name: city.name,
+                pts: gameCities[gameCityIndex].bonusPoints[0],
+                bonusAwarded: [true, false],
+              });
+            } else if (
+              players.length >= 4 &&
+              !gameCities[gameCityIndex].bonusAwarded[1]
+            )
+              currentRoundPoints.bonusCityPoints.push({
+                name: city.name,
+                pts: gameCities[gameCityIndex].bonusPoints[1],
+                bonusAwarded: [false, true],
+              });
+          } else {
+            currentRoundPoints.bonusCityPoints.push(
+              bonusCityAllRounds[bonusCityIndex]
+            );
           }
+          // }
         }
       });
 
       // Award artefact points
       road.artefacts.forEach((artefact) => {
-        // const artefactName = getArtefactName(artefact.name);
         const gameArtefactIndex = gameArtefacts.findIndex(
           (item) => item.name === artefact.name
         );
@@ -176,10 +206,6 @@ const updatePoints = (roads, roundPoints, game) => {
         const artefactIndex = currentRoundPoints.artefactPoints.findIndex(
           (item) => item.name === artefact.name
         );
-
-        // console.log(artefactIndex);
-        // console.log(currentRoundPoints.artefactPoints);
-        // console.log(artefact);
 
         if (artefactIndex === -1) {
           currentRoundPoints.artefactPoints.push({
@@ -208,12 +234,6 @@ const updatePoints = (roads, roundPoints, game) => {
         } else {
           const qty =
             currentRoundPoints.artefactPoints[artefactIndex].totalQty + 1;
-          // console.log(currentRoundPoints.artefactPoints[artefactIndex].name);
-          // console.log(currentRoundPoints.artefactPoints[artefactIndex].pts);
-          // console.log(
-          //   currentRoundPoints.artefactPoints[artefactIndex].totalQty
-          // );
-          // console.log(qty);
 
           currentRoundPoints.artefactPoints[artefactIndex] = {
             name: artefact.name,
@@ -250,50 +270,21 @@ const updatePoints = (roads, roundPoints, game) => {
           };
         }
       });
+      // Check if two artefacts are connected without city to award artefact bonus points
+    } else {
+      road.artefacts.forEach((artefact) => {
+        if (artefact.qty === 2) {
+          currentRoundPoints.bonusArtefactPoints.push({
+            name: bonusArtefact.name,
+            pts: bonusArtefact.bonusPoints,
+          });
+        }
+      });
     }
-
-    // Award artefact bonus points
-    // road.artefacts.forEach((artefact) => {
-    //   const artefactName = getArtefactName(artefact.name);
-    //   // const gameArtefactIndex = gameArtefacts.findIndex(
-    //   //   (item) => item.name === artefactName
-    //   // );
-
-    //   if (artefactName === bonusArtefact.name && artefact.qty >= 2) {
-    //     const bonusArtefactAllRounds = roundPoints
-    //       .map((round) => round.bonusArtefactPoints)
-    //       .flat();
-    //     const bonusArtefactIndex = bonusArtefactAllRounds.findIndex(
-    //       (bonusArtefact) => bonusArtefact.name === artefact.name
-    //     );
-
-    //     if (bonusArtefactIndex === -1) {
-    //       if (!bonusArtefact.bonusAwarded) {
-    //         currentRoundPoints.bonusArtefactPoints.push({
-    //           name: artefact.name,
-    //           pts: bonusArtefact.bonusPoints,
-    //         });
-    //       } else {
-    //         currentRoundPoints.bonusArtefactPoints.push({
-    //           name: artefact.name,
-    //           pts: 0,
-    //         });
-    //       }
-    //     } else {
-    //       currentRoundPoints.bonusArtefactPoints =
-    //         bonusArtefactAllRounds[bonusArtefactIndex];
-    //     }
-    //   }
-    // });
   });
 
   // Award artefact bonus points
   currentRoundPoints.artefactPoints.forEach((artefact) => {
-    // const artefactName = getArtefactName(artefact.name);
-    // const gameArtefactIndex = gameArtefacts.findIndex(
-    //   (item) => item.name === artefactName
-    // );
-
     if (artefact.name === bonusArtefact.name && artefact.totalQty >= 2) {
       const bonusArtefactAllRounds = roundPoints
         .map((round) => round.bonusArtefactPoints)
@@ -450,22 +441,17 @@ export const createRoad = (roads, path, cityScenario) => {
   let artefacts = [];
   let cities = [];
 
-  // console.log(path);
   path.forEach((hex) => {
     if (hex.artefact !== NONE) {
       if (hex.artefact.substring(0, 4) === "CITY") {
         cities.push({
           name: getCityName(hex.artefact, cityScenario),
           qty: 1,
-          // pts: 0,
-          // bonusPts: 0,
         });
       } else {
         artefacts.push({
           name: getArtefactName(hex.artefact),
           qty: 1,
-          // pts: 0,
-          // bonusPts: 0,
         });
       }
     }
@@ -481,23 +467,7 @@ export const createRoad = (roads, path, cityScenario) => {
   ];
 };
 
-// export const getUpdatedRoads = (roads, roadIndecies, path, game) => {
-//   // Both hexes are in the existing roads
-//   if (roadIndecies[0] !== -1 && roadIndecies[1] !== -1) {
-//     return connectRoads(roads, roadIndecies, game);
-//     // One of the hexes is in the existing roads
-//   } else if (roadIndecies[0] !== -1) {
-//     return addHex(roads, roadIndecies[0], path[1], game);
-//   } else if (roadIndecies[1] !== -1) {
-//     return addHex(roads, roadIndecies[1], path[0], game);
-//     // Both hexes are not in the existing roads
-//   } else {
-//     return createRoad(roads, path);
-//   }
-// };
-
 export const getUpdatedTurn = (path, turn, game, paths) => {
-  // const roads = turn.roads || [];
   const roadIndecies = findRoadIndecies(turn.roads, path);
   let updatedRoads = [];
 
@@ -524,10 +494,18 @@ export const getUpdatedTurn = (path, turn, game, paths) => {
     updatedRoads = createRoad(turn.roads, path, game.cityScenario);
   }
 
+  let updatedPoints = updatePoints(updatedRoads, turn.roundPoints, game);
+  let updatedBonusMoves = updateBonusMoves(
+    updatedPoints,
+    turn.bonusMoves,
+    game
+  );
+
   return {
-    number: turn.number + 1,
+    // number: turn.number + 1,
     roads: updatedRoads,
-    roundPoints: updatePoints(updatedRoads, turn.roundPoints, game),
+    roundPoints: updatedPoints,
     paths,
+    bonusMoves: updatedBonusMoves,
   };
 };

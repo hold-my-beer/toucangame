@@ -2,7 +2,7 @@ import React from "react";
 import { getBonusArtefact } from "../utils";
 
 const ArtefactPointsItem = ({ isMinor, artefact, awardedPoints }) => {
-  console.log(awardedPoints);
+  // console.log(awardedPoints);
   return (
     <div className="artefactPointsItem">
       <div className="mr-1 artefactPointsPicture">

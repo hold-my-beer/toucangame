@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { HexGrid, Layout, Hexagon } from "react-hexgrid";
 
-const TurnHexes = ({ deal }) => {
+const TurnHexes = ({ deal, roundNumber, turnNumber, isBonusMove }) => {
   const [width, setWidth] = useState(1);
 
   useEffect(() => {
@@ -16,7 +16,12 @@ const TurnHexes = ({ deal }) => {
 
   return (
     <div className="turnHexes my-1 mb-2">
-      <h4 className="text-center">Текущий ход</h4>
+      <h4 className="text-center">Раунд {roundNumber}</h4>
+      {isBonusMove ? (
+        <h4 className="text-center text-danger">Бонусный Ход</h4>
+      ) : (
+        <h4 className="text-center">Ход {turnNumber}</h4>
+      )}
       <HexGrid width={250} height={80} viewBox="-2 -9 17 17">
         <Layout
           size={{ x: 7, y: 7 }}
