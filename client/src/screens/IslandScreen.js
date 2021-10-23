@@ -8,7 +8,7 @@ import Grid from "../components/Grid";
 import Points from "../components/Points";
 import { getGame } from "../actions/gameActions";
 
-const IslandScreen = () => {
+const IslandScreen = ({ history }) => {
   const dispatch = useDispatch();
 
   const gameGet = useSelector((state) => state.gameGet);
@@ -33,6 +33,25 @@ const IslandScreen = () => {
       dispatch(getGame(game, userInfo.id));
     });
   }, [dispatch, userInfo.id]);
+
+  useEffect(() => {
+    socket.on("getNewRound", (game) => {
+      // console.log(game);
+      dispatch(getGame(game, userInfo.id));
+      history.push("/results");
+    });
+
+    return socket.off("getNewRound", (game) => {
+      dispatch(getGame(game, userInfo.id));
+      history.push("/results");
+    });
+  }, [dispatch, userInfo.id, history]);
+
+  // useEffect(() => {
+  //   if (game_ && game_.roundNumber > 1 && game_.turnNumber === 1) {
+  //     history.push("./results");
+  //   }
+  // }, [game_, history]);
 
   return (
     <div className="islandScreen">

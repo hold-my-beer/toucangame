@@ -153,14 +153,18 @@ io.on("connection", (socket) => {
 
     const updatedGame = deal(game);
 
-    io.to(groupId).emit("getGame", updatedGame);
+    io.to(groupId).emit("getNewGame", updatedGame);
   });
 
   // User updates turn
   socket.on("updateTurn", ({ groupId, gameId, turn }) => {
     const gameInfo = updateTurn(socket.id, gameId, turn);
 
-    if (gameInfo.isNewTurn) {
+    if (gameInfo.isNewRound) {
+      const updatedGame = deal(gameInfo.game);
+
+      io.to(groupId).emit("getNewRound", updatedGame);
+    } else if (gameInfo.isNewTurn) {
       const updatedGame = deal(gameInfo.game);
 
       io.to(groupId).emit("getGame", updatedGame);

@@ -11,6 +11,7 @@ const Grid = ({ turn, game, users }) => {
   const [paths, setPaths] = useState(turn ? turn.paths : []);
   const [hexStart, setHexStart] = useState(null);
   const [hexUsed, setHexUsed] = useState([...game.deal]);
+  const [moveMade, setMoveMade] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -18,84 +19,93 @@ const Grid = ({ turn, game, users }) => {
     const landscapeIndex = hexUsed.indexOf(hex.landscape);
     const anyIndex = hexUsed.indexOf("any");
 
-    // Hex clicked is not in the deal or been used
-    if (
-      (anyIndex === -1 && landscapeIndex === -1) ||
-      // The same hex clicked
-      (pathStart && HexUtils.equals(source.state.hex, pathStart)) ||
-      // Hex clicked is not a neighbour
-      (pathStart && HexUtils.distance(source.state.hex, pathStart)) >= 2
-    ) {
-      setHexUsed([...game.deal]);
-      setPathStart(null);
-      setHexStart(null);
+    // Don't allow to make more than one move
+    if (!moveMade) {
+      // Hex clicked is not in the deal or been used
+      if (
+        (anyIndex === -1 && landscapeIndex === -1) ||
+        // The same hex clicked
+        (pathStart && HexUtils.equals(source.state.hex, pathStart)) ||
+        // Hex clicked is not a neighbour
+        (pathStart && HexUtils.distance(source.state.hex, pathStart)) >= 2
+      ) {
+        setHexUsed([...game.deal]);
+        setPathStart(null);
+        setHexStart(null);
 
-      setHexagons([
-        ...hexagons.map((item) => {
-          item.className = "";
-
-          return item;
-        }),
-      ]);
-    }
-    // No path initiated yet
-    else if (!pathStart) {
-      landscapeIndex !== -1
-        ? setHexUsed([
-            ...hexUsed.filter((item, index) => index !== landscapeIndex),
-          ])
-        : setHexUsed([...hexUsed.filter((item, index) => index !== anyIndex)]);
-      setPathStart(source.state.hex);
-      setHexStart(hex);
-
-      setHexagons([
-        ...hexagons.map((item) => {
-          if (HexUtils.equals(item, hex)) {
-            item.className = "active";
-          } else {
+        setHexagons([
+          ...hexagons.map((item) => {
             item.className = "";
-          }
 
-          return item;
-        }),
-      ]);
-    }
-    // Hex clicked is a neighbour
-    else {
-      landscapeIndex !== -1
-        ? setHexUsed([
-            ...hexUsed.filter((item, index) => index !== landscapeIndex),
-          ])
-        : setHexUsed([...hexUsed.filter((item, index) => index !== anyIndex)]);
-      const newPath = { start: pathStart, end: source.state.hex };
-      if (!pathsContain(newPath, paths)) {
-        setPaths([...paths, newPath]);
+            return item;
+          }),
+        ]);
       }
+      // No path initiated yet
+      else if (!pathStart) {
+        landscapeIndex !== -1
+          ? setHexUsed([
+              ...hexUsed.filter((item, index) => index !== landscapeIndex),
+            ])
+          : setHexUsed([
+              ...hexUsed.filter((item, index) => index !== anyIndex),
+            ]);
+        setPathStart(source.state.hex);
+        setHexStart(hex);
 
-      const hexPath = [hexStart, hex];
-      dispatch(
-        updateTurn(hexPath, turn, game, users.groupUsers[0].groupId, [
-          ...paths,
-          newPath,
-        ])
-      );
+        setHexagons([
+          ...hexagons.map((item) => {
+            if (HexUtils.equals(item, hex)) {
+              item.className = "active";
+            } else {
+              item.className = "";
+            }
 
-      setHexagons([
-        ...hexagons.map((item) => {
-          if (
-            HexUtils.equals(item, hex) ||
-            (pathStart && HexUtils.equals(item, pathStart))
-          ) {
-            item.className = "active";
-          } else {
-            item.className = "";
-          }
+            return item;
+          }),
+        ]);
+      }
+      // Hex clicked is a neighbour
+      else {
+        landscapeIndex !== -1
+          ? setHexUsed([
+              ...hexUsed.filter((item, index) => index !== landscapeIndex),
+            ])
+          : setHexUsed([
+              ...hexUsed.filter((item, index) => index !== anyIndex),
+            ]);
+        const newPath = { start: pathStart, end: source.state.hex };
+        if (!pathsContain(newPath, paths)) {
+          setPaths([...paths, newPath]);
+        }
 
-          return item;
-        }),
-      ]);
+        const hexPath = [hexStart, hex];
+        dispatch(
+          updateTurn(hexPath, turn, game, users.groupUsers[0].groupId, [
+            ...paths,
+            newPath,
+          ])
+        );
 
-      setPathStart(null);
+        setMoveMade(true);
+
+        setHexagons([
+          ...hexagons.map((item) => {
+            if (
+              HexUtils.equals(item, hex) ||
+              (pathStart && HexUtils.equals(item, pathStart))
+            ) {
+              item.className = "active";
+            } else {
+              item.className = "";
+            }
+
+            return item;
+          }),
+        ]);
+
+        setPathStart(null);
+      }
     }
   };
 

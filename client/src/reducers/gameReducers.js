@@ -43,6 +43,7 @@ export const gameUpdateTurnReducer = (
       return { loading: false, error: action.payload };
     case GAME_UPDATE_TURN_RESET:
       return {
+        loading: false,
         turn: { roads: [], roundPoints: [], paths: [], bonusMoves: [] },
       };
     default:

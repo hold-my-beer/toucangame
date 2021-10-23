@@ -67,6 +67,18 @@ const initiateGame = (users, isMinor) => {
     bonusArtefact: artefacts[bonusArtefactIndex],
     cities,
     players: users,
+    results: {
+      players: users.map((user) => {
+        return {
+          id: user.id,
+          name: user.name,
+          artefactPoints: 0,
+          cityPoints: 0,
+          bonusPoints: 0,
+          totalPoints: 0,
+        };
+      }),
+    },
   };
 
   games.push(game);
@@ -132,6 +144,53 @@ const updateTurn = (socketId, gameId, turn) => {
         games[gameIndex].cities = updatedCities;
       }
 
+      // If it is the last round save the players points
+      if (games[gameIndex].turnNumber === 13) {
+        if (turn.roundPoints.length) {
+          const artefactPoints = turn.roundPoints[turn.roundPoints.length - 1]
+            .artefactPoints.length
+            ? turn.roundPoints[turn.roundPoints.length - 1].artefactPoints
+                .map((item) => item.pts)
+                .reduce((acc, cur) => {
+                  return acc + cur;
+                }, 0)
+            : 0;
+          const cityPoints = turn.roundPoints[turn.roundPoints.length - 1]
+            .cityPoints.length
+            ? turn.roundPoints[turn.roundPoints.length - 1].cityPoints
+                .map((item) => item.pts)
+                .reduce((acc, cur) => {
+                  return acc + cur;
+                }, 0)
+            : 0;
+          const bonusPoints = turn.roundPoints[turn.roundPoints.length - 1]
+            .bonusArtefactPoints.length
+            ? turn.roundPoints[turn.roundPoints.length - 1].bonusArtefactPoints
+                .map((item) => item.pts)
+                .reduce((acc, cur) => {
+                  return acc + cur;
+                }, 0)
+            : 0 +
+              turn.roundPoints[turn.roundPoints.length - 1].bonusCityPoints
+                .length
+            ? turn.roundPoints[turn.roundPoints.length - 1].bonusCityPoints
+                .map((item) => item.pts)
+                .reduce((acc, cur) => {
+                  return acc + cur;
+                }, 0)
+            : 0;
+          const totalPoints = artefactPoints + cityPoints + bonusPoints;
+
+          games[gameIndex].results.players[playerIndex].artefactPoints =
+            artefactPoints;
+          games[gameIndex].results.players[playerIndex].cityPoints = cityPoints;
+          games[gameIndex].results.players[playerIndex].bonusPoints =
+            bonusPoints;
+          games[gameIndex].results.players[playerIndex].totalPoints =
+            totalPoints;
+        }
+      }
+
       // Check if all players made their move this turn
       const playersWaitingNumber = games[gameIndex].players.filter(
         (player) => player.status === "isWaiting"
@@ -146,6 +205,7 @@ const updateTurn = (socketId, gameId, turn) => {
 
         games[gameIndex].turnNumber += 1;
 
+        // If it is the last turn start next round
         if (games[gameIndex].turnNumber === 14) {
           games[gameIndex].roundNumber = games[gameIndex].roundNumber + 1;
           games[gameIndex].turnNumber = 1;
@@ -157,16 +217,18 @@ const updateTurn = (socketId, gameId, turn) => {
             water: 4,
             any: 2,
           };
+
+          return { game: games[gameIndex], isNewTurn: true, isNewRound: true };
         }
 
-        return { game: games[gameIndex], isNewTurn: true };
+        return { game: games[gameIndex], isNewTurn: true, isNewRound: false };
       }
     }
 
-    return { game: games[gameIndex], isNewTurn: false };
+    return { game: games[gameIndex], isNewTurn: false, isNewRound: false };
   }
 
-  return { game: {}, isNewTurn: false };
+  return { game: {}, isNewTurn: false, isNewRound: false };
 };
 
 const quitGame = (socketId, gameId) => {
@@ -189,29 +251,9 @@ const quitGame = (socketId, gameId) => {
   return {};
 };
 
-// const addPlayer = (playerId, game) => {
-//   const newPLayer = {
-//     id: playerId,
-//     isThinking: false,
-//     points: 0,
-//   };
-//   const updatedGame = { ...game, players: [...game.players, newPLayer] };
-//   return updatedGame;
-// };
-
-// const removePlayer = (playerId, game) => {
-//   const updatedGame = {
-//     ...game,
-//     players: game.players.filter((player) => player !== playerId),
-//   };
-//   return updatedGame;
-// };
-
 module.exports = {
   initiateGame,
   updateTurn,
-  // addPlayer,
-  // removePlayer,
   deal,
   quitGame,
 };

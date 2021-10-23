@@ -33,6 +33,19 @@ const UsersScreen = ({ history }) => {
     });
   }, [dispatch, userInfo.id]);
 
+  useEffect(() => {
+    socket.on("getNewGame", (game) => {
+      // console.log(game);
+      dispatch(getGame(game, userInfo.id));
+      history.push("/minor-island");
+    });
+
+    return socket.off("getNewGame", (game) => {
+      dispatch(getGame(game, userInfo.id));
+      history.push("/minor-island");
+    });
+  }, [dispatch, userInfo.id]);
+
   // useEffect(() => {
   //   socket.on("getGame", (game) => {
   //     dispatch(getGame(game, userInfo.id));

@@ -12,6 +12,7 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import UsersScreen from "./screens/UsersScreen";
 import IslandScreen from "./screens/IslandScreen";
+import ResultScreen from "./screens/ResultScreen";
 
 const App = () => {
   const userLogin = useSelector((state) => state.userLogin);
@@ -41,6 +42,7 @@ const App = () => {
             <Message className="danger" text={error} />
           ) : (
             <>
+              <Route path="/results" component={ResultScreen} exact />
               <Route path="/minor-island" component={IslandScreen} exact />
               <Route path="/users" component={UsersScreen} exact />
               <Route path="/login" component={LoginScreen} exact />
