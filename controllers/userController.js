@@ -1,5 +1,6 @@
 const generateToken = require("../utils/generateToken");
 const User = require("../models/userModel");
+const { updateMany } = require("../models/userModel");
 
 // @desc     Register a new user
 // @route    POST /api/users
@@ -73,6 +74,76 @@ const loginUser = async (req, res) => {
   }
 };
 
+// @desc     Save users stats
+// @route    Server initiated
+// @access   Server initiated
+const saveStats = async (players, isMinor) => {
+  try {
+    // const { players, isMinor } = req.body;
+
+    if (players.length) {
+      let maxPoints = 0;
+      let winnerIDs = [];
+      players.forEach((player) => {
+        if (parseInt(player.totalPoints) > maxPoints) {
+          maxPoints = parseInt(player.totalPoints);
+          winnerIDs = [player.id];
+        } else if (parseInt(player.totalPoints) === maxPoints) {
+          winnerIDs.push(player.id);
+        }
+      });
+
+      for (const player of players) {
+        let user = await User.findById(player.id);
+
+        const gamesPlayed = 1;
+        const wins = winnerIDs.indexOf(player.id) !== 1 ? 1 : 0;
+        const points = player.totalPoints;
+
+        if (user) {
+          stats = {
+            total: {
+              gamesPlayed: user.stats.total.gamesPlayed + gamesPlayed,
+              wins: user.stats.total.wins + wins,
+              points: user.stats.total.points + points,
+            },
+            minor: {
+              gamesPlayed: isMinor
+                ? user.stats.minor.gamesPlayed + gamesPlayed
+                : user.stats.minor.gamesPlayed,
+              wins: isMinor
+                ? user.stats.minor.wins + wins
+                : user.stats.minor.wins,
+              points: isMinor
+                ? user.stats.minor.points + points
+                : user.stats.minor.points,
+            },
+            major: {
+              gamesPlayed: !isMinor
+                ? user.stats.major.gamesPlayed + gamesPlayed
+                : user.stats.major.gamesPlayed,
+              wins: !isMinor
+                ? user.stats.major.wins + wins
+                : user.stats.major.wins,
+              points: !isMinor
+                ? user.stats.major.points + points
+                : user.stats.major.points,
+            },
+          };
+
+          user.stats = stats;
+          await user.save();
+        }
+      }
+
+      return { message: "Данные сохранены" };
+    }
+  } catch (error) {
+    console.error(error);
+    return { message: "Ошибка сервера" };
+  }
+};
+
 // @desc     Invite to be friends
 // @route    PUT /api/users/friends/invite
 // @access   Private
@@ -131,5 +202,6 @@ const inviteToBeFriends = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  saveStats,
   inviteToBeFriends,
 };

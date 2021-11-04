@@ -11,6 +11,10 @@ import {
   USER_LIST_REQUEST,
   USER_LIST_SUCCESS,
   USER_LIST_FAIL,
+  USER_UPDATE_STATS_REQUEST,
+  USER_UPDATE_STATS_SUCCESS,
+  USER_UPDATE_STATS_FAIL,
+  USER_LIST_RESET,
 } from "../constants/userConstants";
 
 export const login = (email, password) => async (dispatch) => {
@@ -94,6 +98,8 @@ export const logout = () => (dispatch) => {
   dispatch({ type: USER_LOGOUT });
 
   dispatch({ type: USER_REGISTER_RESET });
+
+  dispatch({ type: USER_LIST_RESET });
 };
 
 // export const listUsers = (users, userId) => (dispatch) => {
@@ -173,6 +179,31 @@ export const listUsers = (users, userId) => (dispatch) => {
   } catch (error) {
     dispatch({
       type: USER_LIST_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const updateStats = (stats) => (dispatch) => {
+  try {
+    dispatch({ type: USER_UPDATE_STATS_REQUEST });
+
+    let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+    userInfo.stats = stats;
+
+    dispatch({
+      type: USER_UPDATE_STATS_SUCCESS,
+      payload: userInfo,
+    });
+
+    localStorage.setItem("userInfo", JSON.stringify(userInfo));
+  } catch (error) {
+    dispatch({
+      type: USER_UPDATE_STATS_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

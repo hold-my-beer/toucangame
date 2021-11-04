@@ -19,8 +19,8 @@ const Grid = ({ turn, game, users }) => {
     const landscapeIndex = hexUsed.indexOf(hex.landscape);
     const anyIndex = hexUsed.indexOf("any");
 
-    // Don't allow to make more than one move
-    if (!moveMade) {
+    // Don't allow to make more than one move except if it is bonus move
+    if (!moveMade || (turn && turn.bonusMoves.length)) {
       // Hex clicked is not in the deal or been used
       if (
         (anyIndex === -1 && landscapeIndex === -1) ||
@@ -108,6 +108,14 @@ const Grid = ({ turn, game, users }) => {
       }
     }
   };
+
+  useEffect(() => {
+    if (turn && turn.bonusMoves.length && game && game.deal.length) {
+      // console.log("bonus move");
+      setMoveMade(false);
+      setHexUsed([...game.deal]);
+    }
+  }, [turn, game]);
 
   return (
     <div className="island">

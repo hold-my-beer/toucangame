@@ -46,6 +46,7 @@ io.on("connection", (socket) => {
 
     io.to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
+      newStats: false,
     });
   });
 
@@ -74,6 +75,7 @@ io.on("connection", (socket) => {
 
     io.to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
+      newStats: false,
     });
   });
 
@@ -93,6 +95,7 @@ io.on("connection", (socket) => {
 
     io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
+      newStats: false,
     });
   });
 
@@ -109,6 +112,7 @@ io.on("connection", (socket) => {
 
     io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
+      newStats: false,
     });
   });
 
@@ -136,6 +140,7 @@ io.on("connection", (socket) => {
 
     io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
+      newStats: false,
     });
   });
 
@@ -153,20 +158,30 @@ io.on("connection", (socket) => {
 
     const updatedGame = deal(game);
 
-    io.to(groupId).emit("getNewGame", updatedGame);
+    // io.to(groupId).emit("getNewGame", updatedGame);
+    io.to(groupId).emit("getGame", updatedGame);
   });
 
   // User updates turn
   socket.on("updateTurn", ({ groupId, gameId, turn }) => {
     const gameInfo = updateTurn(socket.id, gameId, turn);
 
-    if (gameInfo.isNewRound) {
+    if (gameInfo.isNewGame) {
+      const updatedGame = deal(gameInfo.game);
+
+      io.to(groupId).emit("getUsers", {
+        users: getUsers(),
+        newStats: true,
+      });
+
+      io.to(groupId).emit("getNewRound", updatedGame);
+    } else if (gameInfo.isNewRound) {
       const updatedGame = deal(gameInfo.game);
 
       io.to(groupId).emit("getNewRound", updatedGame);
     } else if (gameInfo.isNewTurn) {
       const updatedGame = deal(gameInfo.game);
-
+      // console.log("getGame");
       io.to(groupId).emit("getGame", updatedGame);
     }
   });
@@ -181,7 +196,9 @@ io.on("connection", (socket) => {
 
     io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
+      newStats: false,
     });
+
     const game = quitGame(socket.id, gameId);
     io.to(groupId).emit("getGame", game);
   });
@@ -198,6 +215,7 @@ io.on("connection", (socket) => {
 
     io.to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
+      newStats: false,
     });
   });
 
@@ -210,6 +228,7 @@ io.on("connection", (socket) => {
 
     io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
       users: getUsers(),
+      newStats: false,
     });
 
     if (user && user.gameId) {

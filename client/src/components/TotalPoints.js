@@ -16,8 +16,9 @@ const TotalPoints = ({ roundPoints }) => {
           .map((item) => item.pts)
           .reduce((acc, cur) => {
             return acc + cur;
-          }, 0) - totalFirstRoundArtefactPoints
-      : 0;
+          }, 0)
+      : // - totalFirstRoundArtefactPoints
+        0;
 
   const totalCityPoints = roundPoints.length
     ? roundPoints[roundPoints.length - 1].cityPoints

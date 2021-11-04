@@ -16,6 +16,7 @@ const Header = () => {
   const { game } = gameGet;
 
   const logoutHandler = () => {
+    // console.log(socket);
     dispatch(logout());
     socket.emit("userLogout");
   };

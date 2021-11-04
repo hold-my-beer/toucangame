@@ -7,12 +7,14 @@ import GameData from "../components/GameData";
 import Grid from "../components/Grid";
 import Points from "../components/Points";
 import { getGame } from "../actions/gameActions";
+import { listUsers } from "../actions/userActions";
+import { updateStats } from "../actions/userActions";
 
 const IslandScreen = ({ history }) => {
   const dispatch = useDispatch();
 
   const gameGet = useSelector((state) => state.gameGet);
-  const { loading, error, game: game_ } = gameGet;
+  const { loading, error, game } = gameGet;
 
   const gameUpdateTurn = useSelector((state) => state.gameUpdateTurn);
   const { loading: loadingTurn, error: errorTurn, turn } = gameUpdateTurn;
@@ -23,29 +25,52 @@ const IslandScreen = ({ history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { loading: loadingUser, error: errorUser, userInfo } = userLogin;
 
+  const getGameHandler = (game) => {
+    dispatch(getGame(game, userInfo.id));
+  };
+
+  const getNewRoundHandler = (game) => {
+    dispatch(getGame(game, userInfo.id));
+    history.push("/results");
+  };
+
+  const getUsersHandler = ({ users, newStats }) => {
+    // console.log(newStats);
+    if (newStats) {
+      // console.log("newStats");
+      const userIndex = users.findIndex((user) => user.id === userInfo.id);
+
+      if (userIndex !== -1) {
+        const stats = users[userIndex].stats;
+
+        dispatch(updateStats(stats));
+      }
+    }
+
+    dispatch(listUsers(users, userInfo.id));
+  };
+
   useEffect(() => {
-    socket.on("getGame", (game) => {
-      // console.log(game);
-      dispatch(getGame(game, userInfo.id));
-    });
+    socket.on("getUsers", getUsersHandler);
 
-    return socket.off("getGame", (game) => {
-      dispatch(getGame(game, userInfo.id));
-    });
-  }, [dispatch, userInfo.id]);
+    return () => socket.off("getUsers", getUsersHandler);
+  });
 
   useEffect(() => {
-    socket.on("getNewRound", (game) => {
-      // console.log(game);
-      dispatch(getGame(game, userInfo.id));
-      history.push("/results");
-    });
+    socket.on("getGame", getGameHandler);
 
-    return socket.off("getNewRound", (game) => {
-      dispatch(getGame(game, userInfo.id));
-      history.push("/results");
-    });
-  }, [dispatch, userInfo.id, history]);
+    return () => {
+      socket.off("getGame", getGameHandler);
+    };
+  });
+
+  useEffect(() => {
+    socket.on("getNewRound", getNewRoundHandler);
+
+    return () => {
+      socket.off("getNewRound", getNewRoundHandler);
+    };
+  });
 
   // useEffect(() => {
   //   if (game_ && game_.roundNumber > 1 && game_.turnNumber === 1) {
@@ -61,15 +86,15 @@ const IslandScreen = ({ history }) => {
         <Message className="danger" text={error} />
       ) : (
         <>
-          {game_ && (
+          {game && (
             <>
-              <GameData game={game_} />
+              <GameData game={game} />
               <Grid
                 // isMinor={game.isMinor}
                 // cityScenario={game.cityScenario}
                 // deal={game.deal}
                 turn={turn}
-                game={game_}
+                game={game}
                 users={users}
               />
               <Points
@@ -77,7 +102,7 @@ const IslandScreen = ({ history }) => {
                 // artefacts={game.artefacts}
                 // cities={game.cities}
                 turn={turn}
-                game={game_}
+                game={game}
               />
             </>
           )}

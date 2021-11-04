@@ -3,7 +3,9 @@ const deck = require("../data/deck");
 const cityScenarios = require("../data/cityScenarios");
 const artefacts = require("../data/artefacts");
 const cities = require("../data/cities");
-const { default: socket } = require("../client/src/config/socket");
+const { saveStats } = require("../controllers/userController");
+const { updateStats } = require("./users");
+// const { default: socket } = require("../client/src/config/socket");
 
 const games = [];
 
@@ -147,14 +149,24 @@ const updateTurn = (socketId, gameId, turn) => {
       // If it is the last round save the players points
       if (games[gameIndex].turnNumber === 13) {
         if (turn.roundPoints.length) {
-          const artefactPoints = turn.roundPoints[turn.roundPoints.length - 1]
-            .artefactPoints.length
-            ? turn.roundPoints[turn.roundPoints.length - 1].artefactPoints
-                .map((item) => item.pts)
-                .reduce((acc, cur) => {
-                  return acc + cur;
-                }, 0)
-            : 0;
+          let artefactPoints = 0;
+          turn.roundPoints.forEach((round) => {
+            artefactPoints += round.artefactPoints.length
+              ? round.artefactPoints
+                  .map((item) => item.pts)
+                  .reduce((acc, cur) => {
+                    return acc + cur;
+                  }, 0)
+              : 0;
+          });
+          // const artefactPoints = turn.roundPoints[turn.roundPoints.length - 1]
+          //   .artefactPoints.length
+          //   ? turn.roundPoints[turn.roundPoints.length - 1].artefactPoints
+          //       .map((item) => item.pts)
+          //       .reduce((acc, cur) => {
+          //         return acc + cur;
+          //       }, 0)
+          //   : 0;
           const cityPoints = turn.roundPoints[turn.roundPoints.length - 1]
             .cityPoints.length
             ? turn.roundPoints[turn.roundPoints.length - 1].cityPoints
@@ -163,29 +175,31 @@ const updateTurn = (socketId, gameId, turn) => {
                   return acc + cur;
                 }, 0)
             : 0;
-          const bonusPoints = turn.roundPoints[turn.roundPoints.length - 1]
-            .bonusArtefactPoints.length
+          const bonusArtefactPoints = turn.roundPoints[
+            turn.roundPoints.length - 1
+          ].bonusArtefactPoints.length
             ? turn.roundPoints[turn.roundPoints.length - 1].bonusArtefactPoints
                 .map((item) => item.pts)
                 .reduce((acc, cur) => {
                   return acc + cur;
                 }, 0)
-            : 0 +
-              turn.roundPoints[turn.roundPoints.length - 1].bonusCityPoints
-                .length
+            : 0;
+          const bonusCityPoints = turn.roundPoints[turn.roundPoints.length - 1]
+            .bonusCityPoints.length
             ? turn.roundPoints[turn.roundPoints.length - 1].bonusCityPoints
                 .map((item) => item.pts)
                 .reduce((acc, cur) => {
                   return acc + cur;
                 }, 0)
             : 0;
-          const totalPoints = artefactPoints + cityPoints + bonusPoints;
+          const totalPoints =
+            artefactPoints + cityPoints + bonusArtefactPoints + bonusCityPoints;
 
           games[gameIndex].results.players[playerIndex].artefactPoints =
             artefactPoints;
           games[gameIndex].results.players[playerIndex].cityPoints = cityPoints;
           games[gameIndex].results.players[playerIndex].bonusPoints =
-            bonusPoints;
+            bonusArtefactPoints + bonusCityPoints;
           games[gameIndex].results.players[playerIndex].totalPoints =
             totalPoints;
         }
@@ -203,10 +217,48 @@ const updateTurn = (socketId, gameId, turn) => {
 
         games[gameIndex].isBonusMove = false;
 
-        games[gameIndex].turnNumber += 1;
-
         // If it is the last turn start next round
-        if (games[gameIndex].turnNumber === 14) {
+        if (games[gameIndex].turnNumber === 13) {
+          // If it is the last round
+          if (
+            (games[gameIndex].isMinor && games[gameIndex].roundNumber === 2) ||
+            (!games[gameIndex].isMinor && games[gameIndex].roundNumber === 3)
+          ) {
+            updateStats(
+              games[gameIndex].results.players,
+              games[gameIndex].isMinor
+            );
+
+            try {
+              saveStats(
+                games[gameIndex].results.players,
+                games[gameIndex].isMinor
+              );
+            } catch (error) {
+              console.error(error);
+            }
+
+            games[gameIndex].isActive = false;
+
+            games[gameIndex].roundNumber = games[gameIndex].roundNumber + 1;
+            games[gameIndex].turnNumber = 1;
+            games[gameIndex].deck = [...deck];
+            games[gameIndex].cellsLeft = {
+              sand: 8,
+              forest: 7,
+              stone: 6,
+              water: 4,
+              any: 2,
+            };
+
+            return {
+              game: games[gameIndex],
+              isNewTurn: true,
+              isNewRound: true,
+              isNewGame: true,
+            };
+          }
+
           games[gameIndex].roundNumber = games[gameIndex].roundNumber + 1;
           games[gameIndex].turnNumber = 1;
           games[gameIndex].deck = [...deck];
@@ -218,17 +270,34 @@ const updateTurn = (socketId, gameId, turn) => {
             any: 2,
           };
 
-          return { game: games[gameIndex], isNewTurn: true, isNewRound: true };
+          return {
+            game: games[gameIndex],
+            isNewTurn: true,
+            isNewRound: true,
+            isNewGame: false,
+          };
         }
 
-        return { game: games[gameIndex], isNewTurn: true, isNewRound: false };
+        games[gameIndex].turnNumber += 1;
+
+        return {
+          game: games[gameIndex],
+          isNewTurn: true,
+          isNewRound: false,
+          isNewGame: false,
+        };
       }
     }
 
-    return { game: games[gameIndex], isNewTurn: false, isNewRound: false };
+    return {
+      game: games[gameIndex],
+      isNewTurn: false,
+      isNewRound: false,
+      isNewGame: false,
+    };
   }
 
-  return { game: {}, isNewTurn: false, isNewRound: false };
+  return { game: {}, isNewTurn: false, isNewRound: false, isNewGame: false };
 };
 
 const quitGame = (socketId, gameId) => {

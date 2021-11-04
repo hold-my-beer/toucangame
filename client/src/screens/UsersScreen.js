@@ -5,7 +5,7 @@ import socket from "../config/socket";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { listUsers } from "../actions/userActions";
-import { getGame } from "../actions/gameActions";
+// import { getGame } from "../actions/gameActions";
 import { setModal } from "../actions/modalActions";
 
 const UsersScreen = ({ history }) => {
@@ -18,33 +18,54 @@ const UsersScreen = ({ history }) => {
   const { loading: loadingList, error: errorList, users } = userList;
 
   useEffect(() => {
-    if (!userInfo) {
+    if (userInfo) {
+      socket.emit("userLogin", {
+        id: userInfo.id,
+        name: userInfo.name,
+        email: userInfo.email,
+        stats: userInfo.stats,
+      });
+    } else {
       history.push("/");
     }
   }, [history, userInfo]);
 
+  const getUsersHandler = ({ users, newStats }) => {
+    // console.log(newStats);
+    // if (newStats) {
+    //   console.log("newStats");
+    //   const userIndex = users.findIndex((user) => user.id === userInfo.id);
+
+    //   if (userIndex !== -1) {
+    //     const stats = users[userIndex].stats;
+
+    //     dispatch(updateStats(stats));
+    //   }
+    // }
+
+    dispatch(listUsers(users, userInfo.id));
+  };
+
   useEffect(() => {
-    socket.on("getUsers", ({ users }) => {
-      dispatch(listUsers(users, userInfo.id));
-    });
+    socket.on("getUsers", getUsersHandler);
 
-    return socket.off("getUsers", ({ users }) => {
-      dispatch(listUsers(users, userInfo.id));
-    });
-  }, [dispatch, userInfo.id]);
+    return () => socket.off("getUsers", getUsersHandler);
+  });
 
-  useEffect(() => {
-    socket.on("getNewGame", (game) => {
-      // console.log(game);
-      dispatch(getGame(game, userInfo.id));
-      history.push("/minor-island");
-    });
+  // useEffect(() => {
+  //   socket.on("getNewGame", (game) => {
+  //     // console.log(game);
+  //     dispatch(getGame(game, userInfo.id));
+  //     // history.push("/minor-island");
+  //   });
 
-    return socket.off("getNewGame", (game) => {
-      dispatch(getGame(game, userInfo.id));
-      history.push("/minor-island");
-    });
-  }, [dispatch, userInfo.id]);
+  //   return () => {
+  //     socket.off("getNewGame", (game) => {
+  //       dispatch(getGame(game, userInfo.id));
+  //       // history.push("/minor-island");
+  //     });
+  //   };
+  // }, [dispatch, history, userInfo.id]);
 
   // useEffect(() => {
   //   socket.on("getGame", (game) => {
@@ -121,7 +142,8 @@ const UsersScreen = ({ history }) => {
         <Message className="danger" text={error || errorList} />
       ) : (
         users &&
-        users.length !== 0 && (
+        users.groupUsers &&
+        users.freeUsers && (
           <div className="userLists">
             <div className="userList">
               <h3 className="mb-1">Ваша группа</h3>

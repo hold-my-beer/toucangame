@@ -1,10 +1,16 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+// import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
+import {
+  GAME_GET_RESET,
+  GAME_UPDATE_TURN_RESET,
+} from "../constants/gameConstants";
 
 const ResultScreen = ({ history }) => {
+  const dispatch = useDispatch();
+
   const gameGet = useSelector((state) => state.gameGet);
   const { loading, error, game } = gameGet;
 
@@ -22,6 +28,14 @@ const ResultScreen = ({ history }) => {
       return () => clearTimeout(id);
     }
   }, [history, game]);
+
+  const quitGameHandler = () => {
+    dispatch({ type: GAME_GET_RESET });
+
+    dispatch({ type: GAME_UPDATE_TURN_RESET });
+
+    history.push("/users");
+  };
 
   return (
     <div className="results">
@@ -63,9 +77,16 @@ const ResultScreen = ({ history }) => {
                 </tbody>
               </table>
               {!game.isActive && (
-                <Link to="/users" className="btn btn-primary">
+                // <Link to="/users" className="btn btn-primary mt-1">
+                //   Закончить игру
+                // </Link>
+                <button
+                  type="button"
+                  className="btn btn-primary mt-1"
+                  onClick={quitGameHandler}
+                >
                   Закончить игру
-                </Link>
+                </button>
               )}
             </>
           )

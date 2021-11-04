@@ -128,7 +128,7 @@ export const updatePoints = (roads, roundPoints, game) => {
   const {
     isMinor,
     roundNumber,
-    cityScenario,
+    // cityScenario,
     artefacts: gameArtefacts,
     bonusArtefact,
     cities: gameCities,

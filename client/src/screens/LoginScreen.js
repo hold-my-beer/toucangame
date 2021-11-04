@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import socket from "../config/socket";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { login } from "../actions/userActions";
@@ -15,7 +16,15 @@ const LoginScreen = ({ history }) => {
   const { loading, error, userInfo } = userLogin;
 
   useEffect(() => {
-    if (userInfo) {
+    if (userInfo && userInfo.id) {
+      const user = {
+        id: userInfo.id,
+        name: userInfo.name,
+        friends: userInfo.friends,
+        stats: userInfo.stats,
+      };
+      socket.emit("userLogin", user);
+
       history.push("/users");
     }
   }, [history, userInfo]);
