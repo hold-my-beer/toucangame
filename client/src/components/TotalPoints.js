@@ -1,6 +1,6 @@
 import React from "react";
 
-const TotalPoints = ({ roundPoints }) => {
+const TotalPoints = ({ roundPoints, isMinor }) => {
   const totalFirstRoundArtefactPoints =
     roundPoints.length >= 1
       ? roundPoints[0].artefactPoints
@@ -13,6 +13,16 @@ const TotalPoints = ({ roundPoints }) => {
   const totalSecondRoundArtefactPoints =
     roundPoints.length >= 2
       ? roundPoints[1].artefactPoints
+          .map((item) => item.pts)
+          .reduce((acc, cur) => {
+            return acc + cur;
+          }, 0)
+      : // - totalFirstRoundArtefactPoints
+        0;
+
+  const totalThirdRoundArtefactPoints =
+    roundPoints.length === 3
+      ? roundPoints[2].artefactPoints
           .map((item) => item.pts)
           .reduce((acc, cur) => {
             return acc + cur;
@@ -42,34 +52,50 @@ const TotalPoints = ({ roundPoints }) => {
   const totalOverallPoints =
     totalFirstRoundArtefactPoints +
     totalSecondRoundArtefactPoints +
+    totalThirdRoundArtefactPoints +
     totalCityPoints +
     totalBonusPoints;
 
   return (
     <div className="totalPoints">
-      <div className="totalPointsItem totalFirstRoundArtefactPoints">
-        <div className="totalPointValue">
-          {totalFirstRoundArtefactPoints ? totalFirstRoundArtefactPoints : ""}
+      <div className="totalRoundPoints">
+        <div className="totalPointsItem totalFirstRoundArtefactPoints">
+          <div className="totalPointValue">
+            {totalFirstRoundArtefactPoints ? totalFirstRoundArtefactPoints : ""}
+          </div>
         </div>
-      </div>
-      <div className="totalPointsItem totalSecondRoundArtefactPoints">
-        <div className="totalPointValue">
-          {totalSecondRoundArtefactPoints ? totalSecondRoundArtefactPoints : ""}
+        <div className="totalPointsItem totalSecondRoundArtefactPoints">
+          <div className="totalPointValue">
+            {totalSecondRoundArtefactPoints
+              ? totalSecondRoundArtefactPoints
+              : ""}
+          </div>
         </div>
+        {!isMinor && (
+          <div className="totalPointsItem totalThirdRoundArtefactPoints">
+            <div className="totalPointValue">
+              {totalThirdRoundArtefactPoints
+                ? totalThirdRoundArtefactPoints
+                : ""}
+            </div>
+          </div>
+        )}
       </div>
-      <div className="totalPointsItem totalCityPoints">
-        <div className="totalPointValue">
-          {totalCityPoints ? totalCityPoints : ""}
+      <div className="totalNonRoundPoints">
+        <div className="totalPointsItem totalCityPoints">
+          <div className="totalPointValue">
+            {totalCityPoints ? totalCityPoints : ""}
+          </div>
         </div>
-      </div>
-      <div className="totalPointsItem totalBonusPoints">
-        <div className="totalPointValue">
-          {totalBonusPoints ? totalBonusPoints : ""}
+        <div className="totalPointsItem totalBonusPoints">
+          <div className="totalPointValue">
+            {totalBonusPoints ? totalBonusPoints : ""}
+          </div>
         </div>
-      </div>
-      <div className="totalPointsItem totalOverallPoints">
-        <div className="totalPointValue">
-          {totalOverallPoints ? totalOverallPoints : ""}
+        <div className="totalPointsItem totalOverallPoints">
+          <div className="totalPointValue">
+            {totalOverallPoints ? totalOverallPoints : ""}
+          </div>
         </div>
       </div>
     </div>

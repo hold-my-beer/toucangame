@@ -65,8 +65,8 @@ const initiateGame = (users, isMinor) => {
       any: 2,
     },
     cityScenario: cityScenarios[cityScenarioIndex],
-    artefacts,
-    bonusArtefact: artefacts[bonusArtefactIndex],
+    artefacts: [...artefacts],
+    bonusArtefact: { ...[...artefacts][bonusArtefactIndex] },
     cities,
     players: users,
     results: {
@@ -251,8 +251,12 @@ const updateTurn = (socketId, gameId, turn) => {
               any: 2,
             };
 
+            const finishedGame = { ...games[gameIndex] };
+
+            games.splice(gameIndex, 1);
+
             return {
-              game: games[gameIndex],
+              game: finishedGame,
               isNewTurn: true,
               isNewRound: true,
               isNewGame: true,

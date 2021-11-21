@@ -9,14 +9,18 @@ const CityBonus = ({ city, playersNumber }) => {
           : city.bonusAwarded[0] && city.bonusAwarded[1] && "awarded"
       }`}
     >
-      <span className="cityBonusHeader">{city.name}</span>
-      <span>
-        {playersNumber < 5
-          ? city.bonusPoints[0]
-          : !city.bonusAwarded[0]
-          ? city.bonusPoints[0]
-          : city.bonusPoints[1]}
-      </span>
+      <div>
+        <span className="cityBonusHeader">{city.name}</span>
+      </div>
+      <div>
+        <span>
+          {playersNumber < 5
+            ? city.bonusPoints[0]
+            : !city.bonusAwarded[0]
+            ? city.bonusPoints[0]
+            : city.bonusPoints[1]}
+        </span>
+      </div>
     </div>
   );
 };

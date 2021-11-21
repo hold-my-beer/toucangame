@@ -1,35 +1,42 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { HexGrid, Layout, Path, Text, Hexagon, HexUtils } from "react-hexgrid";
-import { minorGrid } from "../data/minorGrid";
+import { minorGrid, majorGrid } from "../data/grid";
+import ProgressBar from "./ProgressBar";
+import TurnHexes from "./TurnHexes";
 import { pathsContain } from "../utils";
 import { updateTurn } from "../actions/gameActions";
 
 const Grid = ({ turn, game, users }) => {
-  const [hexagons, setHexagons] = useState(minorGrid);
+  const [hexagons, setHexagons] = useState(
+    game.isMinor ? minorGrid : majorGrid
+  );
   const [pathStart, setPathStart] = useState(null);
   const [paths, setPaths] = useState(turn ? turn.paths : []);
   const [hexStart, setHexStart] = useState(null);
-  const [hexUsed, setHexUsed] = useState([...game.deal]);
+  const [dealLeft, setDealLeft] = useState([...game.deal]);
   const [moveMade, setMoveMade] = useState(false);
 
   const dispatch = useDispatch();
 
   const onClick = (e, source, hex) => {
-    const landscapeIndex = hexUsed.indexOf(hex.landscape);
-    const anyIndex = hexUsed.indexOf("any");
+    console.log(e.target);
+    console.log(source);
+    console.log(hex);
+    const landscapeIndex = dealLeft.indexOf(hex.landscape);
+    const anyIndex = dealLeft.indexOf("any");
 
     // Don't allow to make more than one move except if it is bonus move
     if (!moveMade || (turn && turn.bonusMoves.length)) {
-      // Hex clicked is not in the deal or been used
       if (
+        // Hex clicked is not in the deal
         (anyIndex === -1 && landscapeIndex === -1) ||
         // The same hex clicked
         (pathStart && HexUtils.equals(source.state.hex, pathStart)) ||
         // Hex clicked is not a neighbour
         (pathStart && HexUtils.distance(source.state.hex, pathStart)) >= 2
       ) {
-        setHexUsed([...game.deal]);
+        setDealLeft([...game.deal]);
         setPathStart(null);
         setHexStart(null);
 
@@ -44,11 +51,11 @@ const Grid = ({ turn, game, users }) => {
       // No path initiated yet
       else if (!pathStart) {
         landscapeIndex !== -1
-          ? setHexUsed([
-              ...hexUsed.filter((item, index) => index !== landscapeIndex),
+          ? setDealLeft([
+              ...dealLeft.filter((item, index) => index !== landscapeIndex),
             ])
-          : setHexUsed([
-              ...hexUsed.filter((item, index) => index !== anyIndex),
+          : setDealLeft([
+              ...dealLeft.filter((item, index) => index !== anyIndex),
             ]);
         setPathStart(source.state.hex);
         setHexStart(hex);
@@ -68,11 +75,11 @@ const Grid = ({ turn, game, users }) => {
       // Hex clicked is a neighbour
       else {
         landscapeIndex !== -1
-          ? setHexUsed([
-              ...hexUsed.filter((item, index) => index !== landscapeIndex),
+          ? setDealLeft([
+              ...dealLeft.filter((item, index) => index !== landscapeIndex),
             ])
-          : setHexUsed([
-              ...hexUsed.filter((item, index) => index !== anyIndex),
+          : setDealLeft([
+              ...dealLeft.filter((item, index) => index !== anyIndex),
             ]);
         const newPath = { start: pathStart, end: source.state.hex };
         if (!pathsContain(newPath, paths)) {
@@ -113,22 +120,24 @@ const Grid = ({ turn, game, users }) => {
     if (turn && turn.bonusMoves.length && game && game.deal.length) {
       // console.log("bonus move");
       setMoveMade(false);
-      setHexUsed([...game.deal]);
+      setDealLeft([...game.deal]);
     }
   }, [turn, game]);
 
   return (
     <div className="island">
-      <h2 className="text-center my-1 mb-2">
+      {/* <h2 className="text-center mb-2">
         {game.isMinor ? "Малый остров" : "Большой остров"}
-      </h2>
-      <div className="grid">
-        <HexGrid width={600} height={500} viewBox="0 0 85 85">
+      </h2> */}
+      <TurnHexes deal={game.deal} isBonusMove={game.isBonusMove} />
+      <div className="gridContainer">
+        <HexGrid width={335} height={335} viewBox="0 0 100 100">
           <Layout
-            size={{ x: 5, y: 5 }}
+            size={game.isMinor ? { x: 5.4, y: 5.4 } : { x: 4.6, y: 4.6 }}
             flat={false}
-            spacing={1.1}
-            origin={{ x: 45, y: 47 }}
+            spacing={game.isMinor ? 1.1 : 1.1}
+            origin={{ x: 52, y: 50 }}
+            // onClick={(e) => console.log(e.target)}
           >
             {hexagons.map((hex, i) => (
               <Hexagon
@@ -150,20 +159,26 @@ const Grid = ({ turn, game, users }) => {
                 ) : (
                   <image
                     href={hex.artefact}
-                    height="5"
-                    width="5"
-                    x="-2.5"
-                    y="-2.5"
+                    height="7"
+                    width="7"
+                    x="-4"
+                    y="-4"
                   />
                 )}
               </Hexagon>
             ))}
             {turn.paths.map((item, i) => (
-              <Path key={i} start={item.start} end={item.end} />
+              <Path
+                key={i}
+                start={item.start}
+                end={item.end}
+                // onClick={(e, h) => console.log("path")}
+              />
             ))}
           </Layout>
         </HexGrid>
       </div>
+      <ProgressBar />
     </div>
   );
 };

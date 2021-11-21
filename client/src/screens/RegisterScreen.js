@@ -35,10 +35,10 @@ const RegisterScreen = ({ history }) => {
 
   return (
     <div className="register">
-      <h1 className="large">Регистрация</h1>
-      <p className="lead">
+      <h1>Регистрация</h1>
+      {/* <p className="lead">
         Зарегистрируйтесь, чтобы сохранять достижения и играть с друзьями
-      </p>
+      </p> */}
       {message && <Message className="danger" text={message} />}
       {error && <Message className="danger" text={error} />}
       {loading && <Loader />}
@@ -49,7 +49,7 @@ const RegisterScreen = ({ history }) => {
             type="text"
             id="name"
             name="name"
-            placeholder="Введите имя (будет видно всем)..."
+            placeholder="Введите имя (видно игрокам)..."
             onChange={(e) => setName(e.target.value)}
           />
         </div>

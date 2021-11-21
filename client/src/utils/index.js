@@ -233,7 +233,8 @@ export const updatePoints = (roads, roundPoints, game) => {
           });
         } else {
           const qty =
-            currentRoundPoints.artefactPoints[artefactIndex].totalQty + 1;
+            currentRoundPoints.artefactPoints[artefactIndex].totalQty +
+            artefact.qty;
 
           currentRoundPoints.artefactPoints[artefactIndex] = {
             name: artefact.name,
@@ -242,9 +243,10 @@ export const updatePoints = (roads, roundPoints, game) => {
                   (acc, cur, index) => {
                     if (
                       index <
-                      currentRoundPoints.artefactPoints[artefactIndex]
-                        .totalQty +
-                        1
+                      // currentRoundPoints.artefactPoints[artefactIndex]
+                      //   .totalQty +
+                      //   1
+                      qty
                     ) {
                       return acc + cur;
                     }
@@ -256,9 +258,10 @@ export const updatePoints = (roads, roundPoints, game) => {
                   (acc, cur, index) => {
                     if (
                       index <
-                      currentRoundPoints.artefactPoints[artefactIndex]
-                        .totalQty +
-                        1
+                      // currentRoundPoints.artefactPoints[artefactIndex]
+                      //   .totalQty +
+                      //   1
+                      qty
                     ) {
                       return acc + cur;
                     }
@@ -270,10 +273,13 @@ export const updatePoints = (roads, roundPoints, game) => {
           };
         }
       });
-      // Check if two artefacts are connected without city to award artefact bonus points
+      // Check if two / three artefacts are connected without city to award artefact bonus points
     } else {
       road.artefacts.forEach((artefact) => {
-        if (artefact.qty === 2) {
+        if (
+          (isMinor && artefact.qty === 2) ||
+          (!isMinor && artefact.qty === 3)
+        ) {
           currentRoundPoints.bonusArtefactPoints.push({
             name: bonusArtefact.name,
             pts: bonusArtefact.bonusPoints,
@@ -285,7 +291,11 @@ export const updatePoints = (roads, roundPoints, game) => {
 
   // Award artefact bonus points
   currentRoundPoints.artefactPoints.forEach((artefact) => {
-    if (artefact.name === bonusArtefact.name && artefact.totalQty >= 2) {
+    if (
+      artefact.name === bonusArtefact.name &&
+      ((isMinor && artefact.totalQty === 2) ||
+        (!isMinor && artefact.totalQty === 3))
+    ) {
       const bonusArtefactAllRounds = roundPoints
         .map((round) => round.bonusArtefactPoints)
         .flat();

@@ -22,7 +22,7 @@ const ResultScreen = ({ history }) => {
         (!game.isMinor && game.roundNumber - 1 < 3))
     ) {
       const id = setTimeout(() => {
-        history.push("/minor-island");
+        history.push("/island");
       }, 5000);
 
       return () => clearTimeout(id);
@@ -52,14 +52,14 @@ const ResultScreen = ({ history }) => {
               <p className="lead">{`${
                 game.isMinor ? "Малая" : "Большая"
               } игра. Раунд ${game.roundNumber - 1}`}</p>
-              <table>
+              <table className="resultsTable">
                 <thead>
                   <tr>
-                    <th>Игрок</th>
-                    <th>Артефакты</th>
-                    <th>Города</th>
-                    <th>Бонусы</th>
-                    <th>Итого</th>
+                    <th className="playerColumn">Игрок</th>
+                    <th className="artefactColumn">Артефакты</th>
+                    <th className="cityColumn">Города</th>
+                    <th className="bonusColumn">Бонусы</th>
+                    <th className="totalColumn">Итого</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -67,11 +67,13 @@ const ResultScreen = ({ history }) => {
                     game.results.players.length &&
                     game.results.players.map((player) => (
                       <tr key={player.id}>
-                        <td>{player.name}</td>
-                        <td>{player.artefactPoints}</td>
-                        <td>{player.cityPoints}</td>
-                        <td>{player.bonusPoints}</td>
-                        <td>{player.totalPoints}</td>
+                        <td className="playerColumn">{player.name}</td>
+                        <td className="artefactColumn">
+                          {player.artefactPoints}
+                        </td>
+                        <td className="cityColumn">{player.cityPoints}</td>
+                        <td className="bonusColumn">{player.bonusPoints}</td>
+                        <td className="totalColumn">{player.totalPoints}</td>
                       </tr>
                     ))}
                 </tbody>

@@ -13,16 +13,38 @@ import Opponents from "./Opponents";
 const GameData = ({ game }) => {
   return (
     <div className="gameData">
-      <TurnHexes
+      <div className="roundNumber">
+        <span>Раунд: {game.roundNumber}</span>
+      </div>
+
+      <div className="turnNumber">
+        <span>Ход: {game.turnNumber}</span>
+      </div>
+      {/* <div className="locations">
+        <span>Локации:</span>
+      </div> */}
+      {/* <TurnHexes
         deal={game.deal}
         roundNumber={game.roundNumber}
         turnNumber={game.turnNumber}
         isBonusMove={game.isBonusMove}
-      />
+      /> */}
       <CellsLeft cellsLeft={game.cellsLeft} />
+      {/* <div className="bonuses">
+        <span>Бонусы:</span>
+      </div> */}
+      {/* {game.isBonusMove ? (
+        <div className="turnNumber">
+          <span>Бонусный ход</span>
+        </div>
+      ) : (
+        <div className="turnNumber">
+          <span>Ход: {game.turnNumber}</span>
+        </div>
+      )} */}
       <ArtefactBonus bonusArtefact={game.bonusArtefact} />
       <CityBonuses cities={game.cities} playersNumber={game.players.length} />
-      <Opponents users={game.players} />
+      {/* <Opponents users={game.players} /> */}
     </div>
   );
 };

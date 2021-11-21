@@ -27,8 +27,8 @@ const ArtefactBonus = ({ bonusArtefact }) => {
   // };
 
   return (
-    <div className="bonusArtefact mb-1">
-      <h4 className="text-center mb-1">Призовой артефакт</h4>
+    <div className="bonusArtefact">
+      {/* <h4 className="text-center">Призовой артефакт:</h4> */}
       <div
         className={`bonusArtefactCard ${
           bonusArtefact.bonusAwarded && "awarded"

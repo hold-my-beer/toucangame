@@ -4,7 +4,7 @@
   --dark-color: #331400;
   --light-color: #ffe0cc;
   --danger-color: #ff0000;
-  --success-color: #00ff00;
+  --success-color: #80ff00;
   --sand-color: #ffff99;
   --forest-color: #66ff33;
   --stone-color: #777;
@@ -21,8 +21,10 @@ body {
   font-family: "Open Sans", sans-serif;
   font-size: 1rem;
   line-height: 1.6;
-  background-color: var(--light-color);
-  color: #000;
+  /* background-color: var(--light-color); */
+  background: url("img/pexels-ylanite-koppens-697662_1920x1278.jpg")
+    center/cover no-repeat fixed;
+  color: var(--light-color);
 }
 
 a {
@@ -40,12 +42,10 @@ img {
 
 /* Utilities */
 .container {
-  /* max-width: 1100px; */
-  min-width: 900px;
   width: 90%;
-  margin: 3rem auto;
+  min-width: 337.5px;
+  margin: 0 auto;
   overflow: hidden;
-  padding: 0 2rem;
 }
 
 /* Margin */
@@ -113,7 +113,7 @@ img {
 .x-large {
   font-size: 4rem;
   line-height: 1.2;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 }
 
 .large {
@@ -138,12 +138,17 @@ img {
 /* Buttons */
 .btn {
   display: inline-block;
+  width: 100%;
+  min-width: 200px;
+  max-width: 400px;
+  margin: 0 auto 1rem auto;
   padding: 0.5rem 1.2rem;
-  margin-right: 0.5rem;
-  margin-bottom: 1rem;
+  /* margin-right: 0.5rem;
+  margin-bottom: 1rem; */
   font-family: inherit;
   font-size: 1rem;
-  color: var(--dark-color);
+  /* color: var(--dark-color); */
+  color: var(--light-color);
   background-color: var(--light-color);
   border: 1px solid;
   border-radius: 5px;
@@ -162,7 +167,7 @@ img {
 
 .btn-primary {
   background-color: var(--primary-color);
-  color: var(--light-color);
+  /* color: var(--dark-color); */
   border: none;
 }
 
@@ -174,7 +179,7 @@ img {
 
 .btn-danger {
   background-color: var(--danger-color);
-  color: var(--light-color);
+  /* color: var(--light-color); */
   border: none;
 }
 
@@ -183,16 +188,24 @@ img {
 }
 
 /* Forms */
-.form,
+/* .form, */
 .form-group {
   margin: 1rem 0;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .form input[type="text"],
 .form input[type="email"],
 .form input[type="password"] {
   display: block;
-  width: 400px;
+  /* width: 400px; */
+  width: 100%;
   font-size: 1.2rem;
   padding: 0.2rem 1rem;
   border: 1px solid #0099ff;
@@ -207,9 +220,10 @@ img {
 th,
 td {
   min-width: 100px;
-  padding: 0.2rem 0.5rem;
+  padding: 0.2rem 1rem;
   text-align: center;
   /* color: #fff; */
+  border: 1px solid var(--sand-color);
 }
 
 thead tr {
@@ -227,6 +241,17 @@ tbody tr:nth-child(even) {
   background-color: var(--primary-color);
 }
 
+/* Overlay */
+.dark-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
 /* Modal */
 .modal {
   position: fixed;
@@ -238,10 +263,11 @@ tbody tr:nth-child(even) {
   width: 100%;
   height: 100%;
   /* margin: auto; */
+  padding: 1rem;
   z-index: 2;
   color: var(--light-color);
-  background-color: var(--primary-color);
-  opacity: 0.9;
+  background-color: var(--dark-color);
+  opacity: 0.97;
 }
 
 .modal.visible {
@@ -251,14 +277,15 @@ tbody tr:nth-child(even) {
 
 /* Messages */
 .message {
-  width: 500px;
-  margin-bottom: 0.5rem;
+  /* width: 500px; */
+  margin: 1rem 0;
   padding: 0.5rem 1.5rem;
-  color: var(--dark-color);
+  color: var(--light-color);
 }
 
 .message.danger {
   background-color: var(--danger-color);
+  /* color: var(--light-color); */
 }
 
 .message.success {
@@ -306,47 +333,54 @@ tbody tr:nth-child(even) {
   }
 }
 
-/* Landing Page*/
-.landing,
-.register,
-.login,
-.usersOnline,
-.results {
-  margin: 8rem auto;
-}
-
 /* Navbar */
 .navbar {
   display: flex;
+  position: absolute;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0.7rem 2rem;
-  position: fixed;
-  z-index: 1;
   width: 100%;
+  min-width: 337.5px;
+  padding: 1rem 5%;
   top: 0;
-  background-color: var(--light-color);
-  border-bottom: solid 1px var(--primary-color);
+}
+
+/* Pages */
+.landing,
+.register,
+.login,
+.results,
+.usersOnline {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.landing {
+  min-height: 100vh;
+  margin: auto;
+}
+
+.login,
+.register,
+.usersOnline,
+.results {
+  margin: 6rem 0 2rem 0;
 }
 
 /* Users Online */
 .userLists {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: flex-start;
-  /* width: 100%; */
+  width: 100%;
+  margin-top: 1rem;
 }
 
 .userList {
-  /* width: 50%; */
-  min-width: 300px;
-  margin-right: 1rem;
-}
-
-.userList h3 {
-  color: var(--primary-color);
+  max-width: 350px;
+  margin: 0 auto 2rem auto;
+  text-align: start;
 }
 
 .userListItem {
@@ -354,58 +388,110 @@ tbody tr:nth-child(even) {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0.2rem 1rem;
+  width: 100%;
+  padding: 0.2rem 0.5rem;
   margin-bottom: 0.5rem;
   color: var(--light-color);
   background-color: var(--primary-color);
   border-radius: 5px;
 }
 
-.userListItem .btn {
+.userListItemButtons .btn {
+  min-width: 160px;
   font-size: 0.8rem;
   margin-bottom: 0;
+  padding: 0.4rem 0.7rem;
 }
 
 .userListItemData {
-  margin-right: 1rem;
+  margin-right: 0.5rem;
+  text-align: start;
+}
+
+.launchGame {
+  margin-top: 1rem;
 }
 
 /* IslandScreen */
 .islandScreen {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-top: 3rem;
+  /* display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; */
+  display: grid;
+  grid-template-areas:
+    "gameData"
+    "island"
+    "points";
+  /* gap: 0.5rem; */
+  row-gap: 0.5rem;
+  column-gap: 2rem;
+  max-width: 337.5px;
+  margin: 4rem auto 1rem auto;
 }
 
 .island {
   /* position: relative; */
-  min-width: 600px;
-  width: 70%;
-  margin: 0 2rem;
+  /* min-width: 600px; */
+  grid-area: island;
+  width: 100%;
+  /* margin: 0 2rem; */
 }
+
+.turnHexes {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 53px;
+  margin-bottom: 0.5rem;
+}
+
+.turnHexes div {
+  width: 130px;
+}
+
+.turnHexes span {
+  margin-right: 1rem;
+}
+
+.turnHexesContainer {
+  display: inline-block;
+}
+
+.turnHexesContainer span {
+  color: var(--primary-color);
+}
+
+.gridContainer {
+  text-align: center;
+}
+
+/* .gridContainer .grid {
+  margin: 0 auto;
+} */
 
 /* Hexagons */
 
 svg g.sand {
   fill: var(--sand-color);
-  fill-opacity: 0.7;
+  fill-opacity: 0.9;
 }
 
 svg g.forest {
   fill: var(--forest-color);
-  fill-opacity: 0.7;
+  fill-opacity: 0.9;
 }
 
 svg g.stone {
   fill: var(--stone-color);
-  fill-opacity: 0.7;
+  fill-opacity: 0.9;
 }
 
 svg g.water {
   fill: var(--water-color);
-  fill-opacity: 0.7;
+  fill-opacity: 0.9;
 }
 
 svg g:hover {
@@ -415,100 +501,123 @@ svg g:hover {
 
 svg g .active {
   stroke: orange;
-  stroke-width: 0.5;
+  stroke-width: 1;
   stroke-opacity: 0.9;
 }
 svg g text {
-  font-size: 0.17em;
-  fill: #000;
-  fill-opacity: 0.7;
+  font-size: 0.35rem;
+  fill: var(--dark-color);
+  fill-opacity: 0.9;
   transition: fill-opacity 0.5s;
   stroke: none;
 }
 svg path {
   fill: none;
-  stroke: sandybrown;
-  stroke-width: 0.05rem;
-  stroke-opacity: 0.9;
+  /* stroke: sandybrown; */
+  stroke: var(--primary-color);
+  stroke-width: 1.5;
+  stroke-opacity: 0.7;
   stroke-linecap: round;
   stroke-linejoin: round;
+  /* z-index: 10; */
+}
+/* To make onClick on path work */
+path {
+  pointer-events: visibleFill;
 }
 
-.city {
+/* .city {
   font-size: 0.25rem;
   color: var(--dark-color);
-}
-
-.points,
-.gameData {
-  min-width: 250px;
-  width: 30%;
-}
+} */
 
 /* Game Data */
 .gameData {
+  /* display: none; */
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
+  grid-area: gameData;
+  min-width: 289px;
+  /* margin-bottom: 0.5rem; */
 }
 
-/* Turn hexes */
-.turnHexes {
-  width: 100%;
-  transition: width 5s;
+/* .locations,
+.bonuses {
+  width: 25%;
+} */
+
+.roundNumber,
+.turnNumber {
+  width: 25%;
 }
 
-.turnProgressContainer {
-  width: 100%;
-  height: 15px;
-  background-color: #ccc;
-  border-radius: 7px;
+.turnNumber {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  min-height: 50px;
 }
 
-.turnProgress {
-  /* width: 20%; */
-  height: 15px;
-  background-color: var(--water-color);
-  border-radius: 7px;
+.bonusArtefact {
+  width: 20%;
+}
+
+.cellsLeft,
+.cityBonuses {
+  width: 50%;
+}
+
+.roundNumber,
+.turnNumber,
+.cellsLeft,
+.bonusArtefact,
+.cityBonuses {
+  /* width: 37.5%; */
+  text-align: center;
 }
 
 /* CellsLeft */
-.cellsLeft {
-  /* position: absolute;
-  top: 50;
-  left: 0; */
-  text-align: center;
-  fill-opacity: 0.7;
-}
-
 .cellsLeft svg g:hover {
   fill-opacity: unset;
   cursor: default;
 }
 
 .cellsLeft text {
-  font-size: 0.4rem;
+  font-size: 3rem;
 }
 
 /* Bonus Artefact */
-.bonusArtefact {
+/* .bonusArtefact {
   text-align: center;
-}
+} */
 
-.bonusArtefactCard {
+.bonusArtefactCard,
+.cityBonusCard {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 70px;
-  height: 90px;
-  margin: 0 auto;
-  padding-top: 0.5rem;
+  width: 30px;
+  height: 40px;
+  /* margin: 0 auto; */
+  /* padding: 0.5rem; */
+  font-size: 0.8rem;
   background-color: var(--sand-color);
   border: 3px solid var(--primary-color);
   border-radius: 5px;
   color: var(--primary-color);
+}
+
+.bonusArtefactCard {
+  margin: 0 auto;
+}
+
+.cityBonusCard {
+  margin-right: 0.2rem;
 }
 
 /* .awarded {
@@ -516,8 +625,8 @@ svg path {
 } */
 
 .bonusArtefactImage {
-  width: 50px;
-  height: 50px;
+  width: 20px;
+  height: 20px;
 }
 
 .bonusArtefactImage img {
@@ -527,12 +636,12 @@ svg path {
 }
 
 /* City Bonuses */
-.cityBonuses {
+/* .cityBonuses {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
+} */
 
 .cityBonusItems {
   display: flex;
@@ -541,7 +650,7 @@ svg path {
   align-items: center;
 }
 
-.cityBonusCard {
+/* .cityBonusCard {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -555,10 +664,29 @@ svg path {
   border: 3px solid var(--primary-color);
   border-radius: 5px;
   color: var(--primary-color);
-}
+} */
 
 .cityBonusHeader {
   color: var(--dark-color);
+}
+
+/* Progress Bar */
+.progressBarContainer {
+  /* display: none; */
+  /* grid-area: "progress"; */
+  width: 100%;
+  max-width: 335px;
+  height: 15px;
+  margin: 0 auto;
+  background-color: #ccc;
+  border-radius: 7px;
+}
+
+.progressBar {
+  /* width: 20%; */
+  height: 15px;
+  background-color: var(--water-color);
+  border-radius: 7px;
 }
 
 /* Opponents */
@@ -594,32 +722,57 @@ svg path {
 }
 
 /* Points */
+.points {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  /* display: grid;
+  grid-template-areas:
+    "artefactPoints cityPoints"
+    "bonusPoints totalPoints";
+  grid-template-rows: 60% 40%;
+  grid-template-columns: 60% 40%; */
+  grid-area: points;
+  min-width: 289px;
+  /* max-width: 390px; */
+  margin: 0 auto;
+  font-size: 0.8rem;
+  text-align: center;
+  color: var(--dark-color);
+}
 
 .artefactPoints {
+  /* grid-area: artefactPoints; */
+  width: 60%;
   background-color: var(--primary-color);
-  padding: 1rem;
+  padding: 0.5rem;
 }
 
 .artefactPointsItem {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
+  margin-bottom: 0.2rem;
 }
 
 .artefactPointsPicture {
   width: 25px;
-  height: 35px;
+  height: 25px;
 }
 
 .artefactPointsPicture img {
-  width: 100%;
-  margin: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  /* margin: auto; */
 }
 
 .artefactPointsValueCircle,
 .artefactPointsValueRectangle {
-  background-color: var(--light-color);
+  background-color: var(--sand-color);
 }
 
 /* .artefactPointsValueCircle .awarded,
@@ -629,37 +782,43 @@ svg path {
 
 .artefactPointsValueCircle {
   /* padding: 0.1rem 0.7rem; */
-  width: 27px;
-  height: 27px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
-  text-align: center;
+  /* text-align: center; */
 }
 
 .artefactPointsValueRectangle {
-  padding: 0.1rem 1rem;
+  height: 25px;
+  padding: 0.1rem 0.5rem;
   border-radius: 5px;
+  /* text-align: center; */
 }
 
 .cityPoints {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
-  flex-wrap: wrap;
-  height: 130px;
+  /* grid-area: cityPoints; */
+  /* flex-wrap: wrap; */
+  width: 40%;
+  /* height: 100%; */
   background-color: var(--water-color);
-  padding: 1rem;
+  padding: 0.5rem;
 }
 
 .cityPointsItem {
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 0.3rem;
+  width: 100%;
+  /* margin: 0 auto 0.2rem auto; */
+  margin-bottom: 0.2rem;
 }
 
-.cityPointsFrom,
+/* .cityPointsFrom,
 .cityPointsTo,
 .cityPointsValue {
   width: 27px;
@@ -667,79 +826,135 @@ svg path {
   background-color: var(--water-color);
   border-radius: 50%;
   text-align: center;
-}
+} */
 
-.cityPointsFrom,
-.cityPointsTo {
-  background-color: blue;
-}
-
-.cityPointsValue {
-  background-color: lightblue;
-}
-
-.cityPointsFrom,
-.cityPointsTo {
-  margin-right: 0.5rem;
-}
-
-.cityPointsValue {
-  margin-right: 1rem;
-}
-
-.otherPoints {
+.cityPointsFromTo {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 50px;
+  height: 25px;
+  padding: 0.1rem 0.5rem;
+  margin-right: 0.5rem;
+  background-color: blue;
+  border-radius: 15px;
+}
+
+.cityPointsValue {
+  width: 25px;
+  height: 25px;
+  background-color: lightblue;
+  border-radius: 50%;
+}
+
+/* .cityPointsFrom,
+.cityPointsTo {
+  background-color: blue;
+} */
+
+/* .cityPointsValue {
+  
+} */
+
+/* .cityPointsFrom,
+.cityPointsTo {
+  margin-right: 0.5rem;
+} */
+
+/* .cityPointsValue {
+  margin-right: 1rem;
+} */
+
+/* .otherPoints {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+} */
+
+.bonusPoints {
+  /* grid-area: bonusPoints; */
+  width: 33%;
+  /* height: 260px; */
+}
+
+.totalPoints {
+  /* grid-area: totalPoints; */
+  width: 67%;
 }
 
 .bonusPoints,
 .totalPoints {
-  width: 50%;
-  height: 280px;
+  min-height: 125px;
 }
 
 .bonusPoints {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  flex-direction: row;
+  /* justify-content: flex-start; */
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   background-color: sandybrown;
-  padding: 1rem;
+  padding: 0.5rem;
 }
 
 .bonusPointValue {
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
-  width: 37px;
-  height: 37px;
+  align-items: center; */
+  width: 30px;
+  height: 25px;
   background-color: var(--sand-color);
   border-radius: 5px;
-  margin-bottom: 1rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.2rem;
+  /* padding-right: 0.5rem; */
 }
 
-.bonusPointValue:nth-child(3n) {
-  margin-bottom: 6rem;
-}
+/* .bonusPointValue:nth-child(3n) {
+  margin-bottom: 5rem;
+} */
 
 .totalPoints {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  flex-direction: row;
+  justify-content: center;
   align-items: center;
-  background-color: var(--success-color);
+  background-color: var(--primary-color);
 }
 
 .totalPointsItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  padding: 0.7rem 0;
+  height: 33%;
+  padding: 0.5rem;
 }
 
-.totalFirstRoundArtefactPoints,
-.totalSecondRoundArtefactPoints {
-  background-color: var(--primary-color);
+.totalRoundPoints,
+.totalNonRoundPoints {
+  /* display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; */
+  width: 50%;
+  /* min-height: 125px; */
 }
+
+/* .totalRoundPoints {
+  background-color: var(--primary-color);
+} */
+
+/* .totalFirstRoundArtefactPoints,
+.totalSecondRoundArtefactPoints,
+.totalThirdRoundArtefactPoints {
+  background-color: var(--primary-color);
+} */
 
 .totalCityPoints {
   background-color: var(--water-color);
@@ -754,18 +969,19 @@ svg path {
 }
 
 .totalPointValue {
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
-  width: 45px;
-  height: 32px;
+  align-items: center; */
+  width: 30px;
+  height: 25px;
   border-radius: 5px;
   margin: auto;
 }
 
 .totalFirstRoundArtefactPoints .totalPointValue,
-.totalSecondRoundArtefactPoints .totalPointValue {
-  background-color: var(--light-color);
+.totalSecondRoundArtefactPoints .totalPointValue,
+.totalThirdRoundArtefactPoints .totalPointValue {
+  background-color: var(--sand-color);
 }
 
 .totalCityPoints .totalPointValue {
@@ -783,4 +999,347 @@ svg path {
 .awarded {
   background-color: #777;
   color: #fff;
+}
+
+/* Results */
+.resultsTable {
+  /* min-width: 100%; */
+  /* max-width: 100%; */
+  margin-bottom: 1rem;
+}
+
+.playerColumn {
+  min-width: 150px;
+}
+
+.artefactColumn,
+.cityColumn,
+.bonusColumn {
+  display: none;
+  /* min-width: 100px; */
+}
+
+td.playerColumn {
+  text-align: left;
+}
+
+/* 
+@media only screen and (max-width: 600px) and (orientation: portrait) {
+  body {
+    width: 100vh;
+    height: 100vw;
+    transform: rotate(90deg);
+  }
+} */
+
+@media only screen and (min-width: 600px) {
+  /* .container {
+    display: block;
+    flex-direction: unset;
+    justify-content: unset;
+    align-items: unset;
+    text-align: unset;
+  } */
+
+  .form {
+    min-width: 350px;
+  }
+
+  /* Pages */
+  .landing {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    /* height: 100%; */
+    /* min-height: 100vh; */
+    /* margin: 0 auto; */
+  }
+
+  .landing .btn {
+    margin: 0 0.5rem 1rem 0;
+  }
+
+  .login,
+  .register,
+  .usersOnline {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    /* height: 100%; */
+    /* min-height: 100vh; */
+    /* margin: 4rem auto 0 auto; */
+  }
+
+  .userList {
+    margin-left: 0;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  /* .container {
+    width: 80%;
+  } */
+
+  .btn {
+    /* display: inline-block; */
+    /* width: unset; */
+    /* min-width: 200px;
+    max-width: 400px; */
+    margin: 0 0.5rem 1rem 0;
+  }
+
+  /* Users */
+  .userLists {
+    display: flex;
+    flex-direction: row;
+    /* flex-wrap: wrap; */
+    justify-content: flex-start;
+    align-items: flex-start;
+    /* width: 100%;
+    margin: 1rem auto; */
+  }
+
+  .userList {
+    width: 50%;
+    margin-right: 1rem;
+  }
+
+  /* .userListItem {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.2rem 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--light-color);
+    background-color: var(--primary-color);
+    border-radius: 5px;
+  } */
+
+  .userListItem .btn {
+    min-width: 160px;
+    margin: 0;
+  }
+
+  .launchGame {
+    margin-top: 1rem;
+  }
+
+  .islandScreen {
+    grid-template-areas:
+      "gameData island"
+      "points island";
+
+    grid-template-columns: 325px auto;
+    max-width: unset;
+    margin: 8rem auto 0 auto;
+  }
+
+  .artefactColumn,
+  .cityColumn,
+  .bonusColumn {
+    display: table-cell;
+    /* min-width: 150px; */
+  }
+}
+
+@media only screen and (min-width: 768px) and (orientation: portrait) {
+  .islandScreen {
+    grid-template-areas:
+      "gameData"
+      "island"
+      "points";
+    grid-template-columns: unset;
+    row-gap: 1.5rem;
+    margin: 4rem auto 1rem auto;
+  }
+
+  .gridContainer .grid {
+    width: 600px;
+    height: 600px;
+  }
+
+  .progressBarContainer {
+    max-width: 600px;
+  }
+
+  .roundNumber,
+  .turnNumber {
+    width: 15%;
+  }
+
+  /* .turnHexes, */
+  .bonusArtefact {
+    width: 10%;
+  }
+
+  .cellsLeft,
+  .cityBonuses {
+    width: 25%;
+  }
+
+  .artefactPoints {
+    width: 35%;
+  }
+
+  .cityPoints {
+    width: 20%;
+  }
+
+  .bonusPoints {
+    width: 20%;
+    height: 100%;
+  }
+
+  .totalPoints {
+    width: 25%;
+    height: 100%;
+  }
+
+  .totalRoundPoints,
+  .totalNonRoundPoints {
+    height: 100%;
+  }
+}
+
+@media only screen and (min-width: 920px) {
+  .gridContainer .grid {
+    width: 450px;
+    height: 450px;
+  }
+
+  .progressBarContainer {
+    max-width: 450px;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .x-large {
+    font-size: 6rem;
+    line-height: 1.4;
+    margin-bottom: 3rem;
+  }
+
+  /* .btn {
+    min-width: 300px;
+    padding: 0.5rem 1.2rem;
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--light-color);
+    background-color: var(--light-color);
+    border: 1px solid;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: opacity 0.2s ease-in;
+    outline: none;
+  } */
+
+  .login,
+  .register,
+  .usersOnline {
+    margin: 10rem auto 0 auto;
+  }
+
+  .userList {
+    margin-right: 5rem;
+  }
+
+  /* .gameData,
+  .points {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+  }
+
+  .artefactPoints,
+  .cityPoints,
+  .bonusPoints,
+  .totalPoints {
+    width: 100%;
+  } */
+}
+
+@media only screen and (min-width: 1024px) and (orientation: portrait) {
+  .islandScreen {
+    row-gap: 4rem;
+  }
+
+  .gridContainer .grid {
+    width: 800px;
+    height: 800px;
+  }
+
+  .progressBarContainer {
+    max-width: 800px;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .userList {
+    margin-right: 10rem;
+  }
+}
+
+@media only screen and (min-width: 1366px) {
+  .container {
+    width: 80%;
+  }
+  /* .islandScreen {
+    row-gap: 1rem;
+  } */
+
+  /* .gridContainer .grid {
+    width: 700px;
+    height: 700px;
+  }
+
+  .progressBarContainer {
+    max-width: 700px;
+  } */
+}
+
+@media only screen and (min-width: 1366px) and (min-height: 1024px) {
+  .islandScreen {
+    margin-top: 10rem;
+  }
+
+  .gridContainer .grid {
+    width: 650px;
+    height: 650px;
+  }
+
+  .progressBarContainer {
+    max-width: 650px;
+  }
+}
+
+@media only screen and (min-width: 1920px) {
+  .container {
+    width: 60%;
+  }
+
+  .islandScreen {
+    margin-top: 10rem;
+  }
+
+  .gridContainer .grid {
+    width: 650px;
+    height: 650px;
+  }
+
+  .progressBarContainer {
+    max-width: 650px;
+  }
+
+  .points {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
 }

@@ -27,11 +27,11 @@ const Points = ({ turn, game }) => {
         }
       />
 
-      <div className="otherPoints">
-        <BonusPoints roundPoints={turn.roundPoints} />
+      {/* <div className="otherPoints"> */}
+      <BonusPoints roundPoints={turn.roundPoints} />
 
-        <TotalPoints roundPoints={turn.roundPoints} />
-      </div>
+      <TotalPoints roundPoints={turn.roundPoints} isMinor={game.isMinor} />
+      {/* </div> */}
     </div>
   );
 };

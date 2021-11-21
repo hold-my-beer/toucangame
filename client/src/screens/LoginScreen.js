@@ -36,8 +36,8 @@ const LoginScreen = ({ history }) => {
 
   return (
     <div className="login">
-      <h1 className="large">Войти</h1>
-      <p className="lead">Войдите в свою учетную запись</p>
+      <h1>Вход</h1>
+      {/* <p className="lead">Войдите в свою учетную запись</p> */}
       {error && <Message className="danger" text={error} />}
       {loading && <Loader />}
       <form className="form" onSubmit={submitHandler}>

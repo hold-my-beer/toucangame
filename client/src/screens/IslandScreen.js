@@ -5,6 +5,7 @@ import Loader from "../components/Loader";
 import Message from "../components/Message";
 import GameData from "../components/GameData";
 import Grid from "../components/Grid";
+// import ProgressBar from "../components/ProgressBar";
 import Points from "../components/Points";
 import { getGame } from "../actions/gameActions";
 import { listUsers } from "../actions/userActions";
@@ -86,6 +87,9 @@ const IslandScreen = ({ history }) => {
         <Message className="danger" text={error} />
       ) : (
         <>
+          {/* <h2 className="text-center mb-1">
+            {game.isMinor ? "Малый остров" : "Большой остров"}
+          </h2> */}
           {game && (
             <>
               <GameData game={game} />
@@ -97,6 +101,7 @@ const IslandScreen = ({ history }) => {
                 game={game}
                 users={users}
               />
+              {/* <ProgressBar /> */}
               <Points
                 // isMinor={game.isMinor}
                 // artefacts={game.artefacts}
