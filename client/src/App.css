@@ -1,14 +1,23 @@
 /* Global Styles */
 :root {
   --primary-color: #ff6600;
+  --primary-opacity-color: #ff6600ee;
   --dark-color: #331400;
+  --dark-opacity-color: #331400ee;
   --light-color: #ffe0cc;
+  --light-opacity-color: #ffe0ccee;
   --danger-color: #ff0000;
+  --danger-opacity-color: #ff0000ee;
   --success-color: #80ff00;
+  --success-opacity-color: #80ff00ee;
   --sand-color: #ffff99;
+  --sand-opacity-color: #ffff99ee;
   --forest-color: #66ff33;
+  --forest-opacity-color: #66ff33ee;
   --stone-color: #777;
+  --stone-opacity-color: #777777ee;
   --water-color: #0099ff;
+  --water-opacity-color: #0099ffee;
 }
 
 * {
@@ -252,6 +261,16 @@ tbody tr:nth-child(even) {
   z-index: -1;
 }
 
+/* .block-dark-overlay {
+  background-color: rgba(255, 255, 255, 0.9);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+} */
+
 /* Modal */
 .modal {
   position: fixed;
@@ -447,25 +466,55 @@ tbody tr:nth-child(even) {
   height: 53px;
   margin-bottom: 0.5rem;
 }
-
-.turnHexes div {
-  width: 130px;
-}
-
-.turnHexes span {
-  margin-right: 1rem;
+/* .turnNumber {
+  width: 80px;
 }
 
 .turnHexesContainer {
-  display: inline-block;
-}
+  width: 85px;
+} */
 
-.turnHexesContainer span {
+/* .turnHexes div {
+  width: 33.3%;
+} */
+
+/* .turnHexes span {
+  margin-right: 1rem;
+} */
+
+/* .turnHexesContainer {
+  display: inline-block;
+} */
+
+/* .turnHexesContainer span {
   color: var(--primary-color);
-}
+} */
 
 .gridContainer {
+  position: relative;
   text-align: center;
+}
+
+.bonusMove {
+  /* width: 140px; */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 100%;
+  height: 100%;
+  font-size: 3rem;
+  color: var(--primary-color);
+  background-color: rgba(0, 0, 0, 0.7);
+  transition: left 0.3s ease-in-out;
+}
+
+.bonusMove.visible {
+  left: 0;
+  transition: left 0.3s ease-in-out;
 }
 
 /* .gridContainer .grid {
@@ -476,22 +525,22 @@ tbody tr:nth-child(even) {
 
 svg g.sand {
   fill: var(--sand-color);
-  fill-opacity: 0.9;
+  fill-opacity: 0.8;
 }
 
 svg g.forest {
   fill: var(--forest-color);
-  fill-opacity: 0.9;
+  fill-opacity: 0.8;
 }
 
 svg g.stone {
   fill: var(--stone-color);
-  fill-opacity: 0.9;
+  fill-opacity: 0.8;
 }
 
 svg g.water {
   fill: var(--water-color);
-  fill-opacity: 0.9;
+  fill-opacity: 0.8;
 }
 
 svg g:hover {
@@ -549,18 +598,20 @@ path {
   width: 25%;
 } */
 
-.roundNumber,
-.turnNumber {
-  width: 25%;
+.roundNumber {
+  width: 40%;
 }
+/* .turnNumber {
+  width: 25%;
+} */
 
-.turnNumber {
+/* .turnNumber {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   min-height: 50px;
-}
+} */
 
 .bonusArtefact {
   width: 20%;
@@ -568,7 +619,7 @@ path {
 
 .cellsLeft,
 .cityBonuses {
-  width: 50%;
+  width: 60%;
 }
 
 .roundNumber,
@@ -587,7 +638,7 @@ path {
 }
 
 .cellsLeft text {
-  font-size: 3rem;
+  font-size: 3.5rem;
 }
 
 /* Bonus Artefact */
@@ -602,11 +653,13 @@ path {
   justify-content: center;
   align-items: center;
   width: 30px;
-  height: 40px;
+  height: 45px;
   /* margin: 0 auto; */
   /* padding: 0.5rem; */
-  font-size: 0.8rem;
-  background-color: var(--sand-color);
+  font-size: 1rem;
+  line-height: 1.1;
+  /* background-color: var(--sand-color); */
+  background-color: var(--sand-opacity-color);
   border: 3px solid var(--primary-color);
   border-radius: 5px;
   color: var(--primary-color);
@@ -738,16 +791,31 @@ path {
   min-width: 289px;
   /* max-width: 390px; */
   margin: 0 auto;
-  font-size: 0.8rem;
+  font-size: 1rem;
   text-align: center;
   color: var(--dark-color);
 }
 
 .artefactPoints {
   /* grid-area: artefactPoints; */
+  position: relative;
   width: 60%;
-  background-color: var(--primary-color);
+  /* background-image: url("./img/spyglass-g877a5c0c2_640.png"); */
+  background-color: var(--primary-opacity-color);
+  /* background: var(--primary-opacity-color)
+    url("./img/spyglass-g877a5c0c2_640.png") center/contain no-repeat; */
   padding: 0.5rem;
+  /* z-index: 1; */
+}
+
+.artefactPointsBackground {
+  position: absolute;
+  top: 5px;
+  left: 3px;
+  width: 25px;
+  height: 25px;
+  background: url("./img/spyglass-g877a5c0c2_640.png") center/contain no-repeat;
+  /* z-index: -1; */
 }
 
 .artefactPointsItem {
@@ -800,12 +868,23 @@ path {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: relative;
   /* grid-area: cityPoints; */
   /* flex-wrap: wrap; */
   width: 40%;
   /* height: 100%; */
-  background-color: var(--water-color);
+  background-color: var(--water-opacity-color);
   padding: 0.5rem;
+}
+
+.cityPointsBackground {
+  position: absolute;
+  top: 5px;
+  left: 3px;
+  width: 25px;
+  height: 25px;
+  background: url("./img/hut-g93e3593d1_640.png") center/contain no-repeat;
+  /* z-index: -1; */
 }
 
 .cityPointsItem {
@@ -876,8 +955,19 @@ path {
 
 .bonusPoints {
   /* grid-area: bonusPoints; */
+  position: relative;
   width: 33%;
   /* height: 260px; */
+}
+
+.bonusPointsBackground {
+  position: absolute;
+  top: 5px;
+  left: 3px;
+  width: 25px;
+  height: 25px;
+  background: url("./img/icons-g033dcdf45_640.png") center/contain no-repeat;
+  /* z-index: -1; */
 }
 
 .totalPoints {
@@ -897,7 +987,8 @@ path {
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  background-color: sandybrown;
+  /* background-color: sandybrown; */
+  background-color: #f4a460dd;
   padding: 0.5rem;
 }
 
@@ -923,7 +1014,7 @@ path {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  background-color: var(--primary-color);
+  background-color: var(--primary-opacity-color);
 }
 
 .totalPointsItem {
@@ -938,6 +1029,7 @@ path {
 
 .totalRoundPoints,
 .totalNonRoundPoints {
+  position: relative;
   /* display: flex;
   flex-direction: column;
   justify-content: center;
@@ -957,15 +1049,29 @@ path {
 } */
 
 .totalCityPoints {
-  background-color: var(--water-color);
+  position: relative;
+  background-color: var(--water-opacity-color);
 }
 
 .totalBonusPoints {
-  background-color: sandybrown;
+  /* background-color: sandybrown; */
+  position: relative;
+  background-color: #f4a460dd;
 }
 
 .totalOverallPoints {
-  background-color: var(--success-color);
+  position: relative;
+  background-color: var(--success-opacity-color);
+}
+
+.totalPointsBackground {
+  position: absolute;
+  top: 5px;
+  left: 3px;
+  width: 25px;
+  height: 25px;
+  background: url("./img/equals-g101319250_640.png") center/contain no-repeat;
+  /* z-index: -1; */
 }
 
 .totalPointValue {

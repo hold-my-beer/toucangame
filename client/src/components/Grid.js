@@ -13,16 +13,16 @@ const Grid = ({ turn, game, users }) => {
   );
   const [pathStart, setPathStart] = useState(null);
   const [paths, setPaths] = useState(turn ? turn.paths : []);
-  const [hexStart, setHexStart] = useState(null);
   const [dealLeft, setDealLeft] = useState([...game.deal]);
   const [moveMade, setMoveMade] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   const dispatch = useDispatch();
 
   const onClick = (e, source, hex) => {
-    console.log(e.target);
-    console.log(source);
-    console.log(hex);
+    // console.log(e.target);
+    // console.log(source);
+    // console.log(hex);
     const landscapeIndex = dealLeft.indexOf(hex.landscape);
     const anyIndex = dealLeft.indexOf("any");
 
@@ -32,13 +32,12 @@ const Grid = ({ turn, game, users }) => {
         // Hex clicked is not in the deal
         (anyIndex === -1 && landscapeIndex === -1) ||
         // The same hex clicked
-        (pathStart && HexUtils.equals(source.state.hex, pathStart)) ||
+        (pathStart && HexUtils.equals(hex, pathStart)) ||
         // Hex clicked is not a neighbour
-        (pathStart && HexUtils.distance(source.state.hex, pathStart)) >= 2
+        (pathStart && HexUtils.distance(hex, pathStart)) >= 2
       ) {
         setDealLeft([...game.deal]);
         setPathStart(null);
-        setHexStart(null);
 
         setHexagons([
           ...hexagons.map((item) => {
@@ -57,8 +56,7 @@ const Grid = ({ turn, game, users }) => {
           : setDealLeft([
               ...dealLeft.filter((item, index) => index !== anyIndex),
             ]);
-        setPathStart(source.state.hex);
-        setHexStart(hex);
+        setPathStart(hex);
 
         setHexagons([
           ...hexagons.map((item) => {
@@ -81,56 +79,99 @@ const Grid = ({ turn, game, users }) => {
           : setDealLeft([
               ...dealLeft.filter((item, index) => index !== anyIndex),
             ]);
-        const newPath = { start: pathStart, end: source.state.hex };
+
+        const newPath = { start: pathStart, end: hex };
+
+        // No such path exists
         if (!pathsContain(newPath, paths)) {
           setPaths([...paths, newPath]);
-        }
 
-        const hexPath = [hexStart, hex];
-        dispatch(
-          updateTurn(hexPath, turn, game, users.groupUsers[0].groupId, [
-            ...paths,
-            newPath,
-          ])
-        );
+          const hexPath = [pathStart, hex];
+          dispatch(
+            updateTurn(hexPath, turn, game, users.groupUsers[0].groupId, [
+              ...paths,
+              newPath,
+            ])
+          );
 
-        setMoveMade(true);
+          setMoveMade(true);
 
-        setHexagons([
-          ...hexagons.map((item) => {
-            if (
-              HexUtils.equals(item, hex) ||
-              (pathStart && HexUtils.equals(item, pathStart))
-            ) {
-              item.className = "active";
-            } else {
+          setHexagons([
+            ...hexagons.map((item) => {
+              if (
+                HexUtils.equals(item, hex) ||
+                (pathStart && HexUtils.equals(item, pathStart))
+              ) {
+                item.className = "active";
+              } else {
+                item.className = "";
+              }
+
+              return item;
+            }),
+          ]);
+
+          setPathStart(null);
+        } else {
+          setDealLeft([...game.deal]);
+          setPathStart(null);
+
+          setHexagons([
+            ...hexagons.map((item) => {
               item.className = "";
-            }
 
-            return item;
-          }),
-        ]);
-
-        setPathStart(null);
+              return item;
+            }),
+          ]);
+        }
       }
     }
   };
 
   useEffect(() => {
     if (turn && turn.bonusMoves.length && game && game.deal.length) {
-      // console.log("bonus move");
       setMoveMade(false);
       setDealLeft([...game.deal]);
     }
   }, [turn, game]);
+
+  useEffect(() => {
+    if (game && game.isBonusMove) {
+      setVisible(true);
+    }
+  }, [game]);
+
+  useEffect(() => {
+    // if (width >= 100) return;
+    let id;
+
+    if (visible) {
+      id = setTimeout(() => {
+        setVisible(false);
+      }, 1000);
+    }
+
+    return () => clearTimeout(id);
+  }, [visible]);
 
   return (
     <div className="island">
       {/* <h2 className="text-center mb-2">
         {game.isMinor ? "Малый остров" : "Большой остров"}
       </h2> */}
-      <TurnHexes deal={game.deal} isBonusMove={game.isBonusMove} />
+      <TurnHexes
+        deal={game.deal}
+        turnNumber={game.turnNumber}
+        // isBonusMove={game.isBonusMove}
+        bonusMovesQty={
+          turn.bonusMoves.filter((item) => item.moveIsMade === false).length
+        }
+        // turn={turn}
+      />
       <div className="gridContainer">
+        <div className={`bonusMove ${visible && "visible"}`}>
+          <span>{game.isBonusMove ? "Бонусный ход" : ""}</span>
+        </div>
         <HexGrid width={335} height={335} viewBox="0 0 100 100">
           <Layout
             size={game.isMinor ? { x: 5.4, y: 5.4 } : { x: 4.6, y: 4.6 }}

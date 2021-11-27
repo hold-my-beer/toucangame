@@ -477,7 +477,7 @@ export const createRoad = (roads, path, cityScenario) => {
   ];
 };
 
-export const getUpdatedTurn = (path, turn, game, paths) => {
+export const getUpdatedTurn = (path, turn, game) => {
   const roadIndecies = findRoadIndecies(turn.roads, path);
   let updatedRoads = [];
 
@@ -515,7 +515,7 @@ export const getUpdatedTurn = (path, turn, game, paths) => {
     // number: turn.number + 1,
     roads: updatedRoads,
     roundPoints: updatedPoints,
-    paths,
+    // paths,
     bonusMoves: updatedBonusMoves,
   };
 };

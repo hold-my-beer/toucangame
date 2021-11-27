@@ -17,6 +17,7 @@ const CityPoints = ({ isMinor, cities, cityPoints }) => {
 
   return (
     <div className="cityPoints">
+      <div className="cityPointsBackground"></div>
       {cities.map((city, index) => (
         <CityPointsItem
           key={index}

@@ -59,6 +59,7 @@ const TotalPoints = ({ roundPoints, isMinor }) => {
   return (
     <div className="totalPoints">
       <div className="totalRoundPoints">
+        <div className="artefactPointsBackground"></div>
         <div className="totalPointsItem totalFirstRoundArtefactPoints">
           <div className="totalPointValue">
             {totalFirstRoundArtefactPoints ? totalFirstRoundArtefactPoints : ""}
@@ -83,16 +84,19 @@ const TotalPoints = ({ roundPoints, isMinor }) => {
       </div>
       <div className="totalNonRoundPoints">
         <div className="totalPointsItem totalCityPoints">
+          <div className="cityPointsBackground"></div>
           <div className="totalPointValue">
             {totalCityPoints ? totalCityPoints : ""}
           </div>
         </div>
         <div className="totalPointsItem totalBonusPoints">
+          <div className="bonusPointsBackground"></div>
           <div className="totalPointValue">
             {totalBonusPoints ? totalBonusPoints : ""}
           </div>
         </div>
         <div className="totalPointsItem totalOverallPoints">
+          <div className="totalPointsBackground"></div>
           <div className="totalPointValue">
             {totalOverallPoints ? totalOverallPoints : ""}
           </div>

@@ -10,6 +10,7 @@ const BonusPoints = ({ roundPoints }) => {
 
   return (
     <div className="bonusPoints">
+      <div className="bonusPointsBackground"></div>
       <div className="bonusPointValue">
         {bonusPoints.length >= 1 ? bonusPoints[0].pts : ""}
       </div>

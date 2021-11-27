@@ -17,6 +17,7 @@ const ArtefactPoints = ({ isMinor, artefacts, artefactPoints }) => {
 
   return (
     <div className="artefactPoints">
+      <div className="artefactPointsBackground"></div>
       {artefacts.map((artefact, index) => (
         <ArtefactPointsItem
           key={index}

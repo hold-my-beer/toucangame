@@ -3,11 +3,11 @@ import React from "react";
 // import socket from "../config/socket";
 // import Message from "./Message";
 // import Loader from "./Loader";
-import TurnHexes from "./TurnHexes";
+// import TurnHexes from "./TurnHexes";
 import CellsLeft from "./CellsLeft";
 import ArtefactBonus from "./ArtefactBonus";
 import CityBonuses from "./CityBonuses";
-import Opponents from "./Opponents";
+// import Opponents from "./Opponents";
 // import { getGame } from "../actions/gameActions";
 
 const GameData = ({ game }) => {
@@ -17,9 +17,9 @@ const GameData = ({ game }) => {
         <span>Раунд: {game.roundNumber}</span>
       </div>
 
-      <div className="turnNumber">
+      {/* <div className="turnNumber">
         <span>Ход: {game.turnNumber}</span>
-      </div>
+      </div> */}
       {/* <div className="locations">
         <span>Локации:</span>
       </div> */}

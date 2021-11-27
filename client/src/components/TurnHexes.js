@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { HexGrid, Layout, Hexagon } from "react-hexgrid";
 
 const TurnHexes = ({
   deal,
-  // , roundNumber, turnNumber,
-  isBonusMove,
+  // , roundNumber,
+  turnNumber,
+  // turn,
+  // isBonusMove,
+  bonusMovesQty,
 }) => {
   // const [width, setWidth] = useState(1);
 
@@ -26,60 +29,81 @@ const TurnHexes = ({
       ) : (
         <h4 className="text-center">Ход: {turnNumber}</h4>
       )} */}
-      <div>
+      {/* <div>
         <span>Текущий ход:</span>
+      </div> */}
+      <div className="turnNumber">
+        <span>Ход: {turnNumber}</span>
       </div>
-      <div className="turnHexesContainer">
-        {isBonusMove ? (
-          <span>Бонусный ход</span>
+      {/* <div className="bonusMove">
+        {bonusMovesQty ? (
+          <span>
+            Бонус ход:{" "}
+            
+            {bonusMovesQty}
+          </span>
         ) : (
-          <HexGrid width={85} height={45} viewBox="0 0 100 100">
-            <Layout
-              size={{ x: 45, y: 45 }}
-              flat={false}
-              spacing={1.1}
-              origin={{ x: 0, y: 55 }}
-            >
-              {deal.map((item, index) =>
-                item === "any" ? (
-                  <Hexagon
-                    key={index}
-                    q={index}
-                    r={0}
-                    s={0 - index}
-                    className="any"
-                    fill="MyGradient"
-                  >
-                    <defs>
-                      <linearGradient id="MyGradient" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#ffff99" />
-                        <stop offset="25%" stopColor="#ffff99" />
-                        <stop offset="25%" stopColor="#66ff33" />
-                        <stop offset="50%" stopColor="#66ff33" />
-                        <stop offset="50%" stopColor="#777" />
-                        <stop offset="75%" stopColor="#777" />
-                        <stop offset="75%" stopColor="#0099ff" />
-                        <stop offset="100%" stopColor="#0099ff" />
-                      </linearGradient>
-                    </defs>
-                    {/* <Text>{cellsLeft.any}</Text> */}
-                  </Hexagon>
-                ) : (
-                  <Hexagon
-                    key={index}
-                    q={index}
-                    r={0}
-                    s={0 - index}
-                    className={item}
-                  ></Hexagon>
-                )
-              )}
-              {/* <Hexagon q={0} r={0} s={0} className={deal[0]}></Hexagon>
-            <Hexagon q={1} r={0} s={-1} className={deal[1]}></Hexagon> */}
-            </Layout>
-          </HexGrid>
+          ""
         )}
+      </div> */}
+      <div className="turnHexesContainer">
+        {/* {turn &&
+        !turn.loading &&
+        turn.bonusMoves.filter((item) => item.moveIsMade === false).length ? (
+          <span>
+            Бонусный ход:{" "}
+            {turn.bonusMoves.filter((item) => item.moveIsMade === false).length}
+          </span>
+        ) : ( */}
+        {/* <div className="bonusMove"></div> */}
+        <HexGrid width={140} height={45} viewBox="0 0 100 100">
+          <Layout
+            size={{ x: 45, y: 45 }}
+            flat={false}
+            spacing={1.1}
+            origin={{ x: 25, y: 55 }}
+          >
+            {deal.map((item, index) =>
+              item === "any" ? (
+                <Hexagon
+                  key={index}
+                  q={index}
+                  r={0}
+                  s={0 - index}
+                  className="any"
+                  fill="MyGradient"
+                >
+                  <defs>
+                    <linearGradient id="MyGradient" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#ffff99" />
+                      <stop offset="25%" stopColor="#ffff99" />
+                      <stop offset="25%" stopColor="#66ff33" />
+                      <stop offset="50%" stopColor="#66ff33" />
+                      <stop offset="50%" stopColor="#777" />
+                      <stop offset="75%" stopColor="#777" />
+                      <stop offset="75%" stopColor="#0099ff" />
+                      <stop offset="100%" stopColor="#0099ff" />
+                    </linearGradient>
+                  </defs>
+                  {/* <Text>{cellsLeft.any}</Text> */}
+                </Hexagon>
+              ) : (
+                <Hexagon
+                  key={index}
+                  q={index}
+                  r={0}
+                  s={0 - index}
+                  className={item}
+                ></Hexagon>
+              )
+            )}
+            {/* <Hexagon q={0} r={0} s={0} className={deal[0]}></Hexagon>
+            <Hexagon q={1} r={0} s={-1} className={deal[1]}></Hexagon> */}
+          </Layout>
+        </HexGrid>
+        {/* } */}
       </div>
+
       {/* <div className="turnProgressContainer">
         <div className="turnProgress" style={{ width: `${width + "%"}` }}></div>
       </div> */}

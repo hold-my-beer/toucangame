@@ -50,7 +50,8 @@ export const updateTurn = (path, turn, game, groupId, paths) => (dispatch) => {
   try {
     dispatch({ type: GAME_UPDATE_TURN_REQUEST });
 
-    const updatedTurn = getUpdatedTurn(path, turn, game, paths);
+    // const updatedTurn = getUpdatedTurn(path, turn, game, paths);
+    const updatedTurn = { ...getUpdatedTurn(path, turn, game), paths };
 
     const bonusMoveIndex = updatedTurn.bonusMoves.findIndex(
       (item) => item.moveIsMade === false
