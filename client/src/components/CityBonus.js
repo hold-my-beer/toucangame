@@ -1,12 +1,20 @@
 import React from "react";
 
-const CityBonus = ({ city, playersNumber }) => {
+const CityBonus = ({ city, playersNumber, isWon }) => {
   return (
     <div
       className={`cityBonusCard ${
         playersNumber < 5
-          ? city.bonusAwarded[0] && "awarded"
-          : city.bonusAwarded[0] && city.bonusAwarded[1] && "awarded"
+          ? city.bonusAwarded[0]
+            ? isWon
+              ? "won"
+              : "awarded"
+            : ""
+          : city.bonusAwarded[0] && city.bonusAwarded[1]
+          ? isWon
+            ? "won"
+            : "awarded"
+          : ""
       }`}
     >
       <div>

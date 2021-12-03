@@ -31,7 +31,15 @@ export const gameGetReducer = (state = {}, action) => {
 };
 
 export const gameUpdateTurnReducer = (
-  state = { turn: { roads: [], roundPoints: [], paths: [], bonusMoves: [] } },
+  state = {
+    turn: {
+      roads: [],
+      roundPoints: [],
+      paths: [],
+      bonusMoves: [],
+      newPoints: [],
+    },
+  },
   action
 ) => {
   switch (action.type) {
@@ -44,7 +52,12 @@ export const gameUpdateTurnReducer = (
     case GAME_UPDATE_TURN_RESET:
       return {
         loading: false,
-        turn: { roads: [], roundPoints: [], paths: [], bonusMoves: [] },
+        turn: {
+          roads: [],
+          roundPoints: [],
+          paths: [],
+          bonusMoves: [],
+        },
       };
     default:
       return state;

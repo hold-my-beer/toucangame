@@ -10,7 +10,7 @@ import CityBonuses from "./CityBonuses";
 // import Opponents from "./Opponents";
 // import { getGame } from "../actions/gameActions";
 
-const GameData = ({ game }) => {
+const GameData = ({ game, turn }) => {
   return (
     <div className="gameData">
       <div className="roundNumber">
@@ -42,8 +42,27 @@ const GameData = ({ game }) => {
           <span>Ход: {game.turnNumber}</span>
         </div>
       )} */}
-      <ArtefactBonus bonusArtefact={game.bonusArtefact} />
-      <CityBonuses cities={game.cities} playersNumber={game.players.length} />
+      <ArtefactBonus
+        bonusArtefact={game.bonusArtefact}
+        wonBonusArtefactNames={
+          turn.roundPoints.length
+            ? turn.roundPoints[
+                turn.roundPoints.length - 1
+              ].bonusArtefactPoints.map((item) => item.name)
+            : []
+        }
+      />
+      <CityBonuses
+        cities={game.cities}
+        playersNumber={game.players.length}
+        wonBonusCityNames={
+          turn.roundPoints.length
+            ? turn.roundPoints[turn.roundPoints.length - 1].bonusCityPoints.map(
+                (item) => item.name
+              )
+            : []
+        }
+      />
       {/* <Opponents users={game.players} /> */}
     </div>
   );

@@ -15,6 +15,10 @@ import {
   USER_UPDATE_STATS_SUCCESS,
   USER_UPDATE_STATS_FAIL,
   USER_LIST_RESET,
+  USER_UPDATE_SETTINGS_REQUEST,
+  USER_UPDATE_SETTINGS_SUCCESS,
+  USER_UPDATE_SETTINGS_FAIL,
+  USER_UPDATE_SETTINGS_RESET,
 } from "../constants/userConstants";
 
 export const login = (email, password) => async (dispatch) => {
@@ -100,7 +104,58 @@ export const logout = () => (dispatch) => {
   dispatch({ type: USER_REGISTER_RESET });
 
   dispatch({ type: USER_LIST_RESET });
+
+  dispatch({ type: USER_UPDATE_SETTINGS_RESET });
 };
+
+export const updateSettings =
+  (musicVolume, effectsVolume) => async (dispatch, getState) => {
+    try {
+      dispatch({
+        type: USER_UPDATE_SETTINGS_REQUEST,
+      });
+
+      const {
+        userLogin: { userInfo },
+      } = getState();
+      // console.log(getState());
+      // console.log(userInfo);
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.post(
+        "/api/users/settings",
+        { musicVolume, effectsVolume },
+        config
+      );
+
+      dispatch({
+        type: USER_UPDATE_SETTINGS_SUCCESS,
+        payload: data,
+      });
+
+      dispatch({
+        type: USER_LOGIN_SUCCESS,
+        payload: data,
+      });
+
+      localStorage.setItem("userInfo", JSON.stringify(data));
+    } catch (error) {
+      console.log(error);
+      dispatch({
+        type: USER_UPDATE_SETTINGS_FAIL,
+        payload:
+          error.response && error.response.data.message
+            ? error.response.data.message
+            : error.message,
+      });
+    }
+  };
 
 // export const listUsers = (users, userId) => (dispatch) => {
 //   try {

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import socket from "../config/socket";
 import Loader from "../components/Loader";
@@ -10,8 +10,11 @@ import Points from "../components/Points";
 import { getGame } from "../actions/gameActions";
 import { listUsers } from "../actions/userActions";
 import { updateStats } from "../actions/userActions";
+import { getRandomIntInclusive } from "../utils/index";
 
 const IslandScreen = ({ history }) => {
+  const [audioSource, setAudioSource] = useState("");
+
   const dispatch = useDispatch();
 
   const gameGet = useSelector((state) => state.gameGet);
@@ -32,7 +35,12 @@ const IslandScreen = ({ history }) => {
 
   const getNewRoundHandler = (game) => {
     dispatch(getGame(game, userInfo.id));
+
+    // const id = setTimeout(() => {
     history.push("/results");
+    // }, 3000);
+
+    // return () => clearTimeout(id);
   };
 
   const getUsersHandler = ({ users, newStats }) => {
@@ -50,6 +58,40 @@ const IslandScreen = ({ history }) => {
 
     dispatch(listUsers(users, userInfo.id));
   };
+
+  useEffect(() => {
+    const islandBackgroundMusic = document.getElementById(
+      "islandBackgroundMusic"
+    );
+
+    if (islandBackgroundMusic && userInfo) {
+      islandBackgroundMusic.volume =
+        parseInt(userInfo.settings.musicVolume) / 100;
+
+      const audioSources = [
+        "audio/bensound-ukulele.mp3",
+        "audio/bensound-cute.mp3",
+        "audio/bensound-littleidea.mp3",
+      ];
+
+      let index = getRandomIntInclusive(0, audioSources.length - 1);
+      // console.log(index);
+
+      const playNext = () => {
+        index = (index + 1) % audioSources.length;
+        // islandBackgroundMusic.src = audioSources[index];
+        setAudioSource(audioSources[index]);
+        // islandBackgroundMusic.play();
+      };
+
+      // islandBackgroundMusic.src = audioSources[index];
+      setAudioSource(audioSources[index]);
+
+      // islandBackgroundMusic.play();
+
+      islandBackgroundMusic.addEventListener("ended", playNext);
+    }
+  }, [userInfo]);
 
   useEffect(() => {
     socket.on("getUsers", getUsersHandler);
@@ -81,6 +123,14 @@ const IslandScreen = ({ history }) => {
 
   return (
     <div className="islandScreen">
+      <audio
+        id="islandBackgroundMusic"
+        // src="audio/bensound-ukulele.mp3"
+        src={audioSource}
+        autoPlay={true}
+        // preload="auto"
+        // loop={true}
+      ></audio>
       {loading || loadingTurn || loadingList || loadingUser ? (
         <Loader />
       ) : error || errorTurn || errorList || errorUser ? (
@@ -92,7 +142,7 @@ const IslandScreen = ({ history }) => {
           </h2> */}
           {game && (
             <>
-              <GameData game={game} />
+              <GameData game={game} turn={turn} />
               <Grid
                 // isMinor={game.isMinor}
                 // cityScenario={game.cityScenario}
@@ -100,6 +150,7 @@ const IslandScreen = ({ history }) => {
                 turn={turn}
                 game={game}
                 users={users}
+                userInfo={userInfo}
               />
               {/* <ProgressBar /> */}
               <Points

@@ -7,7 +7,7 @@ import TurnHexes from "./TurnHexes";
 import { pathsContain } from "../utils";
 import { updateTurn } from "../actions/gameActions";
 
-const Grid = ({ turn, game, users }) => {
+const Grid = ({ turn, game, users, userInfo }) => {
   const [hexagons, setHexagons] = useState(
     game.isMinor ? minorGrid : majorGrid
   );
@@ -16,10 +16,20 @@ const Grid = ({ turn, game, users }) => {
   const [dealLeft, setDealLeft] = useState([...game.deal]);
   const [moveMade, setMoveMade] = useState(false);
   const [visible, setVisible] = useState(false);
+  // const [achievments, setAchievments] = useState(null);
 
   const dispatch = useDispatch();
 
   const onClick = (e, source, hex) => {
+    // if (pathStart) {
+    //   const clickTwo = document.getElementById("clickTwo");
+    //   clickTwo.play();
+    // } else {
+    //   const clickOne = document.getElementById("clickOne");
+    //   clickOne.play();
+    // }
+
+    // console.log(click);
     // console.log(e.target);
     // console.log(source);
     // console.log(hex);
@@ -27,7 +37,15 @@ const Grid = ({ turn, game, users }) => {
     const anyIndex = dealLeft.indexOf("any");
 
     // Don't allow to make more than one move except if it is bonus move
-    if (!moveMade || (turn && turn.bonusMoves.length)) {
+    if (
+      !moveMade ||
+      (turn &&
+        turn.bonusMoves.filter((item) => item.moveIsMade === false).length)
+    ) {
+      const click = document.getElementById("click");
+      click.volume = parseInt(userInfo.settings.effectsVolume) / 100;
+      click.play();
+
       if (
         // Hex clicked is not in the deal
         (anyIndex === -1 && landscapeIndex === -1) ||
@@ -94,6 +112,10 @@ const Grid = ({ turn, game, users }) => {
             ])
           );
 
+          if (game.turnNumber === 13) {
+            setVisible(true);
+          }
+
           setMoveMade(true);
 
           setHexagons([
@@ -129,7 +151,12 @@ const Grid = ({ turn, game, users }) => {
   };
 
   useEffect(() => {
-    if (turn && turn.bonusMoves.length && game && game.deal.length) {
+    if (
+      turn &&
+      turn.bonusMoves.filter((item) => item.moveIsMade === false).length &&
+      game &&
+      game.deal.length
+    ) {
       setMoveMade(false);
       setDealLeft([...game.deal]);
     }
@@ -137,9 +164,76 @@ const Grid = ({ turn, game, users }) => {
 
   useEffect(() => {
     if (game && game.isBonusMove) {
+      const bonusMoveNotification = document.getElementById(
+        "bonusMoveNotification"
+      );
+      bonusMoveNotification.volume =
+        parseInt(userInfo.settings.effectsVolume) / 100;
+      bonusMoveNotification.play();
+
       setVisible(true);
     }
-  }, [game]);
+  }, [game, userInfo]);
+
+  // useEffect(() => {
+  //   if (turn && turn.roundPoints.length) {
+  //     const latestAchievments = {};
+
+  //     latestAchievments.cityPoints = turn.roundPoints[
+  //       turn.roundPoints.length - 1
+  //     ].cityPoints.filter(
+  //       (item) =>
+  //         (parseInt(item.roundNumber) - 1) * 13 + parseInt(item.turnNumber) ===
+  //         (parseInt(game.roundNumber) - 1) * 13 + parseInt(game.turnNumber) - 1
+  //     );
+
+  //     latestAchievments.artefactPoints = turn.roundPoints[
+  //       turn.roundPoints.length - 1
+  //     ].artefactPoints.filter(
+  //       (item) =>
+  //         (parseInt(item.roundNumber) - 1) * 13 + parseInt(item.turnNumber) ===
+  //         (parseInt(game.roundNumber) - 1) * 13 + parseInt(game.turnNumber) - 1
+  //     );
+
+  //     latestAchievments.bonusCityPoints = turn.roundPoints[
+  //       turn.roundPoints.length - 1
+  //     ].bonusCityPoints.filter(
+  //       (item) =>
+  //         (parseInt(item.roundNumber) - 1) * 13 + parseInt(item.turnNumber) ===
+  //         (parseInt(game.roundNumber) - 1) * 13 + parseInt(game.turnNumber) - 1
+  //     );
+
+  //     latestAchievments.bonusArtefactPoints = turn.roundPoints[
+  //       turn.roundPoints.length - 1
+  //     ].bonusArtefactPoints.filter(
+  //       (item) =>
+  //         (parseInt(item.roundNumber) - 1) * 13 + parseInt(item.turnNumber) ===
+  //         (parseInt(game.roundNumber) - 1) * 13 + parseInt(game.turnNumber) - 1
+  //     );
+
+  //     if (
+  //       latestAchievments.cityPoints.length ||
+  //       latestAchievments.artefactPoints.length ||
+  //       latestAchievments.bonusCityPoints.length ||
+  //       latestAchievments.bonusArtefactPoints.length
+  //     ) {
+  //       setAchievments(latestAchievments);
+  //     }
+  //   }
+  // }, [turn, game.turnNumber]);
+
+  // useEffect(() => {
+  //   if (achievments) {
+  //     console.log(game.turnNumber);
+  //     console.log(achievments);
+  //     const bonusMoveNotification = document.getElementById(
+  //       "bonusMoveNotification"
+  //     );
+  //     bonusMoveNotification.play();
+
+  //     setVisible(true);
+  //   }
+  // }, [achievments]);
 
   useEffect(() => {
     // if (width >= 100) return;
@@ -147,6 +241,7 @@ const Grid = ({ turn, game, users }) => {
 
     if (visible) {
       id = setTimeout(() => {
+        // setAchievments(null);
         setVisible(false);
       }, 1000);
     }
@@ -156,6 +251,20 @@ const Grid = ({ turn, game, users }) => {
 
   return (
     <div className="island">
+      <audio
+        id="click"
+        src="audio/mixkit-hard-typewriter-click-1119.wav"
+        preload="auto"
+      ></audio>
+      {/* <audio
+        id="clickTwo"
+        src="audio/mixkit-hard-click-1118.wav"
+        // preload
+      ></audio> */}
+      <audio
+        id="bonusMoveNotification"
+        src="audio/mixkit-winning-notification-2018.wav"
+      ></audio>
       {/* <h2 className="text-center mb-2">
         {game.isMinor ? "Малый остров" : "Большой остров"}
       </h2> */}
@@ -169,8 +278,18 @@ const Grid = ({ turn, game, users }) => {
         // turn={turn}
       />
       <div className="gridContainer">
-        <div className={`bonusMove ${visible && "visible"}`}>
+        <div className={`gridNotification ${visible ? "visible" : ""}`}>
           <span>{game.isBonusMove ? "Бонусный ход" : ""}</span>
+          <span>
+            {game.turnNumber === 13
+              ? `Конец ${
+                  (game.isMinor && game.roundNumber === 2) ||
+                  (!game.isMinor && game.roundNumber === 3)
+                    ? "игры"
+                    : "раунда"
+                }`
+              : ""}
+          </span>
         </div>
         <HexGrid width={335} height={335} viewBox="0 0 100 100">
           <Layout

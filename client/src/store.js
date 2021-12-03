@@ -6,6 +6,7 @@ import {
   userLoginReducer,
   userRegisterReducer,
   userListReducer,
+  userUpdateSettingsReducer,
 } from "./reducers/userReducers";
 
 import { gameGetReducer, gameUpdateTurnReducer } from "./reducers/gameReducers";
@@ -15,6 +16,7 @@ import { modalSetReducer } from "./reducers/modalReducers";
 const reducer = combineReducers({
   userLogin: userLoginReducer,
   userRegister: userRegisterReducer,
+  userUpdateSettings: userUpdateSettingsReducer,
   userList: userListReducer,
   gameGet: gameGetReducer,
   gameUpdateTurn: gameUpdateTurnReducer,

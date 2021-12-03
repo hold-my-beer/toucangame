@@ -34,19 +34,40 @@ const Header = () => {
       <Link to="/">
         <h1>Тропы Туканы</h1>
       </Link>
-      {userInfo ? (
-        game && game.isActive ? (
-          <Link to="/users" onClick={quitGameHandler}>
-            Выход из игры
-          </Link>
+      <ul className="navList">
+        {/* <li> */}
+        {/* <Link to="/settings">
+            <span>Настройки</span> <i class="fas fa-sliders-h"></i>
+          </Link> */}
+        {/* </li> */}
+        {/* <li> */}
+        {userInfo ? (
+          <>
+            <li>
+              <Link to="/settings">
+                <span>Настройки</span> <i className="fas fa-sliders-h"></i>
+              </Link>
+            </li>
+            <li>
+              {game && game.isActive ? (
+                <Link to="/users" onClick={quitGameHandler}>
+                  <span>Выход из игры</span>{" "}
+                  <i className="fas fa-sign-out-alt"></i>
+                </Link>
+              ) : (
+                <Link to="/" onClick={logoutHandler}>
+                  <span>Выход</span> <i className="fas fa-sign-out-alt"></i>
+                </Link>
+              )}
+            </li>
+          </>
         ) : (
-          <Link to="/" onClick={logoutHandler}>
-            Выход
+          <Link to="/login">
+            <span>Вход</span> <i className="fas fa-sign-in-alt"></i>
           </Link>
-        )
-      ) : (
-        <Link to="/login">Вход</Link>
-      )}
+        )}
+        {/* </li> */}
+      </ul>
     </nav>
   );
 };

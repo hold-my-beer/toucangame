@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 // import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import socket from "../config/socket";
@@ -10,6 +10,8 @@ import { getGame } from "../actions/gameActions";
 import { setModal } from "../actions/modalActions";
 
 const UsersScreen = ({ history }) => {
+  // const [audioSource, setAudioSource] = useState("");
+
   const dispatch = useDispatch();
 
   const userLogin = useSelector((state) => state.userLogin);
@@ -122,6 +124,22 @@ const UsersScreen = ({ history }) => {
   };
 
   useEffect(() => {
+    const usersBackgroundMusic = document.getElementById(
+      "usersBackgroundMusic"
+    );
+
+    if (usersBackgroundMusic && userInfo) {
+      // setAudioSource("audio/bensound-adventure.mp3");
+      usersBackgroundMusic.volume =
+        (userInfo.settings &&
+          userInfo.settings.musicVolume &&
+          parseInt(userInfo.settings.musicVolume) / 100) ||
+        0.4;
+      // usersBackgroundMusic.play();
+    }
+  }, [userInfo]);
+
+  useEffect(() => {
     if (userInfo) {
       socket.emit("userLogin", {
         id: userInfo.id,
@@ -148,6 +166,13 @@ const UsersScreen = ({ history }) => {
 
   return (
     <div className="usersOnline">
+      <audio
+        id="usersBackgroundMusic"
+        src="audio/bensound-adventure.mp3"
+        // src={audioSource}
+        autoPlay={true}
+        loop={true}
+      ></audio>
       <h1>Пользователи онлайн</h1>
       {loading || loadingList ? (
         <Loader />

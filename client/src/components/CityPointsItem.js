@@ -9,7 +9,7 @@ const CityPointsItem = ({ isMinor, city, awardedPoints }) => {
         <span>{city.name}</span>
         <span>{city.name}</span>
       </div>
-      <div className={`cityPointsValue ${awardedPoints.pts ? "awarded" : ""}`}>
+      <div className={`cityPointsValue ${awardedPoints.pts ? "won" : ""}`}>
         {isMinor ? city.points.minor : city.points.major}
       </div>
     </div>

@@ -8,7 +8,7 @@ import React from "react";
 // } from "../constants/artefactConstants";
 import { getBonusArtefact } from "../utils";
 
-const ArtefactBonus = ({ bonusArtefact }) => {
+const ArtefactBonus = ({ bonusArtefact, wonBonusArtefactNames }) => {
   // const getBonusArtefact = (name) => {
   //   switch (name) {
   //     case "obelisk":
@@ -31,7 +31,11 @@ const ArtefactBonus = ({ bonusArtefact }) => {
       {/* <h4 className="text-center">Призовой артефакт:</h4> */}
       <div
         className={`bonusArtefactCard ${
-          bonusArtefact.bonusAwarded && "awarded"
+          bonusArtefact.bonusAwarded
+            ? wonBonusArtefactNames.indexOf(bonusArtefact.name) !== -1
+              ? "won"
+              : "awarded"
+            : ""
         }`}
       >
         <div className="bonusArtefactImage">

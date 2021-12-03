@@ -14,6 +14,11 @@ import {
   USER_UPDATE_STATS_REQUEST,
   USER_UPDATE_STATS_SUCCESS,
   USER_UPDATE_STATS_FAIL,
+  USER_SET_SOUND_VOLUME,
+  USER_UPDATE_SETTINGS_REQUEST,
+  USER_UPDATE_SETTINGS_SUCCESS,
+  USER_UPDATE_SETTINGS_FAIL,
+  USER_UPDATE_SETTINGS_RESET,
 } from "../constants/userConstants";
 
 export const userLoginReducer = (state = {}, action) => {
@@ -48,6 +53,22 @@ export const userRegisterReducer = (state = {}, action) => {
     case USER_REGISTER_FAIL:
       return { loading: false, error: action.payload };
     case USER_REGISTER_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
+export const userUpdateSettingsReducer = (state = {}, action) => {
+  switch (action.type) {
+    case USER_UPDATE_SETTINGS_REQUEST:
+      return { loading: true };
+    case USER_UPDATE_SETTINGS_SUCCESS:
+    case USER_SET_SOUND_VOLUME:
+      return { loading: false, userInfo: action.payload };
+    case USER_UPDATE_SETTINGS_FAIL:
+      return { loading: false, userInfo: action.payload };
+    case USER_UPDATE_SETTINGS_RESET:
       return {};
     default:
       return state;

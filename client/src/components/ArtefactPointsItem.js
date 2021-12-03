@@ -12,14 +12,14 @@ const ArtefactPointsItem = ({ isMinor, artefact, awardedPoints }) => {
         <>
           <div
             className={`mr-1 artefactPointsValueCircle ${
-              awardedPoints.totalQty >= 1 ? "awarded" : ""
+              awardedPoints.totalQty >= 1 ? "won" : ""
             }`}
           >
             {artefact.points.minor[0]}
           </div>
           <div
             className={`artefactPointsValueRectangle ${
-              awardedPoints.totalQty >= 2 ? "awarded" : ""
+              awardedPoints.totalQty >= 2 ? "won" : ""
             }`}
           >
             {artefact.points.minor[1]}+
@@ -29,21 +29,21 @@ const ArtefactPointsItem = ({ isMinor, artefact, awardedPoints }) => {
         <>
           <div
             className={`mr-1 artefactPointsValueCircle ${
-              awardedPoints.totalQty >= 1 ? "awarded" : ""
+              awardedPoints.totalQty >= 1 ? "won" : ""
             }`}
           >
             {artefact.points.major[0]}
           </div>
           <div
             className={`mr-1 artefactPointsValueCircle ${
-              awardedPoints.totalQty >= 2 ? "awarded" : ""
+              awardedPoints.totalQty >= 2 ? "won" : ""
             }`}
           >
             {artefact.points.major[1]}
           </div>
           <div
             className={`artefactPointsValueRectangle ${
-              awardedPoints.totalQty >= 3 ? "awarded" : ""
+              awardedPoints.totalQty >= 3 ? "won" : ""
             }`}
           >
             {artefact.points.major[2]}+

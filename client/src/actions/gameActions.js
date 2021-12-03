@@ -64,11 +64,21 @@ export const updateTurn = (path, turn, game, groupId, paths) => (dispatch) => {
         payload: updatedTurn,
       });
 
-      socket.emit("updateTurn", {
-        gameId: game.id,
-        turn: updatedTurn,
-        groupId,
-      });
+      if (game.turnNumber === 13) {
+        setTimeout(() => {
+          socket.emit("updateTurn", {
+            gameId: game.id,
+            turn: updatedTurn,
+            groupId,
+          });
+        }, 7000);
+      } else {
+        socket.emit("updateTurn", {
+          gameId: game.id,
+          turn: updatedTurn,
+          groupId,
+        });
+      }
       // If bonus move is to be made
     } else {
       dispatch({
