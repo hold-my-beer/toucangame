@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { HexGrid, Layout, Path, Text, Hexagon, HexUtils } from "react-hexgrid";
 import { minorGrid, majorGrid } from "../data/grid";
+import GridNotification from "./GridNotification";
 import ProgressBar from "./ProgressBar";
 import TurnHexes from "./TurnHexes";
 import { pathsContain } from "../utils";
 import { updateTurn } from "../actions/gameActions";
+// import { GAME_RESET_BONUS_MOVE } from "../constants/gameConstants";
 
 const Grid = ({ turn, game, users, userInfo }) => {
   const [hexagons, setHexagons] = useState(
@@ -15,7 +17,9 @@ const Grid = ({ turn, game, users, userInfo }) => {
   const [paths, setPaths] = useState(turn ? turn.paths : []);
   const [dealLeft, setDealLeft] = useState([...game.deal]);
   const [moveMade, setMoveMade] = useState(false);
-  const [visible, setVisible] = useState(false);
+  // const [visible, setVisible] = useState(false);
+  // const [endRound, setEndRound] = useState(false);
+  // const [newPoints, setNewPoints] = useState([]);
   // const [achievments, setAchievments] = useState(null);
 
   const dispatch = useDispatch();
@@ -39,8 +43,8 @@ const Grid = ({ turn, game, users, userInfo }) => {
     // Don't allow to make more than one move except if it is bonus move
     if (
       !moveMade ||
-      (turn &&
-        turn.bonusMoves.filter((item) => item.moveIsMade === false).length)
+      (turn && turn.isBonusMove)
+      // turn.bonusMoves.filter((item) => item.moveIsMade === false).length)
     ) {
       const click = document.getElementById("click");
       click.volume = parseInt(userInfo.settings.effectsVolume) / 100;
@@ -67,6 +71,10 @@ const Grid = ({ turn, game, users, userInfo }) => {
       }
       // No path initiated yet
       else if (!pathStart) {
+        // if (game && game.isBonusMove) {
+        //   dispatch({ type: GAME_RESET_BONUS_MOVE });
+        // }
+
         landscapeIndex !== -1
           ? setDealLeft([
               ...dealLeft.filter((item, index) => index !== landscapeIndex),
@@ -90,6 +98,10 @@ const Grid = ({ turn, game, users, userInfo }) => {
       }
       // Hex clicked is a neighbour
       else {
+        // if (game && game.isBonusMove) {
+        //   dispatch({ type: GAME_RESET_BONUS_MOVE });
+        // }
+
         landscapeIndex !== -1
           ? setDealLeft([
               ...dealLeft.filter((item, index) => index !== landscapeIndex),
@@ -112,9 +124,10 @@ const Grid = ({ turn, game, users, userInfo }) => {
             ])
           );
 
-          if (game.turnNumber === 13) {
-            setVisible(true);
-          }
+          // if (game.turnNumber === 13) {
+          //   // setVisible(true);
+          //   setEndRound(true);
+          // }
 
           setMoveMade(true);
 
@@ -150,10 +163,75 @@ const Grid = ({ turn, game, users, userInfo }) => {
     }
   };
 
+  // useEffect(() => {
+  //   if (turn && turn.newPoints) {
+  //     for (let pointGroup in turn.newPoints) {
+  //       for (let item of turn.newPoints[pointGroup]) {
+  //         // if (!newPoint) {
+  //         // setAchievments(null);
+
+  //         setNewPoints([...newPoints, item]);
+
+  //         // setVisible(true);
+  //         // }
+  //         // setNewPoint("");
+  //       }
+  //     }
+  //   }
+  // }, [turn, newPoints]);
+
+  // useEffect(() => {
+  //   if (newPoints.length) {
+  //     setVisible(true);
+  //   }
+  // }, [newPoints]);
+
+  // useEffect(() => {
+  //   if (turn && turn.newPoints) {
+  //     if (turn.newPoints.cityPoints) {
+  //       turn.newPoints.cityPoints.forEach((item) => {
+  //         setNewPoint(item.name);
+  //         setVisible(true);
+  //       });
+  //     }
+  //     if (turn.newPoints.bonusCityPoints) {
+  //       turn.newPoints.bonusCityPoints.forEach((item) => {
+  //         setNewPoint(item.name);
+  //         setVisible(true);
+  //       });
+  //     }
+  //     if (turn.newPoints.artefactPoints) {
+  //       turn.newPoints.artefactPoints.forEach((item) => {
+  //         setNewPoint(item.name);
+  //         setVisible(true);
+  //       });
+  //     }
+  //     if (turn.newPoints.bonusArtefactPoints) {
+  //       turn.newPoints.bonusArtefactPoints.forEach((item) => {
+  //         setNewPoint(item.name);
+  //         setVisible(true);
+  //       });
+  //     }
+  //   }
+  // }, [turn]);
+
+  // useEffect(() => {
+  //   if (turn && turn.isBonusMove) {
+  //     setDealLeft(["any", "any"]);
+  //   }
+  // }, [turn]);
+
+  // useEffect(() => {
+  //   if (turn && turn.newPoints.length) {
+  //     setNewPoints([...turn.newPoints])
+  //   }
+  // }, [turn]);
+
   useEffect(() => {
     if (
       turn &&
-      turn.bonusMoves.filter((item) => item.moveIsMade === false).length &&
+      // turn.bonusMoves.filter((item) => item.moveIsMade === false).length &&
+      turn.isBonusMove &&
       game &&
       game.deal.length
     ) {
@@ -162,92 +240,59 @@ const Grid = ({ turn, game, users, userInfo }) => {
     }
   }, [turn, game]);
 
-  useEffect(() => {
-    if (game && game.isBonusMove) {
-      const bonusMoveNotification = document.getElementById(
-        "bonusMoveNotification"
-      );
-      bonusMoveNotification.volume =
-        parseInt(userInfo.settings.effectsVolume) / 100;
-      bonusMoveNotification.play();
-
-      setVisible(true);
-    }
-  }, [game, userInfo]);
-
   // useEffect(() => {
-  //   if (turn && turn.roundPoints.length) {
-  //     const latestAchievments = {};
-
-  //     latestAchievments.cityPoints = turn.roundPoints[
-  //       turn.roundPoints.length - 1
-  //     ].cityPoints.filter(
-  //       (item) =>
-  //         (parseInt(item.roundNumber) - 1) * 13 + parseInt(item.turnNumber) ===
-  //         (parseInt(game.roundNumber) - 1) * 13 + parseInt(game.turnNumber) - 1
-  //     );
-
-  //     latestAchievments.artefactPoints = turn.roundPoints[
-  //       turn.roundPoints.length - 1
-  //     ].artefactPoints.filter(
-  //       (item) =>
-  //         (parseInt(item.roundNumber) - 1) * 13 + parseInt(item.turnNumber) ===
-  //         (parseInt(game.roundNumber) - 1) * 13 + parseInt(game.turnNumber) - 1
-  //     );
-
-  //     latestAchievments.bonusCityPoints = turn.roundPoints[
-  //       turn.roundPoints.length - 1
-  //     ].bonusCityPoints.filter(
-  //       (item) =>
-  //         (parseInt(item.roundNumber) - 1) * 13 + parseInt(item.turnNumber) ===
-  //         (parseInt(game.roundNumber) - 1) * 13 + parseInt(game.turnNumber) - 1
-  //     );
-
-  //     latestAchievments.bonusArtefactPoints = turn.roundPoints[
-  //       turn.roundPoints.length - 1
-  //     ].bonusArtefactPoints.filter(
-  //       (item) =>
-  //         (parseInt(item.roundNumber) - 1) * 13 + parseInt(item.turnNumber) ===
-  //         (parseInt(game.roundNumber) - 1) * 13 + parseInt(game.turnNumber) - 1
-  //     );
-
-  //     if (
-  //       latestAchievments.cityPoints.length ||
-  //       latestAchievments.artefactPoints.length ||
-  //       latestAchievments.bonusCityPoints.length ||
-  //       latestAchievments.bonusArtefactPoints.length
-  //     ) {
-  //       setAchievments(latestAchievments);
-  //     }
-  //   }
-  // }, [turn, game.turnNumber]);
-
-  // useEffect(() => {
-  //   if (achievments) {
-  //     console.log(game.turnNumber);
-  //     console.log(achievments);
+  //   if (game && game.isBonusMove) {
   //     const bonusMoveNotification = document.getElementById(
   //       "bonusMoveNotification"
   //     );
+  //     bonusMoveNotification.volume =
+  //       parseInt(userInfo.settings.effectsVolume) / 100;
   //     bonusMoveNotification.play();
 
   //     setVisible(true);
   //   }
-  // }, [achievments]);
+  // }, [game, userInfo]);
 
-  useEffect(() => {
-    // if (width >= 100) return;
-    let id;
+  // useEffect(() => {
+  //   if (
+  //     turn &&
+  //     turn.isBonusMove
+  //     // && !newPoints.length
+  //   ) {
+  //     const bonusMoveNotification = document.getElementById(
+  //       "bonusMoveNotification"
+  //     );
+  //     bonusMoveNotification.volume =
+  //       parseInt(userInfo.settings.effectsVolume) / 100;
+  //     bonusMoveNotification.play();
 
-    if (visible) {
-      id = setTimeout(() => {
-        // setAchievments(null);
-        setVisible(false);
-      }, 1000);
-    }
+  //     setVisible(true);
+  //   }
+  // }, [turn, userInfo]);
 
-    return () => clearTimeout(id);
-  }, [visible]);
+  // useEffect(() => {
+  //   let id;
+
+  //   if (endRound && turn && !turn.isBonusMove) {
+  //     id = setTimeout(() => {
+  //       setEndRound(false);
+  //     }, 1500);
+  //   }
+
+  //   return () => clearTimeout(id);
+  // }, [endRound, turn]);
+
+  // useEffect(() => {
+  //   let id;
+
+  //   if (visible) {
+  //     id = setTimeout(() => {
+  //       setVisible(false);
+  //     }, 1500);
+  //   }
+
+  //   return () => clearTimeout(id);
+  // }, [visible]);
 
   return (
     <div className="island">
@@ -261,10 +306,14 @@ const Grid = ({ turn, game, users, userInfo }) => {
         src="audio/mixkit-hard-click-1118.wav"
         // preload
       ></audio> */}
-      <audio
+      {/* <audio
         id="bonusMoveNotification"
         src="audio/mixkit-winning-notification-2018.wav"
-      ></audio>
+      ></audio> */}
+      {/* <audio
+        id="roundEndNotification"
+        src="audio/mixkit-arcade-score-interface-217.wav"
+      ></audio> */}
       {/* <h2 className="text-center mb-2">
         {game.isMinor ? "Малый остров" : "Большой остров"}
       </h2> */}
@@ -278,19 +327,37 @@ const Grid = ({ turn, game, users, userInfo }) => {
         // turn={turn}
       />
       <div className="gridContainer">
-        <div className={`gridNotification ${visible ? "visible" : ""}`}>
-          <span>{game.isBonusMove ? "Бонусный ход" : ""}</span>
-          <span>
-            {game.turnNumber === 13
-              ? `Конец ${
-                  (game.isMinor && game.roundNumber === 2) ||
-                  (!game.isMinor && game.roundNumber === 3)
-                    ? "игры"
-                    : "раунда"
-                }`
-              : ""}
-          </span>
-        </div>
+        <GridNotification
+          game={game}
+          turn={turn}
+          userInfo={userInfo}
+          moveMade={moveMade}
+          // endRound={endRound}
+        />
+        {/* <div className={`gridNotification ${visible ? "visible" : ""}`}>
+          <div className="gridNotificationData">
+            {turn.newPoints.map((item, index) => (
+              <span key={index}>{item.data.name}</span>
+            ))}
+            <span>
+              {
+                // !newPoints.length &&
+                turn.isBonusMove ? "Бонусный ход" : ""
+              }
+            </span>
+            <span>
+              {game.turnNumber === 13 && !turn.isBonusMove
+                ? // && !newPoints.length
+                  `Конец ${
+                    (game.isMinor && game.roundNumber === 2) ||
+                    (!game.isMinor && game.roundNumber === 3)
+                      ? "игры"
+                      : "раунда"
+                  }`
+                : ""}
+            </span>
+          </div>
+        </div> */}
         <HexGrid width={335} height={335} viewBox="0 0 100 100">
           <Layout
             size={game.isMinor ? { x: 5.4, y: 5.4 } : { x: 4.6, y: 4.6 }}

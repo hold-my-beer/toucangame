@@ -1,12 +1,12 @@
 import React from "react";
-import { getBonusArtefact } from "../utils";
+import { getArtefactConstant } from "../utils";
 
 const ArtefactPointsItem = ({ isMinor, artefact, awardedPoints }) => {
   // console.log(awardedPoints);
   return (
     <div className="artefactPointsItem">
       <div className="mr-1 artefactPointsPicture">
-        <img src={getBonusArtefact(artefact.name)} alt={artefact.name} />
+        <img src={getArtefactConstant(artefact.name)} alt={artefact.name} />
       </div>
       {isMinor ? (
         <>

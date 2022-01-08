@@ -6,10 +6,10 @@ import React from "react";
 //   YETI,
 //   DRAGON,
 // } from "../constants/artefactConstants";
-import { getBonusArtefact } from "../utils";
+import { getArtefactConstant } from "../utils";
 
 const ArtefactBonus = ({ bonusArtefact, wonBonusArtefactNames }) => {
-  // const getBonusArtefact = (name) => {
+  // const getArtefactConstant = (name) => {
   //   switch (name) {
   //     case "obelisk":
   //       return OBELISK;
@@ -31,16 +31,19 @@ const ArtefactBonus = ({ bonusArtefact, wonBonusArtefactNames }) => {
       {/* <h4 className="text-center">Призовой артефакт:</h4> */}
       <div
         className={`bonusArtefactCard ${
-          bonusArtefact.bonusAwarded
-            ? wonBonusArtefactNames.indexOf(bonusArtefact.name) !== -1
-              ? "won"
-              : "awarded"
+          wonBonusArtefactNames.indexOf(bonusArtefact.name) !== -1
+            ? "won"
+            : bonusArtefact.bonusAwarded
+            ? // wonBonusArtefactNames.indexOf(bonusArtefact.name) !== -1
+              //   ? "won"
+              // :
+              "awarded"
             : ""
         }`}
       >
         <div className="bonusArtefactImage">
           <img
-            src={getBonusArtefact(bonusArtefact.name)}
+            src={getArtefactConstant(bonusArtefact.name)}
             alt={bonusArtefact.name}
           />
         </div>

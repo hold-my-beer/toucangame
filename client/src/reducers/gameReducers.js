@@ -8,6 +8,7 @@ import {
   GAME_UPDATE_TURN_FAIL,
   GAME_UPDATE_TURN_RESET,
   GAME_SET_BONUS_MOVE,
+  // GAME_RESET_BONUS_MOVE,
 } from "../constants/gameConstants";
 
 export const gameGetReducer = (state = {}, action) => {
@@ -23,8 +24,13 @@ export const gameGetReducer = (state = {}, action) => {
     case GAME_SET_BONUS_MOVE:
       return {
         loading: false,
-        game: { ...action.payload, deal: ["any", "any"], isBonusMove: true },
+        game: { ...action.payload, deal: ["any", "any"] },
       };
+    // case GAME_RESET_BONUS_MOVE:
+    //   return {
+    //     loading: false,
+    //     game: { ...state.game, isBonusMove: false },
+    //   };
     default:
       return state;
   }
@@ -57,6 +63,7 @@ export const gameUpdateTurnReducer = (
           roundPoints: [],
           paths: [],
           bonusMoves: [],
+          newPoints: [],
         },
       };
     default:

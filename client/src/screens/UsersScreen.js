@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 // import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import socket from "../config/socket";
@@ -131,10 +131,9 @@ const UsersScreen = ({ history }) => {
     if (usersBackgroundMusic && userInfo) {
       // setAudioSource("audio/bensound-adventure.mp3");
       usersBackgroundMusic.volume =
-        (userInfo.settings &&
-          userInfo.settings.musicVolume &&
-          parseInt(userInfo.settings.musicVolume) / 100) ||
-        0.4;
+        userInfo.settings &&
+        userInfo.settings.musicVolume &&
+        parseInt(userInfo.settings.musicVolume) / 100;
       // usersBackgroundMusic.play();
     }
   }, [userInfo]);

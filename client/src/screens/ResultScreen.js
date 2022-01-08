@@ -14,6 +14,9 @@ const ResultScreen = ({ history }) => {
   const gameGet = useSelector((state) => state.gameGet);
   const { loading, error, game } = gameGet;
 
+  const userLogin = useSelector((state) => state.userLogin);
+  const { loading: loadingUser, error: errorUser, userInfo } = userLogin;
+
   useEffect(() => {
     if (
       game &&
@@ -34,10 +37,13 @@ const ResultScreen = ({ history }) => {
       "resultsBackgroundMusic"
     );
 
-    if (resultsBackgroundMusic) {
-      resultsBackgroundMusic.volume = 0.4;
+    if (resultsBackgroundMusic && userInfo) {
+      resultsBackgroundMusic.volume =
+        userInfo.settings &&
+        userInfo.settings.musicVolume &&
+        parseInt(userInfo.settings.musicVolume) / 100;
     }
-  }, []);
+  }, [userInfo]);
 
   const quitGameHandler = () => {
     dispatch({ type: GAME_GET_RESET });
@@ -57,9 +63,9 @@ const ResultScreen = ({ history }) => {
       ></audio>
       {/* <> */}
       <h1 className="large">Результаты</h1>
-      {loading ? (
+      {loading || loadingUser ? (
         <Loader />
-      ) : error ? (
+      ) : error || errorUser ? (
         <Message className="danger" text={error} />
       ) : (
         game &&

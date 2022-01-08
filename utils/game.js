@@ -54,7 +54,7 @@ const initiateGame = (users, isMinor) => {
     isMinor,
     roundNumber: 1,
     turnNumber: 1,
-    isBonusMove: false,
+    // isBonusMove: false,
     deck: [...deck],
     deal: [],
     cellsLeft: {
@@ -215,10 +215,14 @@ const updateTurn = (socketId, gameId, turn) => {
           player.status = "isThinking";
         });
 
-        games[gameIndex].isBonusMove = false;
+        // games[gameIndex].isBonusMove = false;
 
         // If it is the last turn start next round
         if (games[gameIndex].turnNumber === 13) {
+          // Sort players by total points
+          games[gameIndex].results.players.sort((a, b) => {
+            return b.totalPoints - a.totalPoints;
+          });
           // If it is the last round
           if (
             (games[gameIndex].isMinor && games[gameIndex].roundNumber === 2) ||

@@ -53,12 +53,13 @@ export const updateTurn = (path, turn, game, groupId, paths) => (dispatch) => {
     // const updatedTurn = getUpdatedTurn(path, turn, game, paths);
     const updatedTurn = { ...getUpdatedTurn(path, turn, game), paths };
 
-    const bonusMoveIndex = updatedTurn.bonusMoves.findIndex(
-      (item) => item.moveIsMade === false
-    );
+    // const bonusMoveIndex = updatedTurn.bonusMoves.findIndex(
+    //   (item) => item.moveIsMade === false
+    // );
 
     // If no bonus moves to be made
-    if (bonusMoveIndex === -1) {
+    // if (bonusMoveIndex === -1) {
+    if (!updatedTurn.isBonusMove) {
       dispatch({
         type: GAME_UPDATE_TURN_SUCCESS,
         payload: updatedTurn,

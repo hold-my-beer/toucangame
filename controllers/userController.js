@@ -27,6 +27,7 @@ const registerUser = async (req, res) => {
         major: {},
         minor: {},
       },
+      settings: {},
     });
 
     if (user) {
@@ -36,6 +37,7 @@ const registerUser = async (req, res) => {
         email: user.email,
         friends: user.friends,
         stats: user.stats,
+        settings: user.settings,
         token: generateToken(user._id),
       });
     } else {
@@ -63,10 +65,46 @@ const loginUser = async (req, res) => {
         email: user.email,
         friends: user.friends,
         stats: user.stats,
+        settings: user.settings,
         token: generateToken(user._id),
       });
     } else {
       return res.status(401).json({ message: "Неверные учетные данные" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Ошибка сервера" });
+  }
+};
+
+// @desc     Update settings
+// @route    POST /api/users/settings
+// @access   Private
+const updateSettings = async (req, res) => {
+  try {
+    const { musicVolume, effectsVolume } = req.body;
+
+    const user = await User.findById(req.user.id);
+
+    if (user) {
+      user.settings = {
+        musicVolume,
+        effectsVolume,
+      };
+
+      const updatedUser = await user.save();
+
+      return res.json({
+        id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        friends: updatedUser.friends,
+        stats: updatedUser.stats,
+        settings: updatedUser.settings,
+        token: generateToken(updatedUser._id),
+      });
+    } else {
+      return res.status(401).json({ message: "Пользователь не найден" });
     }
   } catch (error) {
     console.error(error);
@@ -203,5 +241,6 @@ module.exports = {
   registerUser,
   loginUser,
   saveStats,
+  updateSettings,
   inviteToBeFriends,
 };

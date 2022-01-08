@@ -38,6 +38,19 @@ const friendSchema = mongoose.Schema(
   }
 );
 
+const settingsSchema = mongoose.Schema({
+  musicVolume: {
+    type: String,
+    required: true,
+    default: "40",
+  },
+  effectsVolume: {
+    type: String,
+    required: true,
+    default: "100",
+  },
+});
+
 const userSchema = mongoose.Schema(
   {
     name: {
@@ -66,6 +79,7 @@ const userSchema = mongoose.Schema(
       major: statSchema,
       minor: statSchema,
     },
+    settings: settingsSchema,
   },
   {
     timestamps: true,

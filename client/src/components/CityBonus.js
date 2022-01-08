@@ -4,16 +4,20 @@ const CityBonus = ({ city, playersNumber, isWon }) => {
   return (
     <div
       className={`cityBonusCard ${
-        playersNumber < 5
+        isWon
+          ? "won"
+          : playersNumber < 5
           ? city.bonusAwarded[0]
-            ? isWon
-              ? "won"
-              : "awarded"
+            ? // ? isWon
+              //   ? "won"
+              // :
+              "awarded"
             : ""
           : city.bonusAwarded[0] && city.bonusAwarded[1]
-          ? isWon
-            ? "won"
-            : "awarded"
+          ? // ? isWon
+            //   ? "won"
+            // :
+            "awarded"
           : ""
       }`}
     >
