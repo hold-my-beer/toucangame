@@ -481,7 +481,7 @@ export const updateBonusArtefactNoCitiesPoints = (
 
       if (roundBonusArtefactIndex === -1) {
         updatedNewPoints.bonusArtefactPoints.push(
-          updatedBonusArtefactPoints[updatedBonusArtefactPoints - 1]
+          updatedBonusArtefactPoints[updatedBonusArtefactPoints.length - 1]
         );
       }
     }

@@ -386,6 +386,7 @@ tbody tr:nth-child(even) {
 .landing,
 .register,
 .login,
+.about,
 .settings,
 .results,
 .usersOnline {
@@ -403,10 +404,25 @@ tbody tr:nth-child(even) {
 
 .login,
 .register,
+.about,
 .settings,
 .usersOnline,
 .results {
   margin: 6rem 0 2rem 0;
+}
+
+/* About */
+.aboutGroup {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  font-size: 1.2rem;
+}
+
+.aboutData {
+  color: var(--primary-color);
 }
 
 /* Settings */
@@ -1273,6 +1289,7 @@ td.playerColumn {
 
   .login,
   .register,
+  .about,
   /* .settings, */
   .usersOnline {
     display: flex;
@@ -1282,6 +1299,21 @@ td.playerColumn {
     /* height: 100%; */
     /* min-height: 100vh; */
     /* margin: 4rem auto 0 auto; */
+  }
+
+  .aboutGroup {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    font-size: 1.2rem;
+    text-align: left;
+  }
+
+  .aboutLabel {
+    min-width: 150px;
+    margin-right: 1rem;
   }
 
   .settingsItem {

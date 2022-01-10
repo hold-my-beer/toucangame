@@ -11,11 +11,11 @@ const GridNotification = ({ game, turn, userInfo, moveMade }) => {
       turn &&
       turn.newPoints.length &&
       game &&
-      turn.roundPoints.length == game.roundNumber
+      turn.roundPoints.length === game.roundNumber
     ) {
       setNewPoints(true);
     }
-  }, [turn]);
+  }, [turn, game]);
 
   useEffect(() => {
     let id;
