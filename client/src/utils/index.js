@@ -231,11 +231,13 @@ export const updateCityPoints = (
           });
         }
 
-        updatedNewPoints.bonusCityPoints.push(
-          updatedRoundPoints.bonusCityPoints[
-            updatedRoundPoints.bonusCityPoints.length - 1
-          ]
-        );
+        if (updatedRoundPoints.bonusCityPoints.length) {
+          updatedNewPoints.bonusCityPoints.push(
+            updatedRoundPoints.bonusCityPoints[
+              updatedRoundPoints.bonusCityPoints.length - 1
+            ]
+          );
+        }
       } else {
         updatedRoundPoints.bonusCityPoints.push(
           bonusCityAllRounds[bonusCityIndex]

@@ -36,6 +36,11 @@ body {
   color: var(--light-color);
 }
 
+/* For div not to blink when tapping on it (because it has events attached to it) */
+div {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
 a {
   color: var(--primary-color);
   text-decoration: none;

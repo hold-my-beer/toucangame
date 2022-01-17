@@ -5,6 +5,7 @@ import socket from "../config/socket";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { login } from "../actions/userActions";
+import { setModal } from "../actions/modalActions";
 
 const LoginScreen = ({ history }) => {
   const [email, setEmail] = useState("");
@@ -15,6 +16,57 @@ const LoginScreen = ({ history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { loading, error, userInfo } = userLogin;
 
+  const submitHandler = (e) => {
+    e.preventDefault();
+    dispatch(login(email, password));
+  };
+
+  // const postLoginHandler = () => {
+  //   const launchRandomPlay = () => {
+  //     history.push("/randomusers");
+  //   };
+
+  //   const launchPlayerChoice = (user) => {
+  //     socket.emit("userLogin", user);
+  //     history.push("/users");
+  //   };
+
+  //   const buttons = [
+  //     {
+  //       className: "primary",
+  //       text: "Играть немедленно",
+  //       clickHandler: launchRandomPlay,
+  //     },
+  //     {
+  //       className: "primary",
+  //       text: "Сначала выбрать игроков",
+  //       clickHandler: launchPlayerChoice,
+  //     },
+  //   ];
+
+  //   dispatch(
+  //     setModal({
+  //       isVisible: true,
+  //       text: "Выберите дальнейшее действие",
+  //       buttons,
+  //     })
+  //   );
+  // };
+
+  // useEffect(() => {
+  //   if (userInfo && userInfo.id) {
+  //     const user = {
+  //       id: userInfo.id,
+  //       name: userInfo.name,
+  //       friends: userInfo.friends,
+  //       stats: userInfo.stats,
+  //     };
+  //     socket.emit("userLogin", user);
+
+  //     history.push("/users");
+  //   }
+  // }, [history, userInfo]);
+
   useEffect(() => {
     if (userInfo && userInfo.id) {
       const user = {
@@ -23,16 +75,68 @@ const LoginScreen = ({ history }) => {
         friends: userInfo.friends,
         stats: userInfo.stats,
       };
-      socket.emit("userLogin", user);
+      // socket.emit("userLogin", user);
 
-      history.push("/users");
+      // history.push("/users");
+
+      const launchRandomPlay = () => {
+        const launchRandomMinorGame = () => {
+          socket.emit("launchRandomGame", { user, isMinor: true });
+        };
+
+        const launchRandomMajorGame = () => {
+          socket.emit("launchRandomGame", { user, isMinor: false });
+        };
+
+        const buttons2 = [
+          {
+            className: "primary",
+            text: "Малая игра",
+            clickHandler: launchRandomMinorGame,
+          },
+          {
+            className: "primary",
+            text: "Большая игра",
+            clickHandler: launchRandomMajorGame,
+          },
+        ];
+
+        dispatch(
+          setModal({
+            isVisible: true,
+            text: "Выберите тип игры",
+            buttons2,
+          })
+        );
+      };
+
+      const launchPlayerChoice = () => {
+        socket.emit("userLogin", user);
+        history.push("/users");
+      };
+
+      const buttons = [
+        {
+          className: "primary",
+          text: "Играть немедленно",
+          clickHandler: launchRandomPlay,
+        },
+        {
+          className: "primary",
+          text: "Сначала выбрать игроков",
+          clickHandler: launchPlayerChoice,
+        },
+      ];
+
+      dispatch(
+        setModal({
+          isVisible: true,
+          text: "Выберите дальнейшее действие",
+          buttons,
+        })
+      );
     }
-  }, [history, userInfo]);
-
-  const submitHandler = (e) => {
-    e.preventDefault();
-    dispatch(login(email, password));
-  };
+  }, [userInfo, dispatch, history]);
 
   return (
     <div className="login">

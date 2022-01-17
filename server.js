@@ -19,6 +19,9 @@ const io = new Server(server, {
 });
 
 const {
+  addRandomUser,
+  removeRandomUser,
+  getRandomUsers,
   userLogin,
   userLogout,
   getUsers,
@@ -38,9 +41,36 @@ const { initiateGame, updateTurn, deal, quitGame } = require("./utils/game");
 
 // User connects
 io.on("connection", (socket) => {
+  // Launch random game
+  socket.on("launchRandomGame", ({ user, isMinor }) => {
+    const socketRes = addRandomUser(socket.id, user);
+
+    if (socketRes !== socket.id) {
+      io.to(socketRes).emit("forceLogout");
+    }
+
+    // const sockets = await io.in(groupId).fetchSockets();
+
+    // sockets.forEach((socket) => {
+    //   socket.leave(process.env.SOCKET_IO_PUBLIC_ROOM);
+    // });
+
+    // const users = getUsers().filter((user) => user.groupId === groupId);
+
+    // const game = initiateGame(users, isMinor);
+
+    // const updatedGame = deal(game);
+
+    // io.to(groupId).emit("getGame", updatedGame);
+  });
+
   // User login
   socket.on("userLogin", (user) => {
-    userLogin(socket.id, user);
+    const socketRes = userLogin(socket.id, user);
+
+    if (socketRes !== socket.id) {
+      io.to(socketRes).emit("forceLogout");
+    }
 
     socket.join(process.env.SOCKET_IO_PUBLIC_ROOM);
 

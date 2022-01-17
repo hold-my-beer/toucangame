@@ -50,7 +50,7 @@ const Header = () => {
             </li>
             <li>
               <Link to="/about">
-                <span>О программе</span> <i class="fas fa-info"></i>
+                <span>О программе</span> <i className="fas fa-info"></i>
               </Link>
             </li>
             <li>

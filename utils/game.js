@@ -3,17 +3,18 @@ const deck = require("../data/deck");
 const cityScenarios = require("../data/cityScenarios");
 const artefacts = require("../data/artefacts");
 const cities = require("../data/cities");
+const { getRandomIntInclusive } = require("./index");
 const { saveStats } = require("../controllers/userController");
 const { updateStats } = require("./users");
 // const { default: socket } = require("../client/src/config/socket");
 
 const games = [];
 
-const getRandomIntInclusive = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min; //Максимум и минимум включаются
-};
+// const getRandomIntInclusive = (min, max) => {
+//   min = Math.ceil(min);
+//   max = Math.floor(max);
+//   return Math.floor(Math.random() * (max - min + 1)) + min; //Максимум и минимум включаются
+// };
 
 const deal = (game) => {
   const deal = [];

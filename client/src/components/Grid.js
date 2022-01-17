@@ -34,9 +34,9 @@ const Grid = ({ turn, game, users, userInfo }) => {
     // }
 
     // console.log(click);
-    // console.log(e.target);
-    // console.log(source);
-    // console.log(hex);
+    console.log(e.target);
+    console.log(source);
+    console.log(hex);
     const landscapeIndex = dealLeft.indexOf(hex.landscape);
     const anyIndex = dealLeft.indexOf("any");
 

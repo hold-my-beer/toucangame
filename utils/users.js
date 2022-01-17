@@ -1,19 +1,80 @@
 const { v4: uuidv4 } = require("uuid");
+const { getRandomIntInclusive } = require("./index");
 
 let users = [];
+let randomUsers = [];
 
-const userLogin = (socketId, user) => {
-  // console.log(socket);
+const addRandomUser = (socketId, user) => {
+  const randomUserExists = randomUsers.find((item) => item.id === user.id);
   const userExists = users.find((item) => item.id === user.id);
+  let socket = socketId;
 
-  if (!userExists) {
-    user.socketId = socketId;
-    user.isLeader = false;
-    user.groupId = "";
-    users.unshift(user);
+  if (randomUserExists) {
+    socket = randomUserExists.socketId;
+    removeRandomUser(randomUserExists.socketId);
   }
 
-  // console.log(users);
+  if (userExists) {
+    socket = userExists.socketId;
+    userLogout(userExists.socketId);
+  }
+
+  user.socketId = socketId;
+  user.isLeader = false;
+  user.groupId = "";
+  user.status = "isRandomSeeking";
+  randomUsers.unshift(user);
+
+  return socket;
+};
+
+const removeRandomUser = (socketId) => {
+  const index = randomUsers.findIndex((user) => user.socketId === socketId);
+  if (index !== -1) {
+    return randomUsers.splice(index, 1)[0];
+  }
+};
+
+const getRandomUsers = () => {
+  let min = 1;
+  let max = randomUsers.length;
+  let iterations = Math.min(8, max);
+
+  let chosenUsers = [];
+
+  if (max >= min) {
+    for (let i = 0; i < iterations; i++) {
+      let index = getRandomIntInclusive(min, max);
+      let user = randomUsers[index];
+      chosenUsers.push(user);
+      removeRandomUser(user.socketId);
+    }
+  }
+
+  return chosenUsers;
+};
+
+const userLogin = (socketId, user) => {
+  const randomUserExists = randomUsers.find((item) => item.id === user.id);
+  const userExists = users.find((item) => item.id === user.id);
+  let socket = socketId;
+
+  if (randomUserExists) {
+    socket = randomUserExists.socketId;
+    removeRandomUser(randomUserExists.socketId);
+  }
+
+  if (userExists) {
+    socket = userExists.socketId;
+    userLogout(userExists.socketId);
+  }
+
+  user.socketId = socketId;
+  user.isLeader = false;
+  user.groupId = "";
+  users.unshift(user);
+
+  return socket;
 };
 
 const userLogout = (socketId) => {
@@ -235,6 +296,9 @@ const updateStats = (players, isMinor) => {
 };
 
 module.exports = {
+  addRandomUser,
+  removeRandomUser,
+  getRandomUsers,
   userLogin,
   userLogout,
   getUsers,
