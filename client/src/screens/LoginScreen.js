@@ -21,6 +21,12 @@ const LoginScreen = ({ history }) => {
     dispatch(login(email, password));
   };
 
+  useEffect(() => {
+    if (userInfo) {
+      history.push("/select-game");
+    }
+  }, [userInfo, history]);
+
   // const postLoginHandler = () => {
   //   const launchRandomPlay = () => {
   //     history.push("/randomusers");
@@ -67,76 +73,78 @@ const LoginScreen = ({ history }) => {
   //   }
   // }, [history, userInfo]);
 
-  useEffect(() => {
-    if (userInfo && userInfo.id) {
-      const user = {
-        id: userInfo.id,
-        name: userInfo.name,
-        friends: userInfo.friends,
-        stats: userInfo.stats,
-      };
-      // socket.emit("userLogin", user);
+  // useEffect(() => {
+  //   // if (userInfo && userInfo.id) {
+  //   //   const user = {
+  //   //     id: userInfo.id,
+  //   //     name: userInfo.name,
+  //   //     friends: userInfo.friends,
+  //   //     stats: userInfo.stats,
+  //   //   };
 
-      // history.push("/users");
+  //   //   history.push("/select-game");
+  //   //   // socket.emit("userLogin", user);
 
-      const launchRandomPlay = () => {
-        const launchRandomMinorGame = () => {
-          socket.emit("launchRandomGame", { user, isMinor: true });
-        };
+  //   //   // history.push("/users");
 
-        const launchRandomMajorGame = () => {
-          socket.emit("launchRandomGame", { user, isMinor: false });
-        };
+  //   //   // const launchRandomPlay = () => {
+  //   //   //   const launchRandomMinorGame = () => {
+  //   //   //     socket.emit("launchRandomGame", { user, isMinor: true });
+  //   //   //   };
 
-        const buttons2 = [
-          {
-            className: "primary",
-            text: "Малая игра",
-            clickHandler: launchRandomMinorGame,
-          },
-          {
-            className: "primary",
-            text: "Большая игра",
-            clickHandler: launchRandomMajorGame,
-          },
-        ];
+  //   //   //   const launchRandomMajorGame = () => {
+  //   //   //     socket.emit("launchRandomGame", { user, isMinor: false });
+  //   //   //   };
 
-        dispatch(
-          setModal({
-            isVisible: true,
-            text: "Выберите тип игры",
-            buttons2,
-          })
-        );
-      };
+  //   //   //   const buttons2 = [
+  //   //   //     {
+  //   //   //       className: "primary",
+  //   //   //       text: "Малая игра",
+  //   //   //       clickHandler: launchRandomMinorGame,
+  //   //   //     },
+  //   //   //     {
+  //   //   //       className: "primary",
+  //   //   //       text: "Большая игра",
+  //   //   //       clickHandler: launchRandomMajorGame,
+  //   //   //     },
+  //   //   //   ];
 
-      const launchPlayerChoice = () => {
-        socket.emit("userLogin", user);
-        history.push("/users");
-      };
+  //   //   //   dispatch(
+  //   //   //     setModal({
+  //   //   //       isVisible: true,
+  //   //   //       text: "Выберите тип игры",
+  //   //   //       buttons2,
+  //   //   //     })
+  //   //   //   );
+  //   //   // };
 
-      const buttons = [
-        {
-          className: "primary",
-          text: "Играть немедленно",
-          clickHandler: launchRandomPlay,
-        },
-        {
-          className: "primary",
-          text: "Сначала выбрать игроков",
-          clickHandler: launchPlayerChoice,
-        },
-      ];
+  //   //   // const launchPlayerChoice = () => {
+  //   //   //   socket.emit("userLogin", user);
+  //   //   //   history.push("/users");
+  //   //   // };
 
-      dispatch(
-        setModal({
-          isVisible: true,
-          text: "Выберите дальнейшее действие",
-          buttons,
-        })
-      );
-    }
-  }, [userInfo, dispatch, history]);
+  //   //   // const buttons = [
+  //   //   //   {
+  //   //   //     className: "primary",
+  //   //   //     text: "Играть немедленно",
+  //   //   //     clickHandler: launchRandomPlay,
+  //   //   //   },
+  //   //   //   {
+  //   //   //     className: "primary",
+  //   //   //     text: "Сначала выбрать игроков",
+  //   //   //     clickHandler: launchPlayerChoice,
+  //   //   //   },
+  //   //   // ];
+
+  //   //   // dispatch(
+  //   //   //   setModal({
+  //   //   //     isVisible: true,
+  //   //   //     text: "Выберите дальнейшее действие",
+  //   //   //     buttons,
+  //   //   //   })
+  //   //   // );
+  //   // }
+  // }, [userInfo, dispatch, history]);
 
   return (
     <div className="login">

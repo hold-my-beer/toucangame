@@ -132,7 +132,7 @@ const IslandScreen = ({ history }) => {
         // loop={true}
       ></audio>
       {loading || loadingTurn || loadingList || loadingUser ? (
-        <Loader />
+        <Loader text="Подождите, игра запускается" />
       ) : error || errorTurn || errorList || errorUser ? (
         <Message className="danger" text={error} />
       ) : (

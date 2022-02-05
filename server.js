@@ -22,6 +22,7 @@ const {
   addRandomUser,
   removeRandomUser,
   getRandomUsers,
+  clearRandomUsers,
   userLogin,
   userLogout,
   getUsers,
@@ -37,17 +38,86 @@ const {
   // leaveGroup,
 } = require("./utils/users");
 const { initiateGame, updateTurn, deal, quitGame } = require("./utils/game");
+const e = require("express");
 // const { setgroups } = require("process");
+
+let minorId = "";
+let majorId = "";
 
 // User connects
 io.on("connection", (socket) => {
-  // Launch random game
-  socket.on("launchRandomGame", ({ user, isMinor }) => {
-    const socketRes = addRandomUser(socket.id, user);
+  // console.log("connect");
+  // Add random user
+  socket.on("addRandomUser", ({ user, isMinor }) => {
+    // console.log("addRandomUser");
+    const socketRes = addRandomUser(socket.id, user, isMinor);
 
     if (socketRes !== socket.id) {
       io.to(socketRes).emit("forceLogout");
     }
+
+    let users = getRandomUsers(isMinor);
+    // console.log(users);
+
+    const groupId = users[0].groupId;
+
+    socket.join(groupId);
+
+    io.to(groupId).emit("getUsers", {
+      users,
+      newStats: false,
+    });
+
+    if (users.length === 1) {
+      if (isMinor) {
+        minorId = setTimeout(() => {
+          // console.log("fire");
+          users = getRandomUsers(isMinor);
+          // console.log(users);
+          clearRandomUsers(isMinor);
+
+          const game = initiateGame(users, isMinor);
+
+          const updatedGame = deal(game);
+          // console.log(updatedGame);
+
+          io.to(groupId).emit("getGame", updatedGame);
+        }, 10000);
+      } else {
+        majorId = setTimeout(() => {
+          users = getRandomUsers(isMinor);
+          clearRandomUsers(isMinor);
+
+          const game = initiateGame(users, isMinor);
+
+          const updatedGame = deal(game);
+
+          io.to(groupId).emit("getGame", updatedGame);
+        }, 10000);
+      }
+    } else if (users.length === 8) {
+      if (isMinor) {
+        clearTimeout(minorId);
+      } else {
+        clearTimeout(majorId);
+      }
+
+      clearRandomUsers(isMinor);
+
+      const game = initiateGame(users, isMinor);
+
+      const updatedGame = deal(game);
+
+      io.to(groupId).emit("getGame", updatedGame);
+    }
+
+    // if (users.length) {
+    //   const game = initiateGame(users, isMinor);
+
+    //   const updatedGame = deal(game);
+
+    //   io.to(groupId).emit("getGame", updatedGame);
+    // }
 
     // const sockets = await io.in(groupId).fetchSockets();
 
@@ -66,6 +136,7 @@ io.on("connection", (socket) => {
 
   // User login
   socket.on("userLogin", (user) => {
+    // console.log("login");
     const socketRes = userLogin(socket.id, user);
 
     if (socketRes !== socket.id) {

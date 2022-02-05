@@ -3,6 +3,7 @@ import {
   GAME_GET_SUCCESS,
   GAME_GET_FAIL,
   GAME_GET_RESET,
+  GAME_SET_LOADING,
   GAME_UPDATE_TURN_REQUEST,
   GAME_UPDATE_TURN_SUCCESS,
   GAME_UPDATE_TURN_FAIL,
@@ -14,6 +15,7 @@ import {
 export const gameGetReducer = (state = {}, action) => {
   switch (action.type) {
     case GAME_GET_REQUEST:
+    case GAME_SET_LOADING:
       return { loading: true };
     case GAME_GET_SUCCESS:
       return { loading: false, game: action.payload };

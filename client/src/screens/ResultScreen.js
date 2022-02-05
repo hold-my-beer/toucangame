@@ -50,7 +50,8 @@ const ResultScreen = ({ history }) => {
 
     dispatch({ type: GAME_UPDATE_TURN_RESET });
 
-    history.push("/users");
+    // history.push("/users");
+    history.push("/select-game");
   };
 
   return (

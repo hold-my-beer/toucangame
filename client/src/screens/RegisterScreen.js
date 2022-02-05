@@ -19,7 +19,8 @@ const RegisterScreen = ({ history }) => {
 
   useEffect(() => {
     if (userInfo) {
-      history.push("/users");
+      // history.push("/users");
+      history.push("/select-game");
     }
   }, [history, userInfo]);
 

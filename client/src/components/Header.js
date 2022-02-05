@@ -55,7 +55,7 @@ const Header = () => {
             </li>
             <li>
               {game && game.isActive ? (
-                <Link to="/users" onClick={quitGameHandler}>
+                <Link to="/select-game" onClick={quitGameHandler}>
                   <span>Выход из игры</span>{" "}
                   <i className="fas fa-sign-out-alt"></i>
                 </Link>

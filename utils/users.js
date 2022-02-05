@@ -1,73 +1,125 @@
 const { v4: uuidv4 } = require("uuid");
-const { getRandomIntInclusive } = require("./index");
+// const { getRandomIntInclusive } = require("./index");
 
 let users = [];
-let randomUsers = [];
+let minorRandomUsers = [];
+let majorRandomUsers = [];
+let minorGroupId = "";
+let majorGroupId = "";
 
-const addRandomUser = (socketId, user) => {
-  const randomUserExists = randomUsers.find((item) => item.id === user.id);
-  const userExists = users.find((item) => item.id === user.id);
-  let socket = socketId;
+const checkUserExists = (userId) => {
+  let socket = "";
 
-  if (randomUserExists) {
-    socket = randomUserExists.socketId;
-    removeRandomUser(randomUserExists.socketId);
+  const minorRandomUserExists = minorRandomUsers.find(
+    (item) => item.id === userId
+  );
+
+  if (minorRandomUserExists) {
+    socket = minorRandomUserExists.socketId;
+    removeRandomUser(socket, true);
+    return socket;
   }
+
+  const majorRandomUserExists = majorRandomUsers.find(
+    (item) => item.id === userId
+  );
+
+  if (majorRandomUserExists) {
+    socket = majorRandomUserExists.socketId;
+    removeRandomUser(socket, false);
+    return socket;
+  }
+
+  const userExists = users.find((item) => item.id === userId);
 
   if (userExists) {
     socket = userExists.socketId;
-    userLogout(userExists.socketId);
+    userLogout(socket);
+    return socket;
   }
-
-  user.socketId = socketId;
-  user.isLeader = false;
-  user.groupId = "";
-  user.status = "isRandomSeeking";
-  randomUsers.unshift(user);
 
   return socket;
 };
 
-const removeRandomUser = (socketId) => {
-  const index = randomUsers.findIndex((user) => user.socketId === socketId);
-  if (index !== -1) {
-    return randomUsers.splice(index, 1)[0];
+const addRandomUser = (socketId, user, isMinor) => {
+  const socket = checkUserExists(user.id);
+
+  user.socketId = socketId;
+  user.isLeader = false;
+  // user.groupId = "";
+  user.status = "isRandomSeeking";
+
+  if (isMinor) {
+    if (!minorGroupId) {
+      minorGroupId = uuidv4();
+    }
+    user.groupId = minorGroupId;
+    minorRandomUsers.unshift(user);
+  } else {
+    if (!majorGroupId) {
+      majorGroupId = uuidv4();
+    }
+    user.groupId = majorGroupId;
+    majorRandomUsers.unshift(user);
+  }
+
+  return socket;
+};
+
+const removeRandomUser = (socketId, isMinor) => {
+  if (isMinor) {
+    const index = minorRandomUsers.findIndex(
+      (user) => user.socketId === socketId
+    );
+    if (index !== -1) {
+      return minorRandomUsers.splice(index, 1)[0];
+    }
+  } else {
+    const index = majorRandomUsers.findIndex(
+      (user) => user.socketId === socketId
+    );
+    if (index !== -1) {
+      return majorRandomUsers.splice(index, 1)[0];
+    }
   }
 };
 
-const getRandomUsers = () => {
-  let min = 1;
-  let max = randomUsers.length;
-  let iterations = Math.min(8, max);
-
-  let chosenUsers = [];
-
-  if (max >= min) {
-    for (let i = 0; i < iterations; i++) {
-      let index = getRandomIntInclusive(min, max);
-      let user = randomUsers[index];
-      chosenUsers.push(user);
-      removeRandomUser(user.socketId);
-    }
+const getRandomUsers = (isMinor) => {
+  if (isMinor) {
+    return minorRandomUsers;
+  } else {
+    return majorRandomUsers;
   }
+  // let min = 1;
+  // let max = randomUsers.length;
+  // let iterations = Math.min(8, max);
 
-  return chosenUsers;
+  // let chosenUsers = [];
+
+  // if (max >= min) {
+  //   for (let i = 0; i < iterations; i++) {
+  //     let index = getRandomIntInclusive(min, max);
+  //     let user = randomUsers[index];
+  //     chosenUsers.push(user);
+  //     removeRandomUser(user.socketId);
+  //   }
+  // }
+
+  // return chosenUsers;
+};
+
+const clearRandomUsers = (isMinor) => {
+  if (isMinor) {
+    minorRandomUsers = [];
+    minorGroupId = "";
+  } else {
+    majorRandomUsers = [];
+    majorGroupId = "";
+  }
 };
 
 const userLogin = (socketId, user) => {
-  const randomUserExists = randomUsers.find((item) => item.id === user.id);
-  const userExists = users.find((item) => item.id === user.id);
-  let socket = socketId;
-
-  if (randomUserExists) {
-    socket = randomUserExists.socketId;
-    removeRandomUser(randomUserExists.socketId);
-  }
-
-  if (userExists) {
-    socket = userExists.socketId;
-    userLogout(userExists.socketId);
-  }
+  const socket = checkUserExists(user.id);
 
   user.socketId = socketId;
   user.isLeader = false;
@@ -299,6 +351,7 @@ module.exports = {
   addRandomUser,
   removeRandomUser,
   getRandomUsers,
+  clearRandomUsers,
   userLogin,
   userLogout,
   getUsers,

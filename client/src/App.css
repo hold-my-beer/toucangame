@@ -326,6 +326,14 @@ tbody tr:nth-child(even) {
 }
 
 /* Spinner */
+.loader {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
 .lds-ring {
   display: inline-block;
   position: relative;
@@ -391,6 +399,7 @@ tbody tr:nth-child(even) {
 .landing,
 .register,
 .login,
+.selectGame,
 .about,
 .settings,
 .results,
@@ -409,6 +418,7 @@ tbody tr:nth-child(even) {
 
 .login,
 .register,
+.selectGame,
 .about,
 .settings,
 .usersOnline,
@@ -441,6 +451,52 @@ tbody tr:nth-child(even) {
   margin-bottom: 1rem;
   padding: 1rem;
 }
+
+/* Select Game */
+.randomGame,
+.selectUsersGame {
+  width: 80%;
+  height: 38vh;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  font-size: 1.6rem;
+  border-radius: 10px;
+}
+
+.randomGame {
+  background-color: var(--success-opacity-color);
+  color: var(--light-color);
+  border: 3px solid var(--light-color);
+}
+
+.selectUsersGame {
+  background-color: var(--stone-opacity-color);
+  color: var(--primary-color);
+  border: 3px solid var(--primary-color);
+}
+
+.selectGameImg {
+  width: 100%;
+  height: 75%;
+}
+
+.selectGameText {
+  width: 100%;
+  height: 25%;
+}
+
+.selectGameImg img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* .randomGame img,
+.selectUsersGame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+} */
 
 /* Users Online */
 .userLists {
