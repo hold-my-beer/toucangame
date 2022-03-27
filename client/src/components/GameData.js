@@ -7,12 +7,13 @@ import React from "react";
 import CellsLeft from "./CellsLeft";
 import ArtefactBonus from "./ArtefactBonus";
 import CityBonuses from "./CityBonuses";
-// import Opponents from "./Opponents";
+import Opponents from "./Opponents";
 // import { getGame } from "../actions/gameActions";
 
 const GameData = ({ game, turn }) => {
   return (
     <div className="gameData">
+      <Opponents users={game.players} />
       <div className="roundNumber">
         <span>Раунд: {game.roundNumber}</span>
       </div>
@@ -63,7 +64,6 @@ const GameData = ({ game, turn }) => {
             : []
         }
       />
-      {/* <Opponents users={game.players} /> */}
     </div>
   );
 };

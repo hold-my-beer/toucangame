@@ -18,35 +18,39 @@ const SelectGameScreen = ({ history }) => {
     // socket.emit("launchGame", groupId);
     const launchMinorRandomGame = () => {
       // console.log("launch");
-      socket.emit("addRandomUser", {
-        user: {
-          id: userInfo.id,
-          name: userInfo.name,
-          email: userInfo.email,
-          stats: userInfo.stats,
-        },
-        isMinor: true,
-      });
-      dispatch({
-        type: GAME_SET_LOADING,
-      });
-      history.push("/island");
+      if (userInfo) {
+        socket.emit("addRandomUser", {
+          // user: {
+          //   id: userInfo.id,
+          //   name: userInfo.name,
+          //   email: userInfo.email,
+          //   stats: userInfo.stats,
+          // },
+          isMinor: true,
+        });
+        dispatch({
+          type: GAME_SET_LOADING,
+        });
+        history.push("/island");
+      }
     };
 
     const launchMajorRandomGame = () => {
-      socket.emit("addRandomUser", {
-        user: {
-          id: userInfo.id,
-          name: userInfo.name,
-          email: userInfo.email,
-          stats: userInfo.stats,
-        },
-        isMinor: false,
-      });
-      dispatch({
-        type: GAME_SET_LOADING,
-      });
-      history.push("/island");
+      if (userInfo) {
+        socket.emit("addRandomUser", {
+          // user: {
+          //   id: userInfo.id,
+          //   name: userInfo.name,
+          //   email: userInfo.email,
+          //   stats: userInfo.stats,
+          // },
+          isMinor: false,
+        });
+        dispatch({
+          type: GAME_SET_LOADING,
+        });
+        history.push("/island");
+      }
     };
 
     const buttons = [
@@ -59,6 +63,11 @@ const SelectGameScreen = ({ history }) => {
         className: "primary",
         text: "Большая игра",
         clickHandler: launchMajorRandomGame,
+      },
+      {
+        className: "danger",
+        text: "Отмена",
+        clickHandler: () => {},
       },
     ];
 
@@ -77,7 +86,15 @@ const SelectGameScreen = ({ history }) => {
   // };
 
   const selectUsersHandler = () => {
-    history.push("/users");
+    // if (userInfo) {
+    //   socket.emit("userLogin", {
+    //     id: userInfo.id,
+    //     name: userInfo.name,
+    //     email: userInfo.email,
+    //     stats: userInfo.stats,
+    //   });
+    //   history.push("/users");
+    // }
   };
 
   // const getGameHandler = (game) => {
@@ -116,7 +133,7 @@ const SelectGameScreen = ({ history }) => {
           <img src={YETI} alt="Йети" />
         </div>
         <div className="selectGameText">
-          <span>Сначала выбрать игроков</span>
+          <span>Выбрать игроков</span>
         </div>
       </div>
     </div>

@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { GAME_TURN_NEW_POINTS_RESET } from "../constants/gameConstants";
 import { getArtefactConstant } from "../utils";
 
 const GridNotification = ({ game, turn, userInfo, moveMade }) => {
+  const dispatch = useDispatch();
+
   const [newPoints, setNewPoints] = useState(false);
   const [bonusMove, setBonusMove] = useState(false);
   const [endRound, setEndRound] = useState(false);
@@ -9,13 +13,17 @@ const GridNotification = ({ game, turn, userInfo, moveMade }) => {
   useEffect(() => {
     if (
       turn &&
-      turn.newPoints.length &&
-      game &&
-      turn.roundPoints.length === game.roundNumber
+      turn.newPoints.length
+      // &&
+      // game &&
+      // turn.roundPoints.length === game.roundNumber
     ) {
       setNewPoints(true);
     }
-  }, [turn, game]);
+  }, [
+    turn,
+    // , game
+  ]);
 
   useEffect(() => {
     let id;
@@ -23,6 +31,7 @@ const GridNotification = ({ game, turn, userInfo, moveMade }) => {
     if (newPoints) {
       id = setTimeout(() => {
         setNewPoints(false);
+        dispatch({ type: GAME_TURN_NEW_POINTS_RESET });
       }, 1500);
     }
 
@@ -43,7 +52,7 @@ const GridNotification = ({ game, turn, userInfo, moveMade }) => {
   }, [newPoints, userInfo]);
 
   useEffect(() => {
-    if (turn.isBonusMove) {
+    if (turn.isBonusMove && !turn.newPoints.length) {
       setBonusMove(true);
     }
   }, [turn]);
@@ -94,7 +103,7 @@ const GridNotification = ({ game, turn, userInfo, moveMade }) => {
   useEffect(() => {
     let id;
 
-    if (endRound && !bonusMove) {
+    if (endRound && !bonusMove && !newPoints) {
       const roundEndNotification = document.getElementById(
         "roundEndNotification"
       );
@@ -104,7 +113,7 @@ const GridNotification = ({ game, turn, userInfo, moveMade }) => {
     }
 
     return () => clearTimeout(id);
-  }, [endRound, bonusMove, userInfo]);
+  }, [endRound, bonusMove, newPoints, userInfo]);
 
   return (
     <>
@@ -163,7 +172,7 @@ const GridNotification = ({ game, turn, userInfo, moveMade }) => {
             </div>
           ))}
         </div>
-        {(bonusMove || endRound) && (
+        {!newPoints && (bonusMove || endRound) && (
           <div className="gridMessage">
             {bonusMove && <span>Бонусный ход</span>}
             {endRound && !bonusMove && (

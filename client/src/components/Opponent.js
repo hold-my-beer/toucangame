@@ -15,15 +15,20 @@ const Opponent = ({ user }) => {
 
   return (
     <div className="opponent">
-      <div className="opponentData">
-        <span className="mr-1">{user.name}</span>
-        {/* <span>{user.points}</span> */}
+      <div className="opponentImage">
+        <img src={user.avatar || "img/user-avatar-pngegg.png"} alt="" />
       </div>
-      <div className="opponentStatusContainer">
-        <div
-          className="opponentStatus"
-          style={{ width: `${width + "%"}` }}
-        ></div>
+      <div className="opponentInfo">
+        <div className="opponentData">
+          <span className="mr-1">{user.name}</span>
+          {/* <span>{user.points}</span> */}
+        </div>
+        <div className="opponentStatusContainer">
+          <div
+            className="opponentStatus"
+            style={{ width: `${width + "%"}` }}
+          ></div>
+        </div>
       </div>
     </div>
   );

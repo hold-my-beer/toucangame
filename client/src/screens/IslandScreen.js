@@ -7,7 +7,7 @@ import GameData from "../components/GameData";
 import Grid from "../components/Grid";
 // import ProgressBar from "../components/ProgressBar";
 import Points from "../components/Points";
-import { getGame } from "../actions/gameActions";
+import { getGame, getPlayers } from "../actions/gameActions";
 import { listUsers } from "../actions/userActions";
 import { updateStats } from "../actions/userActions";
 import { getRandomIntInclusive } from "../utils/index";
@@ -28,6 +28,12 @@ const IslandScreen = ({ history }) => {
 
   const userLogin = useSelector((state) => state.userLogin);
   const { loading: loadingUser, error: errorUser, userInfo } = userLogin;
+
+  const getUpdatedTurnHandler = (game) => {
+    // console.log(game);
+
+    dispatch(getPlayers(game, userInfo.id));
+  };
 
   const getGameHandler = (game) => {
     dispatch(getGame(game, userInfo.id));
@@ -98,6 +104,14 @@ const IslandScreen = ({ history }) => {
 
     return () => socket.off("getUsers", getUsersHandler);
   });
+
+  // useEffect(() => {
+  //   socket.on("getUpdatedTurn", getUpdatedTurnHandler);
+
+  //   return () => {
+  //     socket.off("getUpdatedTurn", getUpdatedTurnHandler);
+  //   };
+  // });
 
   useEffect(() => {
     socket.on("getGame", getGameHandler);

@@ -17,23 +17,42 @@ const games = [];
 // };
 
 const deal = (game) => {
-  const deal = [];
-  let deck = game.deck;
-  let cellsLeft = game.cellsLeft;
+  // const gameIndex = games.filter((item) => item.id === game.id);
+  const gameIndex = games.findIndex((item) => item.id === game.id);
 
-  let index = getRandomIntInclusive(0, deck.length - 1);
-  deal.push(deck[index]);
-  cellsLeft[deck[index]]--;
-  deck.splice(index, 1);
+  if (gameIndex !== -1) {
+    const deal = [];
+    let deck = game.deck;
+    let cellsLeft = game.cellsLeft;
 
-  index = getRandomIntInclusive(0, deck.length - 1);
-  deal.push(deck[index]);
-  cellsLeft[deck[index]]--;
-  deck.splice(index, 1);
+    let index = getRandomIntInclusive(0, deck.length - 1);
+    deal.push(deck[index]);
+    cellsLeft[deck[index]]--;
+    deck.splice(index, 1);
 
-  const updatedGame = { ...game, deck, deal, cellsLeft };
+    index = getRandomIntInclusive(0, deck.length - 1);
+    deal.push(deck[index]);
+    cellsLeft[deck[index]]--;
+    deck.splice(index, 1);
 
-  return updatedGame;
+    games[gameIndex] = { ...game, deck, deal, cellsLeft };
+
+    // console.log(games[gameIndex]);
+
+    // const gIndex = games.filter((item) => item.id === game.id);
+
+    // if (gIndex !== -1) {
+    //   console.log(games[gIndex]);
+    // }
+
+    return games[gameIndex];
+  }
+
+  // const updatedGame = { ...game, deck, deal, cellsLeft };
+
+  // return updatedGame;
+
+  return game;
 };
 
 const initiateGame = (users, isMinor) => {
@@ -84,13 +103,20 @@ const initiateGame = (users, isMinor) => {
     },
   };
 
-  games.push(game);
+  // const updatedGame = deal(game);
 
-  return game;
+  games.push(game);
+  // games.push(updatedGame);
+
+  // return game;
+  const updatedGame = deal(game);
+
+  return updatedGame;
 };
 
 const updateTurn = (socketId, gameId, turn) => {
   const gameIndex = games.findIndex((game) => game.id === gameId);
+  // console.log(games[gameIndex]);
 
   if (gameIndex !== -1) {
     const playerIndex = games[gameIndex].players.findIndex(
@@ -297,6 +323,8 @@ const updateTurn = (socketId, gameId, turn) => {
         };
       }
     }
+
+    // console.log(games[gameIndex]);
 
     return {
       game: games[gameIndex],

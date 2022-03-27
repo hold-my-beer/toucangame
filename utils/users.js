@@ -1,5 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
-// const { getRandomIntInclusive } = require("./index");
+const { PLAYERS_MAX_NUMBER } = require("../data/gameConstants");
 
 let users = [];
 let minorRandomUsers = [];
@@ -10,60 +10,191 @@ let majorGroupId = "";
 const checkUserExists = (userId) => {
   let socket = "";
 
-  const minorRandomUserExists = minorRandomUsers.find(
-    (item) => item.id === userId
-  );
+  // const minorRandomUserExists = minorRandomUsers.find(
+  //   (item) => item.id === userId
+  // );
 
-  if (minorRandomUserExists) {
-    socket = minorRandomUserExists.socketId;
-    removeRandomUser(socket, true);
-    return socket;
-  }
+  // if (minorRandomUserExists) {
+  //   socket = minorRandomUserExists.socketId;
+  //   removeRandomUser(socket, true);
+  //   return socket;
+  // }
 
-  const majorRandomUserExists = majorRandomUsers.find(
-    (item) => item.id === userId
-  );
+  // const majorRandomUserExists = majorRandomUsers.find(
+  //   (item) => item.id === userId
+  // );
 
-  if (majorRandomUserExists) {
-    socket = majorRandomUserExists.socketId;
-    removeRandomUser(socket, false);
-    return socket;
-  }
+  // if (majorRandomUserExists) {
+  //   socket = majorRandomUserExists.socketId;
+  //   removeRandomUser(socket, false);
+  //   return socket;
+  // }
 
   const userExists = users.find((item) => item.id === userId);
 
   if (userExists) {
     socket = userExists.socketId;
     userLogout(socket);
-    return socket;
+    // return socket;
   }
 
   return socket;
 };
 
-const addRandomUser = (socketId, user, isMinor) => {
-  const socket = checkUserExists(user.id);
+const userLogin = (socketId, user) => {
+  let socket = checkUserExists(user.id);
+
+  if (!socket) {
+    socket = socketId;
+  }
 
   user.socketId = socketId;
   user.isLeader = false;
-  // user.groupId = "";
-  user.status = "isRandomSeeking";
-
-  if (isMinor) {
-    if (!minorGroupId) {
-      minorGroupId = uuidv4();
-    }
-    user.groupId = minorGroupId;
-    minorRandomUsers.unshift(user);
-  } else {
-    if (!majorGroupId) {
-      majorGroupId = uuidv4();
-    }
-    user.groupId = majorGroupId;
-    majorRandomUsers.unshift(user);
-  }
+  user.groupId = "";
+  users.unshift(user);
 
   return socket;
+};
+
+const userLogout = (socketId) => {
+  const minorIndex = minorRandomUsers.findIndex(
+    (user) => user.socketId === socketId
+  );
+  if (minorIndex !== -1) {
+    minorRandomUsers.splice(minorIndex, 1)[0];
+  }
+
+  const majorIndex = majorRandomUsers.findIndex(
+    (user) => user.socketId === socketId
+  );
+  if (majorIndex !== -1) {
+    majorRandomUsers.splice(majorIndex, 1)[0];
+  }
+
+  const index = users.findIndex((user) => user.socketId === socketId);
+  if (index !== -1) {
+    return users.splice(index, 1)[0];
+  }
+};
+
+const addRandomUser = (socketId, isMinor) => {
+  const index = users.findIndex((user) => user.socketId === socketId);
+
+  if (index !== -1) {
+    users[index].status = "isRandomSeeking";
+
+    if (isMinor) {
+      if (!minorGroupId) {
+        minorGroupId = uuidv4();
+        users[index].isLeader = true;
+      }
+      users[index].groupId = minorGroupId;
+      minorRandomUsers.unshift(users[index]);
+    } else {
+      if (!majorGroupId) {
+        majorGroupId = uuidv4();
+        users[index].isLeader = true;
+      }
+      users[index].groupId = majorGroupId;
+      majorRandomUsers.unshift(users[index]);
+    }
+  }
+
+  // return socket;
+};
+
+const includeRandomUsers = (groupUsers, isMinor) => {
+  const groupId = groupUsers[0].groupId;
+
+  if (isMinor) {
+    if (minorRandomUsers.length + groupUsers.length < PLAYERS_MAX_NUMBER) {
+      minorGroupId = groupId;
+      minorRandomUsers.forEach((user) => {
+        user.groupId = groupId;
+        user.isLeader = false;
+      });
+
+      minorRandomUsers = [...minorRandomUsers, ...groupUsers];
+
+      return minorRandomUsers;
+    } else if (
+      minorRandomUsers.length + groupUsers.length ==
+      PLAYERS_MAX_NUMBER
+    ) {
+      minorRandomUsers.forEach((user) => {
+        user.groupId = groupId;
+        user.isLeader = false;
+      });
+
+      const updatedUsers = [...minorRandomUsers, ...groupUsers];
+
+      clearRandomUsers(isMinor);
+
+      return updatedUsers;
+    } else {
+      let updatedUsers = [...groupUsers];
+      let usersNeeded = PLAYERS_MAX_NUMBER - groupUsers.length;
+
+      for (let i = 0; i < minorRandomUsers.length; i++) {
+        if (!minorRandomUsers[i].isLeader) {
+          minorRandomUsers[i].groupId = groupId;
+          updatedUsers.push(minorRandomUsers[i]);
+          minorRandomUsers = minorRandomUsers.splice(index, 1);
+          usersNeeded--;
+        }
+
+        if (!usersNeeded) {
+          break;
+        }
+      }
+
+      return updatedUsers;
+    }
+  } else {
+    if (majorRandomUsers.length + groupUsers.length < PLAYERS_MAX_NUMBER) {
+      majorGroupId = groupId;
+      majorRandomUsers.forEach((user) => {
+        user.groupId = groupId;
+        user.isLeader = false;
+      });
+
+      majorRandomUsers = [...majorRandomUsers, ...groupUsers];
+
+      return majorRandomUsers;
+    } else if (
+      majorRandomUsers.length + groupUsers.length ==
+      PLAYERS_MAX_NUMBER
+    ) {
+      majorRandomUsers.forEach((user) => {
+        user.groupId = groupId;
+        user.isLeader = false;
+      });
+
+      const updatedUsers = [...majorRandomUsers, ...groupUsers];
+
+      clearRandomUsers(isMinor);
+
+      return updatedUsers;
+    } else {
+      let updatedUsers = [...groupUsers];
+      let usersNeeded = PLAYERS_MAX_NUMBER - groupUsers.length;
+
+      for (let i = 0; i < majorRandomUsers.length; i++) {
+        if (!majorRandomUsers[i].isLeader) {
+          majorRandomUsers[i].groupId = groupId;
+          updatedUsers.push(majorRandomUsers[i]);
+          majorRandomUsers = majorRandomUsers.splice(index, 1);
+          usersNeeded--;
+        }
+
+        if (!usersNeeded) {
+          break;
+        }
+      }
+
+      return updatedUsers;
+    }
+  }
 };
 
 const removeRandomUser = (socketId, isMinor) => {
@@ -90,22 +221,6 @@ const getRandomUsers = (isMinor) => {
   } else {
     return majorRandomUsers;
   }
-  // let min = 1;
-  // let max = randomUsers.length;
-  // let iterations = Math.min(8, max);
-
-  // let chosenUsers = [];
-
-  // if (max >= min) {
-  //   for (let i = 0; i < iterations; i++) {
-  //     let index = getRandomIntInclusive(min, max);
-  //     let user = randomUsers[index];
-  //     chosenUsers.push(user);
-  //     removeRandomUser(user.socketId);
-  //   }
-  // }
-
-  // return chosenUsers;
 };
 
 const clearRandomUsers = (isMinor) => {
@@ -118,27 +233,12 @@ const clearRandomUsers = (isMinor) => {
   }
 };
 
-const userLogin = (socketId, user) => {
-  const socket = checkUserExists(user.id);
-
-  user.socketId = socketId;
-  user.isLeader = false;
-  user.groupId = "";
-  users.unshift(user);
-
-  return socket;
-};
-
-const userLogout = (socketId) => {
-  // users = users.filter((user) => user.socketId !== socketId);
-  const index = users.findIndex((user) => user.socketId === socketId);
-  if (index !== -1) {
-    return users.splice(index, 1)[0];
-  }
-};
-
 const getUsers = () => {
   return users;
+};
+
+const getUsersByGroup = (groupId) => {
+  return users.filter((user) => user.groupId === groupId);
 };
 
 // const askForFriendship = (initiator, acceptor) => {
@@ -351,10 +451,12 @@ module.exports = {
   addRandomUser,
   removeRandomUser,
   getRandomUsers,
+  includeRandomUsers,
   clearRandomUsers,
   userLogin,
   userLogout,
   getUsers,
+  getUsersByGroup,
   // askForFriendship,
   setLeader,
   // changeLeader,

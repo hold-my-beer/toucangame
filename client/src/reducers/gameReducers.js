@@ -1,4 +1,7 @@
 import {
+  GAME_PLAYERS_GET_REQUEST,
+  GAME_PLAYERS_GET_SUCCESS,
+  GAME_PLAYERS_GET_FAIL,
   GAME_GET_REQUEST,
   GAME_GET_SUCCESS,
   GAME_GET_FAIL,
@@ -8,6 +11,7 @@ import {
   GAME_UPDATE_TURN_SUCCESS,
   GAME_UPDATE_TURN_FAIL,
   GAME_UPDATE_TURN_RESET,
+  GAME_TURN_NEW_POINTS_RESET,
   GAME_SET_BONUS_MOVE,
   // GAME_RESET_BONUS_MOVE,
 } from "../constants/gameConstants";
@@ -15,11 +19,18 @@ import {
 export const gameGetReducer = (state = {}, action) => {
   switch (action.type) {
     case GAME_GET_REQUEST:
+    case GAME_PLAYERS_GET_REQUEST:
     case GAME_SET_LOADING:
       return { loading: true };
     case GAME_GET_SUCCESS:
       return { loading: false, game: action.payload };
+    case GAME_PLAYERS_GET_SUCCESS:
+      return {
+        loading: false,
+        game: action.payload,
+      };
     case GAME_GET_FAIL:
+    case GAME_PLAYERS_GET_FAIL:
       return { loading: false, error: action.payload };
     case GAME_GET_RESET:
       return {};
@@ -67,6 +78,11 @@ export const gameUpdateTurnReducer = (
           bonusMoves: [],
           newPoints: [],
         },
+      };
+    case GAME_TURN_NEW_POINTS_RESET:
+      return {
+        loading: false,
+        turn: { ...state.turn, newPoints: [] },
       };
     default:
       return state;

@@ -399,6 +399,7 @@ tbody tr:nth-child(even) {
 .landing,
 .register,
 .login,
+.profile,
 .selectGame,
 .about,
 .settings,
@@ -418,12 +419,23 @@ tbody tr:nth-child(even) {
 
 .login,
 .register,
+.profile,
 .selectGame,
 .about,
 .settings,
 .usersOnline,
 .results {
   margin: 6rem 0 2rem 0;
+}
+
+/* Profile */
+.profileImage {
+  width: 200px;
+  height: 200px;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background-color: var(--light-color);
+  border-radius: 5px;
 }
 
 /* About */
@@ -576,11 +588,11 @@ tbody tr:nth-child(even) {
 }
 /* .turnNumber {
   width: 80px;
-}
+}*/
 
-.turnHexesContainer {
-  width: 85px;
-} */
+.turnHexesContainer .hexagon {
+  animation: animate 1.5s 1 forwards;
+}
 
 /* .turnHexes div {
   width: 33.3%;
@@ -913,14 +925,53 @@ path {
 /* Opponents */
 
 .opponents {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
   width: 100%;
+  margin-top: 1rem;
 }
 
 .opponent {
-  width: 100%;
-  background-color: var(--primary-color);
+  position: relative;
+  /* display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center; */
+  /* background-color: var(--primary-color); */
+  width: 150px;
   color: var(--light-color);
+  margin-right: 0.5rem;
   margin-bottom: 0.5rem;
+}
+
+.opponentImage {
+  /* position: absolute;
+  top: 0;
+  left: 0; */
+  width: 50px;
+  height: 50px;
+  padding: 0.3rem;
+  border-radius: 50%;
+  background-color: var(--light-color);
+  z-index: 10;
+}
+
+.opponentImage img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  /* margin: auto; */
+}
+
+.opponentInfo {
+  position: absolute;
+  bottom: 0;
+  left: 25px;
+  width: 120px;
+  z-index: -1;
 }
 
 .opponentData {
@@ -928,7 +979,9 @@ path {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0.3rem 1rem;
+  padding: 0.3rem 1rem 0.3rem 2rem;
+  background-color: var(--primary-color);
+  border-top-right-radius: 5px;
 }
 
 .opponentStatusContainer {

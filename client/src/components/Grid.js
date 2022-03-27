@@ -7,7 +7,6 @@ import ProgressBar from "./ProgressBar";
 import TurnHexes from "./TurnHexes";
 import { pathsContain } from "../utils";
 import { updateTurn } from "../actions/gameActions";
-// import { GAME_RESET_BONUS_MOVE } from "../constants/gameConstants";
 
 const Grid = ({ turn, game, users, userInfo }) => {
   const [hexagons, setHexagons] = useState(
@@ -17,14 +16,11 @@ const Grid = ({ turn, game, users, userInfo }) => {
   const [paths, setPaths] = useState(turn ? turn.paths : []);
   const [dealLeft, setDealLeft] = useState([...game.deal]);
   const [moveMade, setMoveMade] = useState(false);
-  // const [visible, setVisible] = useState(false);
-  // const [endRound, setEndRound] = useState(false);
-  // const [newPoints, setNewPoints] = useState([]);
-  // const [achievments, setAchievments] = useState(null);
 
   const dispatch = useDispatch();
 
   const onClick = (e, source, hex) => {
+    // console.log(game.deal);
     // if (pathStart) {
     //   const clickTwo = document.getElementById("clickTwo");
     //   clickTwo.play();
@@ -117,6 +113,7 @@ const Grid = ({ turn, game, users, userInfo }) => {
           setPaths([...paths, newPath]);
 
           const hexPath = [pathStart, hex];
+          // console.log(game);
           dispatch(
             updateTurn(hexPath, turn, game, users.groupUsers[0].groupId, [
               ...paths,
@@ -163,136 +160,12 @@ const Grid = ({ turn, game, users, userInfo }) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (turn && turn.newPoints) {
-  //     for (let pointGroup in turn.newPoints) {
-  //       for (let item of turn.newPoints[pointGroup]) {
-  //         // if (!newPoint) {
-  //         // setAchievments(null);
-
-  //         setNewPoints([...newPoints, item]);
-
-  //         // setVisible(true);
-  //         // }
-  //         // setNewPoint("");
-  //       }
-  //     }
-  //   }
-  // }, [turn, newPoints]);
-
-  // useEffect(() => {
-  //   if (newPoints.length) {
-  //     setVisible(true);
-  //   }
-  // }, [newPoints]);
-
-  // useEffect(() => {
-  //   if (turn && turn.newPoints) {
-  //     if (turn.newPoints.cityPoints) {
-  //       turn.newPoints.cityPoints.forEach((item) => {
-  //         setNewPoint(item.name);
-  //         setVisible(true);
-  //       });
-  //     }
-  //     if (turn.newPoints.bonusCityPoints) {
-  //       turn.newPoints.bonusCityPoints.forEach((item) => {
-  //         setNewPoint(item.name);
-  //         setVisible(true);
-  //       });
-  //     }
-  //     if (turn.newPoints.artefactPoints) {
-  //       turn.newPoints.artefactPoints.forEach((item) => {
-  //         setNewPoint(item.name);
-  //         setVisible(true);
-  //       });
-  //     }
-  //     if (turn.newPoints.bonusArtefactPoints) {
-  //       turn.newPoints.bonusArtefactPoints.forEach((item) => {
-  //         setNewPoint(item.name);
-  //         setVisible(true);
-  //       });
-  //     }
-  //   }
-  // }, [turn]);
-
-  // useEffect(() => {
-  //   if (turn && turn.isBonusMove) {
-  //     setDealLeft(["any", "any"]);
-  //   }
-  // }, [turn]);
-
-  // useEffect(() => {
-  //   if (turn && turn.newPoints.length) {
-  //     setNewPoints([...turn.newPoints])
-  //   }
-  // }, [turn]);
-
   useEffect(() => {
-    if (
-      turn &&
-      // turn.bonusMoves.filter((item) => item.moveIsMade === false).length &&
-      turn.isBonusMove &&
-      game &&
-      game.deal.length
-    ) {
+    if (turn && turn.isBonusMove && game && game.deal.length) {
       setMoveMade(false);
       setDealLeft([...game.deal]);
     }
   }, [turn, game]);
-
-  // useEffect(() => {
-  //   if (game && game.isBonusMove) {
-  //     const bonusMoveNotification = document.getElementById(
-  //       "bonusMoveNotification"
-  //     );
-  //     bonusMoveNotification.volume =
-  //       parseInt(userInfo.settings.effectsVolume) / 100;
-  //     bonusMoveNotification.play();
-
-  //     setVisible(true);
-  //   }
-  // }, [game, userInfo]);
-
-  // useEffect(() => {
-  //   if (
-  //     turn &&
-  //     turn.isBonusMove
-  //     // && !newPoints.length
-  //   ) {
-  //     const bonusMoveNotification = document.getElementById(
-  //       "bonusMoveNotification"
-  //     );
-  //     bonusMoveNotification.volume =
-  //       parseInt(userInfo.settings.effectsVolume) / 100;
-  //     bonusMoveNotification.play();
-
-  //     setVisible(true);
-  //   }
-  // }, [turn, userInfo]);
-
-  // useEffect(() => {
-  //   let id;
-
-  //   if (endRound && turn && !turn.isBonusMove) {
-  //     id = setTimeout(() => {
-  //       setEndRound(false);
-  //     }, 1500);
-  //   }
-
-  //   return () => clearTimeout(id);
-  // }, [endRound, turn]);
-
-  // useEffect(() => {
-  //   let id;
-
-  //   if (visible) {
-  //     id = setTimeout(() => {
-  //       setVisible(false);
-  //     }, 1500);
-  //   }
-
-  //   return () => clearTimeout(id);
-  // }, [visible]);
 
   return (
     <div className="island">
@@ -324,7 +197,6 @@ const Grid = ({ turn, game, users, userInfo }) => {
         bonusMovesQty={
           turn.bonusMoves.filter((item) => item.moveIsMade === false).length
         }
-        // turn={turn}
       />
       <div className="gridContainer">
         <GridNotification
@@ -332,39 +204,14 @@ const Grid = ({ turn, game, users, userInfo }) => {
           turn={turn}
           userInfo={userInfo}
           moveMade={moveMade}
-          // endRound={endRound}
         />
-        {/* <div className={`gridNotification ${visible ? "visible" : ""}`}>
-          <div className="gridNotificationData">
-            {turn.newPoints.map((item, index) => (
-              <span key={index}>{item.data.name}</span>
-            ))}
-            <span>
-              {
-                // !newPoints.length &&
-                turn.isBonusMove ? "Бонусный ход" : ""
-              }
-            </span>
-            <span>
-              {game.turnNumber === 13 && !turn.isBonusMove
-                ? // && !newPoints.length
-                  `Конец ${
-                    (game.isMinor && game.roundNumber === 2) ||
-                    (!game.isMinor && game.roundNumber === 3)
-                      ? "игры"
-                      : "раунда"
-                  }`
-                : ""}
-            </span>
-          </div>
-        </div> */}
+
         <HexGrid width={335} height={335} viewBox="0 0 100 100">
           <Layout
             size={game.isMinor ? { x: 5.4, y: 5.4 } : { x: 4.6, y: 4.6 }}
             flat={false}
             spacing={game.isMinor ? 1.1 : 1.1}
             origin={{ x: 52, y: 50 }}
-            // onClick={(e) => console.log(e.target)}
           >
             {hexagons.map((hex, i) => (
               <Hexagon
@@ -395,12 +242,7 @@ const Grid = ({ turn, game, users, userInfo }) => {
               </Hexagon>
             ))}
             {turn.paths.map((item, i) => (
-              <Path
-                key={i}
-                start={item.start}
-                end={item.end}
-                // onClick={(e, h) => console.log("path")}
-              />
+              <Path key={i} start={item.start} end={item.end} />
             ))}
           </Layout>
         </HexGrid>

@@ -8,6 +8,7 @@ import Header from "./components/Header";
 import LandingScreen from "./screens/LandingScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
+import ProfileScreen from "./screens/ProfileScreen";
 import SelectGameScreen from "./screens/SelectGameScreen";
 import AboutScreen from "./screens/AboutScreen";
 import SettingsScreen from "./screens/SettingsScreen";
@@ -45,6 +46,7 @@ const App = () => {
           <Route path="/about" component={AboutScreen} exact />
           <Route path="/settings" component={SettingsScreen} exact />
           <Route path="/select-game" component={SelectGameScreen} exact />
+          <Route path="/profile" component={ProfileScreen} exact />
           <Route path="/login" component={LoginScreen} exact />
           <Route path="/register" component={RegisterScreen} exact />
           <Route path="/" component={LandingScreen} exact />

@@ -21,7 +21,7 @@ const UsersScreen = ({ history }) => {
   const { loading: loadingList, error: errorList, users } = userList;
 
   const getUsersHandler = ({ users, newStats }) => {
-    // console.log(newStats);
+    // console.log(users);
     // if (newStats) {
     //   console.log("newStats");
     //   const userIndex = users.findIndex((user) => user.id === userInfo.id);
@@ -138,18 +138,28 @@ const UsersScreen = ({ history }) => {
     }
   }, [userInfo]);
 
+  // useEffect(() => {
+  //   if (userInfo) {
+  //     socket.emit("userLogin", {
+  //       id: userInfo.id,
+  //       name: userInfo.name,
+  //       email: userInfo.email,
+  //       stats: userInfo.stats,
+  //     });
+  //   } else {
+  //     history.push("/");
+  //   }
+  // }, [history, userInfo]);
+
+  // useEffect(() => {
+  //   if (userInfo) {
+  //     dispatch(listUsers());
+  //   }
+  // }, [userInfo, dispatch]);
+
   useEffect(() => {
-    if (userInfo) {
-      socket.emit("userLogin", {
-        id: userInfo.id,
-        name: userInfo.name,
-        email: userInfo.email,
-        stats: userInfo.stats,
-      });
-    } else {
-      history.push("/");
-    }
-  }, [history, userInfo]);
+    socket.emit("addPublicUser");
+  }, []);
 
   useEffect(() => {
     socket.on("getUsers", getUsersHandler);

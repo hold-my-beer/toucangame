@@ -1,14 +1,23 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import socket from "../config/socket";
 
 const LandingScreen = ({ history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
   useEffect(() => {
-    if (userInfo) {
-      history.push("/users");
+    if (userInfo && userInfo.id) {
+      const user = {
+        id: userInfo.id,
+        name: userInfo.name,
+        friends: userInfo.friends,
+        stats: userInfo.stats,
+      };
+      socket.emit("userLogin", user);
+
+      history.push("/profile");
     }
   }, [history, userInfo]);
 

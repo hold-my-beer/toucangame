@@ -8,6 +8,23 @@ import {
 } from "../constants/artefactConstants";
 import { HexUtils } from "react-hexgrid";
 
+export const findCityScenario = (game, userId) => {
+  const cityScenario = [];
+  const userIndex = game.players.findIndex((user) => user.id === userId);
+
+  if (userIndex !== -1) {
+    const userOffset = game.players[userIndex].offset;
+
+    for (let i = 0; i < game.cityScenario.length; i++) {
+      const cityIndex = (i + userOffset) % game.cityScenario.length;
+      const city = game.cityScenario[cityIndex];
+      cityScenario.push(city);
+    }
+  }
+
+  return cityScenario;
+};
+
 export const getRandomIntInclusive = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);

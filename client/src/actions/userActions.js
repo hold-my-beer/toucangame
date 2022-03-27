@@ -195,7 +195,7 @@ export const listUsers = (users, userId) => (dispatch) => {
       const index = users.map((user) => user.id).indexOf(userId);
       const groupId = users[index].groupId || "";
 
-      if (!groupId) {
+      if (groupId === "public") {
         // freeUsers = [...users.filter((user) => user.id !== userId)];
 
         // if (index !== -1) {
@@ -205,7 +205,7 @@ export const listUsers = (users, userId) => (dispatch) => {
         users.forEach((user) => {
           if (user.id === userId) {
             freeUsers.unshift(user);
-          } else if (!user.groupId) {
+          } else if (user.groupId && user.groupId === "public") {
             freeUsers.push(user);
           }
         });
@@ -215,7 +215,7 @@ export const listUsers = (users, userId) => (dispatch) => {
             groupUsers.unshift(user);
           } else if (user.groupId && user.groupId === groupId) {
             groupUsers.push(user);
-          } else if (!user.groupId) {
+          } else if (user.groupId && user.groupId === "public") {
             freeUsers.push(user);
           }
         });

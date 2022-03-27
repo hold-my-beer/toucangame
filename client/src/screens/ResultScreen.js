@@ -1,11 +1,15 @@
 import React, { useEffect } from "react";
 // import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import socket from "../config/socket";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
+import ProgressBar from "../components/ProgressBar";
+import { USER_LIST_RESET } from "../constants/userConstants";
 import {
   GAME_GET_RESET,
   GAME_UPDATE_TURN_RESET,
+  GAME_SET_LOADING,
 } from "../constants/gameConstants";
 
 const ResultScreen = ({ history }) => {
@@ -17,20 +21,44 @@ const ResultScreen = ({ history }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { loading: loadingUser, error: errorUser, userInfo } = userLogin;
 
-  useEffect(() => {
-    if (
-      game &&
-      game.roundNumber &&
-      ((game.isMinor && game.roundNumber - 1 < 2) ||
-        (!game.isMinor && game.roundNumber - 1 < 3))
-    ) {
-      const id = setTimeout(() => {
-        history.push("/island");
-      }, 5000);
+  const userList = useSelector((state) => state.userList);
+  const { loading: loadingList, error: errorList, users } = userList;
 
-      return () => clearTimeout(id);
+  useEffect(() => {
+    if (game) {
+      if (game.isActive) {
+        const id = setTimeout(() => {
+          history.push("/island");
+        }, 5000);
+
+        return () => clearTimeout(id);
+      } else if (
+        // userInfo &&
+        users &&
+        users.groupUsers &&
+        users.groupUsers.length
+      ) {
+        const id = setTimeout(() => {
+          dispatch({ type: GAME_GET_RESET });
+
+          dispatch({ type: GAME_UPDATE_TURN_RESET });
+
+          dispatch({ type: GAME_SET_LOADING });
+
+          if (users.groupUsers[0].isLeader) {
+            socket.emit("launchRandomUserGame", {
+              users: users.groupUsers,
+              isMinor: game.isMinor,
+            });
+          }
+
+          history.push("/island");
+        }, 10000);
+
+        return () => clearTimeout(id);
+      }
     }
-  }, [history, game]);
+  }, [history, game, userInfo, users]);
 
   useEffect(() => {
     const resultsBackgroundMusic = document.getElementById(
@@ -45,13 +73,24 @@ const ResultScreen = ({ history }) => {
     }
   }, [userInfo]);
 
-  const quitGameHandler = () => {
+  const selectGameHandler = () => {
     dispatch({ type: GAME_GET_RESET });
 
     dispatch({ type: GAME_UPDATE_TURN_RESET });
 
     // history.push("/users");
     history.push("/select-game");
+  };
+
+  const quitGameHandler = () => {
+    dispatch({ type: USER_LIST_RESET });
+
+    dispatch({ type: GAME_GET_RESET });
+
+    dispatch({ type: GAME_UPDATE_TURN_RESET });
+
+    // history.push("/users");
+    history.push("/profile");
   };
 
   return (
@@ -64,9 +103,9 @@ const ResultScreen = ({ history }) => {
       ></audio>
       {/* <> */}
       <h1 className="large">Результаты</h1>
-      {loading || loadingUser ? (
+      {loading || loadingUser || loadingList ? (
         <Loader />
-      ) : error || errorUser ? (
+      ) : error || errorUser || errorList ? (
         <Message className="danger" text={error} />
       ) : (
         game &&
@@ -105,13 +144,28 @@ const ResultScreen = ({ history }) => {
               // <Link to="/users" className="btn btn-primary mt-1">
               //   Закончить игру
               // </Link>
-              <button
-                type="button"
-                className="btn btn-primary mt-1"
-                onClick={quitGameHandler}
-              >
-                Закончить игру
-              </button>
+              <div className="endGameOptions">
+                <div className="anotherGame mt-1 mb-2">
+                  <p>Запуск новой игры...</p>
+                  <ProgressBar />
+                </div>
+                <div className="endGameButtons">
+                  <button
+                    type="button"
+                    className="btn btn-primary mt-1"
+                    onClick={selectGameHandler}
+                  >
+                    Выбрать другую игру
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-danger mt-1"
+                    onClick={quitGameHandler}
+                  >
+                    Выйти из игры
+                  </button>
+                </div>
+              </div>
             )}
           </>
         )

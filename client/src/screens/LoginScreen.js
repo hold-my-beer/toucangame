@@ -21,11 +21,11 @@ const LoginScreen = ({ history }) => {
     dispatch(login(email, password));
   };
 
-  useEffect(() => {
-    if (userInfo) {
-      history.push("/select-game");
-    }
-  }, [userInfo, history]);
+  // useEffect(() => {
+  //   if (userInfo) {
+  //     history.push("/profile");
+  //   }
+  // }, [userInfo, history]);
 
   // const postLoginHandler = () => {
   //   const launchRandomPlay = () => {
@@ -59,19 +59,19 @@ const LoginScreen = ({ history }) => {
   //   );
   // };
 
-  // useEffect(() => {
-  //   if (userInfo && userInfo.id) {
-  //     const user = {
-  //       id: userInfo.id,
-  //       name: userInfo.name,
-  //       friends: userInfo.friends,
-  //       stats: userInfo.stats,
-  //     };
-  //     socket.emit("userLogin", user);
+  useEffect(() => {
+    if (userInfo && userInfo.id) {
+      const user = {
+        id: userInfo.id,
+        name: userInfo.name,
+        friends: userInfo.friends,
+        stats: userInfo.stats,
+      };
+      socket.emit("userLogin", user);
 
-  //     history.push("/users");
-  //   }
-  // }, [history, userInfo]);
+      history.push("/profile");
+    }
+  }, [history, userInfo]);
 
   // useEffect(() => {
   //   // if (userInfo && userInfo.id) {

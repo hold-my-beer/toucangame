@@ -3,14 +3,16 @@ const router = express.Router();
 const {
   registerUser,
   loginUser,
-  saveStats,
+  updateProfile,
   updateSettings,
+  saveStats,
 } = require("../controllers/userController");
 const { auth } = require("../middleware/authMiddleware");
 
 router.route("/").post(registerUser);
 router.post("/login", loginUser);
-router.put("/stats", saveStats);
+router.route("/profile").post(auth, updateProfile);
 router.route("/settings").post(auth, updateSettings);
+router.put("/stats", saveStats);
 
 module.exports = router;

@@ -63,6 +63,7 @@ const loginUser = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        avatar: user.avatar || "",
         friends: user.friends,
         stats: user.stats,
         settings: user.settings,
@@ -70,6 +71,39 @@ const loginUser = async (req, res) => {
       });
     } else {
       return res.status(401).json({ message: "Неверные учетные данные" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Ошибка сервера" });
+  }
+};
+
+// @desc     Update user profile
+// @route    POST /api/users/profile
+// @access   Private
+const updateProfile = async (req, res) => {
+  try {
+    const { avatar } = req.body;
+
+    const user = await User.findById(req.user.id);
+
+    if (user) {
+      user.avatar = avatar;
+
+      const updatedUser = await user.save();
+
+      return res.json({
+        id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        avatar: updatedUser.avatar || "",
+        friends: updatedUser.friends,
+        stats: updatedUser.stats,
+        settings: updatedUser.settings,
+        token: generateToken(updatedUser._id),
+      });
+    } else {
+      return res.status(401).json({ message: "Пользователь не найден" });
     }
   } catch (error) {
     console.error(error);
@@ -98,6 +132,7 @@ const updateSettings = async (req, res) => {
         id: updatedUser._id,
         name: updatedUser.name,
         email: updatedUser.email,
+        avatar: updatedUser.avatar || "",
         friends: updatedUser.friends,
         stats: updatedUser.stats,
         settings: updatedUser.settings,
@@ -240,7 +275,8 @@ const inviteToBeFriends = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
-  saveStats,
+  updateProfile,
   updateSettings,
+  saveStats,
   inviteToBeFriends,
 };

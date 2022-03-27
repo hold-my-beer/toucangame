@@ -22,10 +22,12 @@ const {
   addRandomUser,
   removeRandomUser,
   getRandomUsers,
+  includeRandomUsers,
   clearRandomUsers,
   userLogin,
   userLogout,
   getUsers,
+  getUsersByGroup,
   setLeader,
   // changeLeader,
   setGroup,
@@ -38,8 +40,7 @@ const {
   // leaveGroup,
 } = require("./utils/users");
 const { initiateGame, updateTurn, deal, quitGame } = require("./utils/game");
-const e = require("express");
-// const { setgroups } = require("process");
+const { PLAYERS_MAX_NUMBER } = require("./data/gameConstants");
 
 let minorId = "";
 let majorId = "";
@@ -47,17 +48,21 @@ let majorId = "";
 // User connects
 io.on("connection", (socket) => {
   // console.log("connect");
-  // Add random user
-  socket.on("addRandomUser", ({ user, isMinor }) => {
-    // console.log("addRandomUser");
-    const socketRes = addRandomUser(socket.id, user, isMinor);
+
+  // User login
+  socket.on("userLogin", (user) => {
+    const socketRes = userLogin(socket.id, user);
 
     if (socketRes !== socket.id) {
       io.to(socketRes).emit("forceLogout");
     }
+  });
+
+  // Add random user
+  socket.on("addRandomUser", ({ isMinor }) => {
+    addRandomUser(socket.id, isMinor);
 
     let users = getRandomUsers(isMinor);
-    // console.log(users);
 
     const groupId = users[0].groupId;
 
@@ -71,17 +76,16 @@ io.on("connection", (socket) => {
     if (users.length === 1) {
       if (isMinor) {
         minorId = setTimeout(() => {
-          // console.log("fire");
           users = getRandomUsers(isMinor);
-          // console.log(users);
+
           clearRandomUsers(isMinor);
 
           const game = initiateGame(users, isMinor);
 
-          const updatedGame = deal(game);
-          // console.log(updatedGame);
+          // const updatedGame = deal(game);
 
-          io.to(groupId).emit("getGame", updatedGame);
+          // io.to(groupId).emit("getGame", updatedGame);
+          io.to(groupId).emit("getGame", game);
         }, 10000);
       } else {
         majorId = setTimeout(() => {
@@ -90,12 +94,13 @@ io.on("connection", (socket) => {
 
           const game = initiateGame(users, isMinor);
 
-          const updatedGame = deal(game);
+          // const updatedGame = deal(game);
 
-          io.to(groupId).emit("getGame", updatedGame);
+          // io.to(groupId).emit("getGame", updatedGame);
+          io.to(groupId).emit("getGame", game);
         }, 10000);
       }
-    } else if (users.length === 8) {
+    } else if (users.length === PLAYERS_MAX_NUMBER) {
       if (isMinor) {
         clearTimeout(minorId);
       } else {
@@ -106,50 +111,113 @@ io.on("connection", (socket) => {
 
       const game = initiateGame(users, isMinor);
 
-      const updatedGame = deal(game);
+      // const updatedGame = deal(game);
 
-      io.to(groupId).emit("getGame", updatedGame);
+      // io.to(groupId).emit("getGame", updatedGame);
+      io.to(groupId).emit("getGame", game);
     }
-
-    // if (users.length) {
-    //   const game = initiateGame(users, isMinor);
-
-    //   const updatedGame = deal(game);
-
-    //   io.to(groupId).emit("getGame", updatedGame);
-    // }
-
-    // const sockets = await io.in(groupId).fetchSockets();
-
-    // sockets.forEach((socket) => {
-    //   socket.leave(process.env.SOCKET_IO_PUBLIC_ROOM);
-    // });
-
-    // const users = getUsers().filter((user) => user.groupId === groupId);
-
-    // const game = initiateGame(users, isMinor);
-
-    // const updatedGame = deal(game);
-
-    // io.to(groupId).emit("getGame", updatedGame);
   });
 
-  // User login
-  socket.on("userLogin", (user) => {
-    // console.log("login");
-    const socketRes = userLogin(socket.id, user);
+  // Launch another random user game
+  socket.on("launchRandomUserGame", async ({ users, isMinor }) => {
+    const groupId = users[0].groupId;
 
-    if (socketRes !== socket.id) {
-      io.to(socketRes).emit("forceLogout");
+    if (users.length === PLAYERS_MAX_NUMBER) {
+      const game = initiateGame(users, isMinor);
+
+      // const updatedGame = deal(game);
+
+      // io.to(groupId).emit("getGame", updatedGame);
+      io.to(groupId).emit("getGame", game);
+    } else {
+      let updatedUsers = includeRandomUsers(users, isMinor);
+
+      // Earlier added random users leave old room and join new room
+      const otherGroupUsers = updatedUsers.filter(
+        (user) => user.groupId !== groupId
+      );
+
+      if (otherGroupUsers.length) {
+        const otherGroupId = otherGroupUsers[0].groupId;
+
+        const sockets = await io.in(otherGroupId).fetchSockets();
+
+        sockets.forEach((socket) => {
+          socket.leave(otherGroupId);
+
+          socket.join(groupId);
+        });
+      }
+
+      if (updatedUsers.length === PLAYERS_MAX_NUMBER) {
+        const remainingRandomUsers = getRandomUsers(isMinor);
+
+        if (!remainingRandomUsers.length) {
+          if (isMinor) {
+            clearTimeout(minorId);
+          } else {
+            clearTimeout(majorId);
+          }
+        }
+
+        const game = initiateGame(updatedUsers, isMinor);
+
+        // const updatedGame = deal(game);
+
+        // io.to(groupId).emit("getGame", updatedGame);
+        io.to(groupId).emit("getGame", game);
+      } else if (updatedUsers.length === users.length) {
+        // console.log("in final branch");
+        if (isMinor) {
+          minorId = setTimeout(() => {
+            updatedUsers = getRandomUsers(isMinor);
+
+            clearRandomUsers(isMinor);
+
+            const game = initiateGame(updatedUsers, isMinor);
+
+            // const updatedGame = deal(game);
+
+            // io.to(groupId).emit("getGame", updatedGame);
+            io.to(groupId).emit("getGame", game);
+          }, 10000);
+        } else {
+          majorId = setTimeout(() => {
+            updatedUsers = getRandomUsers(isMinor);
+
+            clearRandomUsers(isMinor);
+
+            const game = initiateGame(updatedUsers, isMinor);
+
+            // const updatedGame = deal(game);
+
+            // io.to(groupId).emit("getGame", updatedGame);
+            io.to(groupId).emit("getGame", game);
+          }, 10000);
+        }
+      }
     }
-
-    socket.join(process.env.SOCKET_IO_PUBLIC_ROOM);
-
-    io.to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
-      users: getUsers(),
-      newStats: false,
-    });
   });
+
+  // Add public user
+  // socket.on("addPublicUser", (group = "") => {
+  //   if (!group) {
+  //     setGroup(socket.id, process.env.SOCKET_IO_PUBLIC_ROOM);
+
+  //     socket.join(process.env.SOCKET_IO_PUBLIC_ROOM);
+  //   }
+
+  //   const groupId = group || process.env.SOCKET_IO_PUBLIC_ROOM;
+
+  //   // const users = getUsersByGroup(groupId);
+  //   // console.log(users);
+
+  //   io.to(groupId).emit("getUsers", {
+  //     users: getUsersByGroup(groupId),
+  //     // users,
+  //     newStats: false,
+  //   });
+  // });
 
   // User asks another user for friendship
   // socket.on("askForFriendship", (socketId) => {
@@ -167,55 +235,56 @@ io.on("connection", (socket) => {
   // });
 
   // User creates group
-  socket.on("createGroup", () => {
-    setLeader(socket.id);
-    const groupId = uuidv4();
-    setGroup(socket.id, groupId);
+  // socket.on("createGroup", () => {
+  //   setLeader(socket.id);
+  //   const groupId = uuidv4();
+  //   setGroup(socket.id, groupId);
 
-    socket.join(groupId);
+  //   socket.leave(process.env.SOCKET_IO_PUBLIC_ROOM);
+  //   socket.join(groupId);
 
-    io.to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
-      users: getUsers(),
-      newStats: false,
-    });
-  });
+  //   io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
+  //     users: getUsers(),
+  //     newStats: false,
+  //   });
+  // });
 
   // User adds another user to group
-  socket.on("addToGroup", async (socketId) => {
-    // console.log([...socket.rooms]);
-    const groupId = [...socket.rooms].find(
-      (item, index) => index !== 0 && item !== "public"
-    );
-    setGroup(socketId, groupId);
+  // socket.on("addToGroup", async (socketId) => {
+  //   // console.log([...socket.rooms]);
+  //   const groupId = [...socket.rooms].find(
+  //     (item, index) => index !== 0 && item !== process.env.SOCKET_IO_PUBLIC_ROOM
+  //   );
+  //   setGroup(socketId, groupId);
 
-    const sockets = await io.fetchSockets();
-    const socketToAdd = sockets.find((socket) => socket.id === socketId);
-    if (socketToAdd) {
-      socketToAdd.join(groupId);
-    }
+  //   const sockets = await io.fetchSockets();
+  //   const socketToAdd = sockets.find((socket) => socket.id === socketId);
+  //   if (socketToAdd) {
+  //     socketToAdd.join(groupId);
+  //   }
 
-    io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
-      users: getUsers(),
-      newStats: false,
-    });
-  });
+  //   io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
+  //     users: getUsers(),
+  //     newStats: false,
+  //   });
+  // });
 
   // User removes another user from group
-  socket.on("removeFromGroup", async (socketId) => {
-    const groupId = userLeaveGroup(socketId);
-    const sockets = await io.in(groupId).fetchSockets();
+  // socket.on("removeFromGroup", async (socketId) => {
+  //   const groupId = userLeaveGroup(socketId);
+  //   const sockets = await io.in(groupId).fetchSockets();
 
-    const socketToRemove = sockets.find((socket) => socket.id === socketId);
+  //   const socketToRemove = sockets.find((socket) => socket.id === socketId);
 
-    if (socketToRemove) {
-      socketToRemove.leave(groupId);
-    }
+  //   if (socketToRemove) {
+  //     socketToRemove.leave(groupId);
+  //   }
 
-    io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
-      users: getUsers(),
-      newStats: false,
-    });
-  });
+  //   io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
+  //     users: getUsers(),
+  //     newStats: false,
+  //   });
+  // });
 
   // User receives request to leave group
   // socket.on("leaveRoom", (socketId) => {
@@ -239,29 +308,31 @@ io.on("connection", (socket) => {
 
     socket.leave(groupId);
 
-    io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
-      users: getUsers(),
-      newStats: false,
-    });
+    io.to(groupId)
+      // .to(process.env.SOCKET_IO_PUBLIC_ROOM)
+      .emit("getUsers", {
+        users: getUsersByGroup(groupId),
+        newStats: false,
+      });
   });
 
   // Launch game
-  socket.on("launchGame", async ({ groupId, isMinor }) => {
-    const sockets = await io.in(groupId).fetchSockets();
+  // socket.on("launchGame", async ({ groupId, isMinor }) => {
+  //   const sockets = await io.in(groupId).fetchSockets();
 
-    sockets.forEach((socket) => {
-      socket.leave(process.env.SOCKET_IO_PUBLIC_ROOM);
-    });
+  //   sockets.forEach((socket) => {
+  //     socket.leave(process.env.SOCKET_IO_PUBLIC_ROOM);
+  //   });
 
-    const users = getUsers().filter((user) => user.groupId === groupId);
+  //   const users = getUsers().filter((user) => user.groupId === groupId);
 
-    const game = initiateGame(users, isMinor);
+  //   const game = initiateGame(users, isMinor);
 
-    const updatedGame = deal(game);
+  //   const updatedGame = deal(game);
 
-    // io.to(groupId).emit("getNewGame", updatedGame);
-    io.to(groupId).emit("getGame", updatedGame);
-  });
+  //   // io.to(groupId).emit("getNewGame", updatedGame);
+  //   io.to(groupId).emit("getGame", updatedGame);
+  // });
 
   // User updates turn
   socket.on("updateTurn", ({ groupId, gameId, turn }) => {
@@ -271,7 +342,8 @@ io.on("connection", (socket) => {
       const updatedGame = deal(gameInfo.game);
 
       io.to(groupId).emit("getUsers", {
-        users: getUsers(),
+        // users: getUsers(),
+        users: getUsersByGroup(groupId),
         newStats: true,
       });
 
@@ -282,8 +354,13 @@ io.on("connection", (socket) => {
       io.to(groupId).emit("getNewRound", updatedGame);
     } else if (gameInfo.isNewTurn) {
       const updatedGame = deal(gameInfo.game);
-      // console.log("getGame");
+      // console.log("new turn");
+      // console.log(updatedGame.deal);
       io.to(groupId).emit("getGame", updatedGame);
+    } else {
+      // console.log("is waiting");
+      // console.log(gameInfo.game.deal);
+      io.to(groupId).emit("getUpdatedTurn", gameInfo.game);
     }
   });
 
@@ -293,12 +370,15 @@ io.on("connection", (socket) => {
 
     socket.leave(groupId);
 
-    socket.join(process.env.SOCKET_IO_PUBLIC_ROOM);
+    // socket.join(process.env.SOCKET_IO_PUBLIC_ROOM);
 
-    io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
-      users: getUsers(),
-      newStats: false,
-    });
+    io.to(groupId)
+      // .to(process.env.SOCKET_IO_PUBLIC_ROOM)
+      .emit("getUsers", {
+        // users: getUsers(),
+        users: getUsersByGroup(groupId),
+        newStats: false,
+      });
 
     const game = quitGame(socket.id, gameId);
     io.to(groupId).emit("getGame", game);
@@ -310,14 +390,18 @@ io.on("connection", (socket) => {
 
     socket.leave(groupId);
 
-    socket.leave(process.env.SOCKET_IO_PUBLIC_ROOM);
+    // socket.leave(process.env.SOCKET_IO_PUBLIC_ROOM);
 
     userLogout(socket.id);
 
-    io.to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
-      users: getUsers(),
-      newStats: false,
-    });
+    io
+      // .to(process.env.SOCKET_IO_PUBLIC_ROOM)
+      .to(groupId)
+      .emit("getUsers", {
+        // users: getUsers(),
+        users: getUsersByGroup(groupId),
+        newStats: false,
+      });
   });
 
   // User disconnect
@@ -327,10 +411,13 @@ io.on("connection", (socket) => {
     const user = userLogout(socket.id);
     // console.log(user);
 
-    io.to(groupId).to(process.env.SOCKET_IO_PUBLIC_ROOM).emit("getUsers", {
-      users: getUsers(),
-      newStats: false,
-    });
+    io.to(groupId)
+      // .to(process.env.SOCKET_IO_PUBLIC_ROOM)
+      .emit("getUsers", {
+        // users: getUsers(),
+        users: getUsersByGroup(groupId),
+        newStats: false,
+      });
 
     if (user && user.gameId) {
       const game = quitGame(socket.id, user.gameId);

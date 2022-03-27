@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import socket from "../config/socket";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { register } from "../actions/userActions";
@@ -18,9 +19,16 @@ const RegisterScreen = ({ history }) => {
   const { loading, error, userInfo } = userRegister;
 
   useEffect(() => {
-    if (userInfo) {
-      // history.push("/users");
-      history.push("/select-game");
+    if (userInfo && userInfo.id) {
+      const user = {
+        id: userInfo.id,
+        name: userInfo.name,
+        friends: userInfo.friends,
+        stats: userInfo.stats,
+      };
+      socket.emit("userLogin", user);
+
+      history.push("/profile");
     }
   }, [history, userInfo]);
 
